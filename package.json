@@ -1,0 +1,15 @@
+{
+  "name": "afterhours",
+  "version": "1.0.0",
+  "description": "After Hours is a movie watchlist and review web application where users can keep track of movies they want to watch, mark them as watched, and leave ratings and reviews. This project is built as part of a group assignment and focuses on implementing core CRUD functionalities using Node.js, Express, and MongoDB.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "mongoose": "^9.3.1"
+  }
+}
