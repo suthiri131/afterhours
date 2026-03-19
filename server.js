@@ -46,3 +46,5 @@ function startServer() {
 
 // call connectDB first and when connection is ready we start the web server
 connectDB().then(startServer);
+
+// testing
