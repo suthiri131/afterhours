@@ -28,5 +28,5 @@ After Hours is a movie watchlist and review web application where users can keep
 ## Getting Started
 1. Clone the repository  
 2. Install dependencies - npm i
-3. Create a `config.env` file in the root directory and add:MONGO_URI=your_mongodb_connection_string
+3. Create a `config.env` file in the root directory and add: DB = your_mongodb_connection_string
 4. Run the server - nodemon server.js

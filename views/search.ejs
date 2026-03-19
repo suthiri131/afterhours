@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>Search Books</title>
+</head>
+<body>
+    <form action="/search-book" method="POST">
+    ISBN: 
+    <input type="text" name="isbn">
+    <button type="submit">Find</button>
+    </form>
+
+    <br><br>
+    <%if(result){ %>
+        Title: <%= result.title %><br>
+        ISBN:  <%= result.isbn %><br>
+        Rating: <%= result.rating %><br>
+        Price: $ <%= result.price %><br>
+        
+    <% }else if(result===null){%>
+        <p>Book not found</p>
+    <%} %>
+</body>
+</html>

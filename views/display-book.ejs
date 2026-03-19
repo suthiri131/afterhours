@@ -1,0 +1,26 @@
+<html>
+<head>
+  <title>Books on Nodes.js</title> <!-- Title displayed in the browser tab -->
+</head>
+<body>
+
+  <!-- EJS conditional block: Check if there are any book list -->
+  <% if (bookList.length === 0) { %>
+    <p>No books yet.</p> <!-- Message when there is no books -->
+  <% } else { %>
+    <h2>Node.js Book List</h2>
+    <!-- EJS loop to render each book -->
+     
+    <% bookList.forEach(book => { %>
+      
+        <p><strong>Title: <%= book.title %></strong></p>      <!-- Display the book title -->
+        ISBN: <%= book.isbn %><br>             <!-- Display the isbn number -->
+        Rating:<%=book.rating %><br>           <!-- Display the rating -->
+        Price:<%=book.price %>                 <!-- Display the price  -->
+      <hr>
+    <% }); %>
+    
+  <% } %>
+     
+</body>
+</html>

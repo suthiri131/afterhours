@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>Book Marked for Deletion</title>
+</head>
+<body>
+    <p><strong>Book Marked for Deletion.</strong></p>
+    <%if(result){ %>
+        Title: <%= result.title %><br>
+        ISBN:  <%= result.isbn %><br>
+        Rating: <%= result.rating %><br>
+        Price: $ <%= result.price %><br>
+        
+    <% }else if(result===null){%>
+        <p>Book not found</p>
+    <%} %>
+    <form action="/delete-book" method="POST">
+    <p>Click the Confirm button to delete this book.</p>
+       <input type="hidden" name="isbn" value="<%= result.isbn %>">
+       <button type="submit" >Confirm</button>
+    </form>
+</body>
+</html>

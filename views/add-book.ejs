@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Add a New Book</title>
+</head>
+<body>
+    <h3>Add a new Book</h3>
+
+    <form action="/add-book" method="POST">
+        <table border="1">
+            <tr>
+                <th>Title :</th><td><input type="text" name="title"></td>
+            </tr>
+            <tr>
+                <th>ISBN: </th><td><input type="text" name="isbn"></td>
+            </tr>
+            <tr>
+                <th>Rating:</th><td><input type="text" name="rating"></td>
+            </tr>
+            <tr>
+                <th>Price:</th><td><input type="text" name="price"></td>
+            </tr>
+            <tr>
+                <td colspan="2"><button type="submit">Add Book</button></td>
+            </tr>
+        </table>
+    </form>
+
+    <br><br>
+
+    <% if (msg) { %>
+        <p><%= msg %></p>
+    <% } %>
+
+    <% if (result) { %>
+        <p>Title: <%= result.title %></p>
+        <p>ISBN: <%= result.isbn %></p>
+        <p>Rating: <%= result.rating %></p>
+        <p>Price: $ <%= result.price %></p>
+    <% } %>
+
+</body>
+</html>
