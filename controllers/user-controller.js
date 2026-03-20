@@ -2,7 +2,10 @@ const User = require("./../models/user-model");
 const bcrypt = require("bcrypt");
 
 exports.showRegisterForm = (req, res) => {
-  res.render("registerUser", { msg: "" });
+  res.render("register-user", {
+    msg: "",
+    formData: {},
+  });
 };
 
 exports.createUser = async (req, res) => {
@@ -12,33 +15,45 @@ exports.createUser = async (req, res) => {
   username = username?.trim();
   email = email?.trim().toLowerCase();
 
+  const formData = {
+    fullName,
+    username,
+    email,
+  };
+
   if (!fullName || !username || !email || !password || !confirmPassword) {
-    return res.render("registerUser", {
+    return res.render("register-user", {
       msg: "Please fill in all required fields",
+      formData,
     });
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
-    return res.render("registerUser", {
+    return res.render("register-user", {
       msg: "Please enter a valid email address",
+      formData,
     });
   }
 
   if (email.endsWith("@gmal.com")) {
-    return res.render("registerUser", {
+    return res.render("register-user", {
       msg: "Did you mean gmail.com?",
+      formData,
     });
   }
+
   if (password.length < 6) {
-    return res.render("registerUser", {
+    return res.render("register-user", {
       msg: "Password must be at least 6 characters",
+      formData,
     });
   }
 
   if (password !== confirmPassword) {
-    return res.render("registerUser", {
+    return res.render("register-user", {
       msg: "Passwords do not match",
+      formData,
     });
   }
 
@@ -46,8 +61,9 @@ exports.createUser = async (req, res) => {
     const existingUser = await User.findByEmail(email);
 
     if (existingUser) {
-      return res.render("registerUser", {
+      return res.render("register-user", {
         msg: "Email already exists",
+        formData,
       });
     }
 
@@ -60,34 +76,41 @@ exports.createUser = async (req, res) => {
       password: hashedPassword,
     });
 
-    return res.redirect("/login");
+    return res.redirect("/user/login");
   } catch (error) {
     console.error(error);
 
     if (error.code === 11000 && error.keyPattern?.email) {
-      return res.render("registerUser", {
+      return res.render("register-user", {
         msg: "Email already exists",
+        formData,
+      });
+    }
+
+    if (error.code === 11000 && error.keyPattern?.username) {
+      return res.render("register-user", {
+        msg: "Username already exists",
+        formData,
       });
     }
 
     if (error.name === "ValidationError") {
       const firstError = Object.values(error.errors)[0];
-      return res.render("registerUser", {
+      return res.render("register-user", {
         msg: firstError.message,
+        formData,
       });
     }
 
-    return res.render("registerUser", {
+    return res.render("register-user", {
       msg: "Error registering user",
+      formData,
     });
   }
 };
 
 exports.showProfilePage = async (req, res) => {
   try {
-    // Temporary: get the first user in the database
-    // Later replace this with:
-    // const user = await User.findById(req.session.userId);
     const user = await User.findOne();
 
     if (!user) {
@@ -114,11 +137,13 @@ exports.showChangePasswordPage = async (req, res) => {
   try {
     res.render("update-password", {
       msg: "",
+      type: "",
     });
   } catch (error) {
     console.error(error);
     res.render("update-password", {
       msg: "Error loading update password page.",
+      type: "error",
     });
   }
 };
@@ -191,7 +216,7 @@ exports.changePassword = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.render("update-password", {
+    return res.render("update-password", {
       msg: "Error changing password.",
       type: "error",
     });
