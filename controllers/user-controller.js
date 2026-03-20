@@ -353,7 +353,8 @@ exports.showResetPasswordForm = (req, res) => {
 
 exports.resetPassword = async (req, res) => {
   const userId = req.params.id;
-  let { newPassword, confirmPassword } = req.body;
+  let newPassword = req.body.newPassword;
+  let confirmPassword = req.body.confirmPassword;
 
   newPassword = newPassword?.trim();
   confirmPassword = confirmPassword?.trim();
@@ -361,20 +362,31 @@ exports.resetPassword = async (req, res) => {
   if (!newPassword || !confirmPassword) {
     return res.render("resetPassword", {
       msg: "Please fill in both password fields",
+      type: "error",
       userId,
     });
   }
 
   if (newPassword.length < 6) {
     return res.render("resetPassword", {
-      msg: "Password must be at least 6 characters",
+      msg: "New password must be at least 6 characters long",
+      type: "error",
+      userId,
+    });
+  }
+
+  if (confirmPassword.length < 6) {
+    return res.render("resetPassword", {
+      msg: "Confirm password must be at least 6 characters long",
+      type: "error",
       userId,
     });
   }
 
   if (newPassword !== confirmPassword) {
     return res.render("resetPassword", {
-      msg: "Passwords do not match",
+      msg: "New password and confirm password do not match",
+      type: "error",
       userId,
     });
   }
@@ -382,14 +394,18 @@ exports.resetPassword = async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    await User.updateUser(userId, { password: hashedPassword });
-    req.session.loginMsg = "Password reset successful. Please log in with your new password.";
+    await User.updatePassword(userId, hashedPassword);
+
+    req.session.loginMsg =
+      "Password reset successful. Please log in with your new password.";
     req.session.loginMsgType = "success";
+
     return res.redirect("/user/login");
   } catch (error) {
     console.error(error);
     return res.render("resetPassword", {
       msg: "Error resetting password",
+      type: "error",
       userId,
     });
   }

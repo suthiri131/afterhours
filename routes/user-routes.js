@@ -9,6 +9,7 @@ router.get("/profile", userController.showProfilePage);
 router.get("/change-password", userController.showChangePasswordPage);
 router.post("/change-password", userController.changePassword);
 
+// thet
 router.get("/login", userController.showLoginForm);
 router.post("/login", userController.loginUser);
 router.post("/logout", userController.logoutUser);

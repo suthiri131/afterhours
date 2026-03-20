@@ -54,9 +54,12 @@ exports.updatePassword = function (id, hashedPassword) {
   );
 };
 
+/*
+// thet
 exports.updateUser = function (id, updatedData) {
   return User.findByIdAndUpdate(id, updatedData, {
     new: true,
     runValidators: true,
   });
 };
+*/
