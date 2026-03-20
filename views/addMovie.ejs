@@ -2,35 +2,58 @@
 <html lang="en">
   
   <head>
+
     <meta charset="UTF-8" />
     <title>Adding Movies to Watchlist - Afterhours</title>
+
+    <style>
+
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f5f7fb;
+        color: #0f172a;
+      }
+
+      .error {
+        color: #b91c1c;
+      }
+
+      button {
+        background-color: #14213d;
+        color: #ffffff;
+        border: none;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #1d4ed8;
+      }
+
+    </style>
+
   </head>
   
   <body>
-
+    
     <h1>Add Movies to Your Watchlist</h1>
 
     <% if (msg) { %>
-      <p><%= msg %></p>
+      <div class="error"><%= msg %></div>
     <% } %>
 
     <form action="/movies/add-movies" method="POST">
 
-      <label>
-        Title:
-        <input type="text" name="title"/>
-      </label>
-      <br /><br />
+      Title:
+      <input type="text" name="title"/><br><br>
 
-      <label>
-        Genre:
-        <input type="text" name="genre"/>
-      </label>
-      <br /><br />
+      Genre:
+      <input type="text" name="genre"/><br><br>
 
       <button type="submit">Add to Watchlist</button>
-    </form>
 
+    </form>
+    
   </body>
 
 </html>
