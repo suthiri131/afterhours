@@ -239,7 +239,8 @@ exports.showLoginForm = (req, res) => {
 };
 
 exports.loginUser = async (req, res) => {
-  let { email, password } = req.body;
+  let email = req.body.email;
+  let password = req.body.password;
 
   email = email?.trim().toLowerCase();
   password = password?.trim();
@@ -247,6 +248,8 @@ exports.loginUser = async (req, res) => {
   if (!email || !password) {
     return res.render("loginUser", {
       msg: "Please enter both email and password",
+      type: "error",
+      email: email || "",
     });
   }
 
@@ -255,7 +258,9 @@ exports.loginUser = async (req, res) => {
 
     if (!user) {
       return res.render("loginUser", {
-        msg: "Email does not exist",
+        msg: "Invalid email or password",
+        type: "error",
+        email,
       });
     }
 
@@ -263,7 +268,9 @@ exports.loginUser = async (req, res) => {
 
     if (!isMatch) {
       return res.render("loginUser", {
-        msg: "Incorrect password",
+        msg: "Invalid email or password",
+        type: "error",
+        email,
       });
     }
 
@@ -276,6 +283,8 @@ exports.loginUser = async (req, res) => {
     console.error(error);
     return res.render("loginUser", {
       msg: "Error logging in",
+      type: "error",
+      email,
     });
   }
 };
