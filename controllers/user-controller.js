@@ -225,7 +225,17 @@ exports.changePassword = async (req, res) => {
 
 // thet
 exports.showLoginForm = (req, res) => {
-  res.render("loginUser", { msg: "" });
+  const msg = req.session.loginMsg || "";
+  const type = req.session.loginMsgType || "";
+
+  req.session.loginMsg = null;
+  req.session.loginMsgType = null;
+
+  res.render("loginUser", {
+    msg,
+    type,
+    email: "",
+  });
 };
 
 exports.loginUser = async (req, res) => {
@@ -373,7 +383,8 @@ exports.resetPassword = async (req, res) => {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     await User.updateUser(userId, { password: hashedPassword });
-
+    req.session.loginMsg = "Password reset successful. Please log in with your new password.";
+    req.session.loginMsgType = "success";
     return res.redirect("/user/login");
   } catch (error) {
     console.error(error);
