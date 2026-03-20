@@ -2,128 +2,180 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login - After Hours</title>
+    <title>Login - AfterHours</title>
     <style>
       body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
         margin: 0;
-        padding: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f5f7fb;
+        color: #0f172a;
       }
 
       .container {
-        width: 400px;
-        margin: 80px auto;
-        background: white;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 420px;
+        margin: 70px auto;
+        background-color: #ffffff;
+        padding: 36px 32px;
+        border-radius: 14px;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
       }
 
-      h1 {
+      .brand {
         text-align: center;
-        margin-bottom: 25px;
+        margin-bottom: 28px;
+      }
+
+      .brand h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 700;
+        color: #14213d;
+        letter-spacing: 0.3px;
+      }
+
+      .brand p {
+        margin-top: 8px;
+        margin-bottom: 0;
+        font-size: 14px;
+        color: #64748b;
       }
 
       .error {
-        color: red;
-        background-color: #ffe5e5;
-        border: 1px solid #ffb3b3;
-        padding: 10px;
-        border-radius: 5px;
-        margin-bottom: 15px;
+        background-color: #fef2f2;
+        color: #b91c1c;
+        border: 1px solid #fecaca;
+        border-radius: 8px;
+        padding: 10px 12px;
+        margin-bottom: 18px;
+        font-size: 14px;
+      }
+
+      .form-group {
+        margin-bottom: 18px;
       }
 
       label {
         display: block;
-        margin-bottom: 6px;
-        font-weight: bold;
+        margin-bottom: 7px;
+        font-size: 15px;
+        font-weight: 600;
+        color: #14213d;
       }
 
       input {
         width: 100%;
-        padding: 10px;
-        margin-bottom: 18px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
         box-sizing: border-box;
+        padding: 12px 14px;
+        font-size: 15px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        background-color: #ffffff;
+        color: #0f172a;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: #1d4ed8;
+        box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.12);
+      }
+
+      .helper-text {
+        display: block;
+        margin-top: 6px;
+        font-size: 13px;
+        color: #64748b;
       }
 
       button {
         width: 100%;
-        padding: 12px;
-        background-color: #222;
-        color: white;
+        padding: 13px;
         border: none;
-        border-radius: 5px;
+        border-radius: 8px;
+        background-color: #14213d;
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: 600;
         cursor: pointer;
-        font-size: 16px;
+        transition: background-color 0.2s ease;
       }
 
       button:hover {
-        background-color: #444;
+        background-color: #1d4ed8;
       }
 
-      .links {
+      .footer {
+        margin-top: 22px;
         text-align: center;
-        margin-top: 20px;
+        font-size: 14px;
+        color: #64748b;
       }
 
-      .links a {
-        color: #0066cc;
+      .footer a,
+      .forgot-link {
+        color: #1d4ed8;
         text-decoration: none;
+        font-weight: 600;
       }
 
-      .links a:hover {
+      .footer a:hover,
+      .forgot-link:hover {
         text-decoration: underline;
       }
 
-      .small-text {
-        color: #666;
-        font-size: 14px;
-        margin-top: -10px;
-        margin-bottom: 15px;
+      .forgot-wrapper {
+        text-align: right;
+        margin-top: -8px;
+        margin-bottom: 18px;
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <h1>Login</h1>
+      <div class="brand">
+        <h1>AfterHours</h1>
+        <p>Login to your account</p>
+      </div>
 
       <% if (msg && msg.trim() !== "") { %>
         <div class="error"><%= msg %></div>
       <% } %>
 
       <form action="/user/login" method="POST">
-        <label for="email">Email</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          placeholder="Enter your email"
-          required
-          value="<%= typeof email !== 'undefined' ? email : '' %>"
-        />
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value="<%= typeof email !== 'undefined' ? email : '' %>"
+            required
+          />
+        </div>
 
-        <label for="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          placeholder="Enter your password"
-          required
-        />
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            required
+          />
+          <small class="helper-text">
+            Please enter the email and password you registered with
+          </small>
+        </div>
 
-        <p class="small-text">Please enter the email and password you registered with.</p>
-        <p style="text-align: center; margin-top: 15px;">
-            <a href="/user/forgot-password">Forgot Password?</a>
-        </p>
+        <div class="forgot-wrapper">
+          <a class="forgot-link" href="/user/forgot-password">Forgot Password?</a>
+        </div>
+
         <button type="submit">Login</button>
       </form>
 
-      <div class="links">
-        <p>Don’t have an account? <a href="/user/register">Register here</a></p>
+      <div class="footer">
+        Don’t have an account?
+        <a href="/user/register">Register here</a>
       </div>
     </div>
   </body>
