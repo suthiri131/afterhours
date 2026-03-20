@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const fs = require("fs");
 
 const booksRoutes = require("./routes/books-routes");
+const userRoutes = require("./routes/user-routes");
 
 const server = express();
 
@@ -18,6 +19,7 @@ server.set("view engine", "ejs");
 
 // root routes
 server.use("/", booksRoutes);
+server.use("/user", userRoutes);
 
 // Specify the path to the environment variablef file 'config.env'
 dotenv.config({ path: "./config.env" });
