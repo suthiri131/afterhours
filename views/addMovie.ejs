@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+  <head>
+    <meta charset="UTF-8" />
+    <title>Adding Movies to Watchlist - Afterhours</title>
+  </head>
+  
+  <body>
+
+    <h1>Add Movies to Your Watchlist</h1>
+
+    <% if (msg) { %>
+      <p><%= msg %></p>
+    <% } %>
+
+    <form action="/movies/add-movies" method="POST">
+
+      <label>
+        Title:
+        <input type="text" name="title"/>
+      </label>
+      <br /><br />
+
+      <label>
+        Genre:
+        <input type="text" name="genre"/>
+      </label>
+      <br /><br />
+
+      <button type="submit">Add to Watchlist</button>
+    </form>
+
+  </body>
+
+</html>

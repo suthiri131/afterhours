@@ -1,25 +1,100 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
   <title>My Profile</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f5f7fb;
+      color: #0f172a;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 420px;
+      margin: 70px auto;
+      background-color: #ffffff;
+      padding: 36px 32px;
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      box-sizing: border-box;
+    }
+
+    h1 {
+      margin: 0 0 24px 0;
+      font-size: 24px;
+      font-weight: 700;
+      color: #14213d;
+      text-align: center;
+    }
+
+    .message {
+      color: red;
+      margin-bottom: 15px;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .profile p {
+      margin: 12px 0;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .label {
+      font-weight: bold;
+      color: #14213d;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: 24px;
+      padding: 11px;
+      background-color: #14213d;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .btn:hover {
+      background-color: #1d4ed8;
+    }
+
+    .empty {
+      text-align: center;
+      font-size: 14px;
+    }
+  </style>
 </head>
+
 <body>
-  <h2>My Profile</h2>
+  <div class="container">
+    <h1>My Profile</h1>
 
-  <% if (msg) { %>
-    <p><%= msg %></p>
-  <% } %>
+    <% if (msg) { %>
+      <div class="message"><%= msg %></div>
+    <% } %>
 
-  <% if (user) { %>
-    <p><strong>Full Name:</strong> <%= user.fullName %></p>
-    <p><strong>Username:</strong> <%= user.username %></p>
-    <p><strong>Email:</strong> <%= user.email %></p>
-    <p><strong>Joined On:</strong> <%= user.createdAt.toDateString() %></p>
+    <% if (user) { %>
+      <div class="profile">
+        <p><span class="label">Full Name:</span> <%= user.fullName %></p>
+        <p><span class="label">Username:</span> <%= user.username %></p>
+        <p><span class="label">Email:</span> <%= user.email %></p>
+        <p><span class="label">Joined:</span> <%= user.createdAt.toDateString() %></p>
+      </div>
 
-    <br>
-    <a href="/user/change-password">Change Password</a>
-  <% } else { %>
-    <p>User profile not available.</p>
-  <% } %>
+      <a href="/user/change-password" class="btn">Change Password</a>
+    <% } else { %>
+      <p class="empty">User profile not available.</p>
+    <% } %>
+  </div>
 </body>
 </html>
