@@ -222,3 +222,164 @@ exports.changePassword = async (req, res) => {
     });
   }
 };
+
+
+exports.showLoginForm = (req, res) => {
+  res.render("loginUser", { msg: "" });
+};
+
+exports.loginUser = async (req, res) => {
+  let { email, password } = req.body;
+
+  email = email?.trim().toLowerCase();
+  password = password?.trim();
+
+  if (!email || !password) {
+    return res.render("loginUser", {
+      msg: "Please enter both email and password",
+    });
+  }
+
+  try {
+    const user = await User.findByEmail(email);
+
+    if (!user) {
+      return res.render("loginUser", {
+        msg: "Email does not exist",
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.render("loginUser", {
+        msg: "Incorrect password",
+      });
+    }
+
+    req.session.userId = user._id;
+    req.session.email = user.email;
+    req.session.username = user.username;
+
+    return res.redirect("/movies");
+  } catch (error) {
+    console.error(error);
+    return res.render("loginUser", {
+      msg: "Error logging in",
+    });
+  }
+};
+
+exports.logoutUser = (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.send("Error logging out");
+    }
+    res.redirect("/user/login");
+  });
+};
+
+exports.showForgotPasswordForm = (req, res) => {
+  res.render("forgotPassword", {
+    msg: "",
+    email: "",
+    username: "",
+  });
+};
+
+exports.verifyForgotPassword = async (req, res) => {
+  let { email, username } = req.body;
+
+  email = email?.trim().toLowerCase();
+  username = username?.trim();
+
+  if (!email || !username) {
+    return res.render("forgotPassword", {
+      msg: "Please enter both email and username",
+      email: email || "",
+      username: username || "",
+    });
+  }
+
+  try {
+    const user = await User.findByEmail(email);
+
+    if (!user) {
+      return res.render("forgotPassword", {
+        msg: "Account not found",
+        email,
+        username,
+      });
+    }
+
+    if (user.username !== username) {
+      return res.render("forgotPassword", {
+        msg: "Email and username do not match",
+        email,
+        username,
+      });
+    }
+
+    return res.render("resetPassword", {
+      msg: "",
+      userId: user._id,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.render("forgotPassword", {
+      msg: "Error verifying account",
+      email,
+      username,
+    });
+  }
+};
+
+exports.showResetPasswordForm = (req, res) => {
+  res.render("resetPassword", {
+    msg: "",
+    userId: req.params.id,
+  });
+};
+
+exports.resetPassword = async (req, res) => {
+  const userId = req.params.id;
+  let { newPassword, confirmPassword } = req.body;
+
+  newPassword = newPassword?.trim();
+  confirmPassword = confirmPassword?.trim();
+
+  if (!newPassword || !confirmPassword) {
+    return res.render("resetPassword", {
+      msg: "Please fill in both password fields",
+      userId,
+    });
+  }
+
+  if (newPassword.length < 6) {
+    return res.render("resetPassword", {
+      msg: "Password must be at least 6 characters",
+      userId,
+    });
+  }
+
+  if (newPassword !== confirmPassword) {
+    return res.render("resetPassword", {
+      msg: "Passwords do not match",
+      userId,
+    });
+  }
+
+  try {
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await User.updateUser(userId, { password: hashedPassword });
+
+    return res.redirect("/user/login");
+  } catch (error) {
+    console.error(error);
+    return res.render("resetPassword", {
+      msg: "Error resetting password",
+      userId,
+    });
+  }
+};
