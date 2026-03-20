@@ -2,6 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const fs = require("fs");
+const session = require("express-session");
 
 const booksRoutes = require("./routes/books-routes");
 const userRoutes = require("./routes/user-routes");
@@ -13,6 +14,14 @@ server.use(express.urlencoded({ extended: true }));
 
 // express.json() is a middleware
 server.use(express.json());
+
+server.use(
+  session({
+    secret: process.env.SESSION_SECRET || "afterhours_secret",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
 
 // Set EJS as the view engine for rendering dynamic HTML pages
 server.set("view engine", "ejs");
