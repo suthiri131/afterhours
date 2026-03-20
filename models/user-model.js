@@ -37,12 +37,19 @@ exports.findByEmail = function (email) {
 exports.findByUsername = function (username) {
   return User.findOne({ username: username });
 };
-exports.updateUser = function (id, updatedData) {
-  return User.findByIdAndUpdate(id, updatedData, {
-    new: true,
-    runValidators: true,
-  });
-};
 exports.deleteUser = function (id) {
   return User.findByIdAndDelete(id);
+};
+
+// Temporary: get the first user in the database before we have authentication setup
+exports.findOne = function () {
+  return User.findOne();
+};
+
+exports.updatePassword = function (id, hashedPassword) {
+  return User.findByIdAndUpdate(
+    id,
+    { password: hashedPassword },
+    { returnDocument: "after" },
+  );
 };

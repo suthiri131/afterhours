@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Profile</title>
+</head>
+<body>
+  <h2>My Profile</h2>
+
+  <% if (msg) { %>
+    <p><%= msg %></p>
+  <% } %>
+
+  <% if (user) { %>
+    <p><strong>Full Name:</strong> <%= user.fullName %></p>
+    <p><strong>Username:</strong> <%= user.username %></p>
+    <p><strong>Email:</strong> <%= user.email %></p>
+    <p><strong>Joined On:</strong> <%= user.createdAt.toDateString() %></p>
+
+    <br>
+    <a href="/user/change-password">Change Password</a>
+  <% } else { %>
+    <p>User profile not available.</p>
+  <% } %>
+</body>
+</html>
