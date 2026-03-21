@@ -46,11 +46,6 @@ exports.deleteUser = function (id) {
   return User.findByIdAndDelete(id);
 };
 
-// Temporary: get the first user in the database before we have authentication setup
-exports.findOne = function () {
-  return User.findOne();
-};
-
 exports.updatePassword = function (id, hashedPassword) {
   return User.findByIdAndUpdate(
     id,

@@ -1,11 +1,81 @@
-<h1>Movies Page</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Movies</title>
 
-<p>Welcome, <%= user.username %>!</p>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f5f7fb;
+    }
 
-<% if (user.role === "admin") { %>
-  <a href="/movies/add-movies">Create Movie</a>
-<% } %>
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background-color: #14213d;
+      color: white;
+    }
 
-<form action="/user/logout" method="POST">
-  <button type="submit">Logout</button>
-</form>
+    .logo {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .link {
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .link:hover {
+      text-decoration: underline;
+    }
+    
+    .container {
+      padding: 24px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 14px;
+      background-color: #14213d;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <div class="logo">AfterHours</div>
+
+    <div class="right">
+      <a class="link" href="/user/profile">Profile</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <h1>Movies Page</h1>
+
+    <p>Welcome, <%= user.username %>!</p>
+
+    <% if (user.role === "admin") { %>
+      <a class="btn" href="/movies/add-movies">+ Create Movie</a>
+    <% } %>
+  </div>
+
+</body>
+</html>

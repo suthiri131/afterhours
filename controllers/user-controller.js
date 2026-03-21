@@ -111,7 +111,8 @@ exports.createUser = async (req, res) => {
 
 exports.showProfilePage = async (req, res) => {
   try {
-    const user = await User.findOne();
+    const userId = req.session.user.id;
+    const user = await User.findById(userId);
 
     if (!user) {
       return res.render("profile", {
@@ -158,9 +159,8 @@ exports.changePassword = async (req, res) => {
         type: "error",
       });
     }
-
-    const user = await User.findOne();
-
+    const userId = req.session.user.id;
+    const user = await User.findById(userId);
     if (!user) {
       return res.render("update-password", {
         msg: "User not found.",
@@ -223,7 +223,6 @@ exports.changePassword = async (req, res) => {
   }
 };
 
-// thet
 exports.showLoginForm = (req, res) => {
   let msg = "";
   let type = "";
@@ -485,10 +484,6 @@ exports.resetPassword = async (req, res) => {
 };
 
 exports.showDeleteUserPage = (req, res) => {
-  if (!req.session.userId) {
-    return res.redirect("/user/login");
-  }
-
   return res.render("deleteUser", {
     msg: "",
     email: "",
@@ -497,39 +492,22 @@ exports.showDeleteUserPage = (req, res) => {
 };
 
 exports.deleteUserAccount = async (req, res) => {
-  if (!req.session.userId) {
-    return res.redirect("/user/login");
-  }
-
-  let email = req.body.email;
-  let username = req.body.username;
+  const userId = req.session.user.id;
   let password = req.body.password;
 
-  email = email?.trim().toLowerCase();
-  username = username?.trim();
   password = password?.trim();
 
-  if (!email || !username || !password) {
+  if (!password) {
     return res.render("deleteUser", {
-      msg: "Please fill in all required fields",
-      email: email || "",
-      username: username || "",
+      msg: "Please enter your password",
     });
   }
 
   try {
-    const user = await User.findById(req.session.userId);
+    const user = await User.findById(userId);
 
     if (!user) {
       return res.redirect("/user/login");
-    }
-
-    if (user.email !== email || user.username !== username) {
-      return res.render("deleteUser", {
-        msg: "Email or username does not match your account",
-        email,
-        username,
-      });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -537,28 +515,24 @@ exports.deleteUserAccount = async (req, res) => {
     if (!isMatch) {
       return res.render("deleteUser", {
         msg: "Incorrect password",
-        email,
-        username,
       });
     }
 
-    await User.deleteUser(req.session.userId);
+    await User.deleteUser(userId);
 
     req.session.destroy((err) => {
       if (err) {
         console.error(err);
-        return res.redirect("/movies");
+        return res.redirect("/user/profile");
       }
 
       res.clearCookie("connect.sid");
-      return res.redirect("/user/login?deleted=1");
+      return res.redirect("/user/login");
     });
   } catch (error) {
     console.error(error);
     return res.render("deleteUser", {
       msg: "Error deleting account",
-      email: email || "",
-      username: username || "",
     });
   }
 };

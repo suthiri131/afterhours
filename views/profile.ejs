@@ -15,7 +15,7 @@
     .container {
       width: 100%;
       max-width: 420px;
-      margin: 70px auto;
+      margin: 70px auto 20px;
       background-color: #ffffff;
       padding: 36px 32px;
       border-radius: 14px;
@@ -53,7 +53,7 @@
       display: block;
       width: 100%;
       box-sizing: border-box;
-      margin-top: 24px;
+      margin-top: 16px;
       padding: 11px;
       background-color: #14213d;
       color: white;
@@ -62,10 +62,41 @@
       font-size: 15px;
       font-weight: 600;
       text-align: center;
+      border: none;
+      cursor: pointer;
     }
 
     .btn:hover {
       background-color: #1d4ed8;
+    }
+
+    .delete-btn {
+      background-color: #b91c1c;
+    }
+
+    .delete-btn:hover {
+      background-color: #991b1b;
+    }
+
+    .logout-wrapper {
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    .logout-btn {
+      width: 100%;
+      padding: 11px;
+      background-color: #64748b;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .logout-btn:hover {
+      background-color: #475569;
     }
 
     .empty {
@@ -92,9 +123,19 @@
       </div>
 
       <a href="/user/change-password" class="btn">Change Password</a>
+      <a href="/user/delete" class="btn delete-btn">Delete My Account</a>
+
     <% } else { %>
       <p class="empty">User profile not available.</p>
     <% } %>
   </div>
+
+  <% if (user) { %>
+    <div class="logout-wrapper">
+      <form action="/user/logout" method="POST">
+        <button type="submit" class="logout-btn">Logout</button>
+      </form>
+    </div>
+  <% } %>
 </body>
 </html>

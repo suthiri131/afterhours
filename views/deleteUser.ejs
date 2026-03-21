@@ -19,6 +19,7 @@
         padding: 36px 32px;
         border-radius: 14px;
         box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+        box-sizing: border-box;
       }
 
       .brand {
@@ -48,6 +49,13 @@
         background-color: #fef2f2;
         color: #b91c1c;
         border: 1px solid #fecaca;
+      }
+
+      .warning {
+        font-size: 14px;
+        color: #64748b;
+        margin-bottom: 18px;
+        line-height: 1.5;
       }
 
       .form-group {
@@ -104,12 +112,6 @@
       .footer a:hover {
         text-decoration: underline;
       }
-
-      .warning {
-        font-size: 14px;
-        color: #64748b;
-        margin-bottom: 18px;
-      }
     </style>
   </head>
   <body>
@@ -124,45 +126,27 @@
       <% } %>
 
       <div class="warning">
-        Are you sure you want to delete your account? <br> 
-        Please enter your email, username and password to confirm.
+        Are you sure you want to delete your account?<br />
+        Please enter your password to confirm.
       </div>
 
       <form action="/user/delete" method="POST">
         <div class="form-group">
-            <label for="email">Email</label>
-            <input
-                type="email"
-                id="email"
-                name="email"
-                value="<%= typeof email !== 'undefined' ? email : '' %>"
-            />
-        </div>
-
-        <div class="form-group">
-            <label for="username">Username</label>
-            <input
-                type="text"
-                id="username"
-                name="username"
-                value="<%= typeof username !== 'undefined' ? username : '' %>"
-            />
-        </div>
-
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input
-                type="password"
-                id="password"
-                name="password"
-            />
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter your password"
+            required
+          />
         </div>
 
         <button type="submit">Delete My Account</button>
       </form>
 
       <div class="footer">
-        <a href="/movies">Cancel</a>
+        <a href="/user/profile">Cancel</a>
       </div>
     </div>
   </body>
