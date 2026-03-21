@@ -21,6 +21,9 @@ server.use(
     secret: process.env.SESSION_SECRET || "afterhours_secret",
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+    },
   })
 );
 

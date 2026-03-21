@@ -1,5 +1,6 @@
 const express = require("express");
 const userController = require("./../controllers/user-controller");
+const authMiddleware = require("./../middleware/auth");
 const router = express.Router();
 
 router.get("/register", userController.showRegisterForm);

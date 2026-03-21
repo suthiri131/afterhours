@@ -292,9 +292,12 @@ exports.loginUser = async (req, res) => {
 exports.logoutUser = (req, res) => {
   req.session.destroy((err) => {
     if (err) {
-      return res.send("Error logging out");
+      console.error(err);
+      return res.redirect("/movies");
     }
-    res.redirect("/user/login");
+
+    res.clearCookie("connect.sid");
+    return res.redirect("/user/login");
   });
 };
 
@@ -353,11 +356,31 @@ exports.verifyForgotPassword = async (req, res) => {
   }
 };
 
-exports.showResetPasswordForm = (req, res) => {
-  res.render("resetPassword", {
-    msg: "",
-    userId: req.params.id
-  });
+exports.showResetPasswordForm = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.render("forgotPassword", {
+        msg: "Invalid reset request",
+        email: "",
+        username: ""
+      });
+    }
+
+    return res.render("resetPassword", {
+      msg: "",
+      type: "",
+      userId: req.params.id
+    });
+  } catch (error) {
+    console.error(error);
+    return res.render("forgotPassword", {
+      msg: "Invalid reset request",
+      email: "",
+      username: ""
+    });
+  }
 };
 
 exports.resetPassword = async (req, res) => {
@@ -401,8 +424,17 @@ exports.resetPassword = async (req, res) => {
   }
 
   try {
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const user = await User.findById(userId);
 
+    if (!user) {
+      return res.render("resetPassword", {
+        msg: "User not found",
+        type: "error",
+        userId
+      });
+    }
+    
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
     await User.updatePassword(userId, hashedPassword);
 
     req.session.loginMsg =
