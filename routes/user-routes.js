@@ -19,4 +19,7 @@ router.post("/forgot-password", userController.verifyForgotPassword);
 router.get("/reset-password/:id", userController.showResetPasswordForm);
 router.post("/reset-password/:id", userController.resetPassword);
 
+router.get("/delete", userController.showDeleteUserPage);
+router.post("/delete", userController.deleteUserAccount);
+
 module.exports = router;

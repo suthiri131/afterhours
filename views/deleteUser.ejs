@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Login - AfterHours</title>
+    <title>Delete Account - AfterHours</title>
     <style>
       body {
         margin: 0;
@@ -30,8 +30,7 @@
         margin: 0;
         font-size: 24px;
         font-weight: 700;
-        color: #14213d;
-        letter-spacing: 0.3px;
+        color: #b91c1c;
       }
 
       .brand p {
@@ -46,18 +45,9 @@
         padding: 10px 12px;
         margin-bottom: 18px;
         font-size: 14px;
-      }
-
-      .message.error {
         background-color: #fef2f2;
         color: #b91c1c;
         border: 1px solid #fecaca;
-      }
-
-      .message.success {
-        background-color: #ecfdf5;
-        color: #047857;
-        border: 1px solid #a7f3d0;
       }
 
       .form-group {
@@ -83,58 +73,41 @@
         color: #0f172a;
       }
 
-      input:focus {
-        outline: none;
-        border-color: #1d4ed8;
-        box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.12);
-      }
-
-      .helper-text {
-        display: block;
-        margin-top: 6px;
-        font-size: 13px;
-        color: #64748b;
-      }
-
       button {
         width: 100%;
         padding: 13px;
         border: none;
         border-radius: 8px;
-        background-color: #14213d;
+        background-color: #b91c1c;
         color: #ffffff;
         font-size: 15px;
         font-weight: 600;
         cursor: pointer;
-        transition: background-color 0.2s ease;
       }
 
       button:hover {
-        background-color: #1d4ed8;
+        background-color: #991b1b;
       }
 
       .footer {
         margin-top: 22px;
         text-align: center;
         font-size: 14px;
-        color: #64748b;
       }
 
-      .footer a,
-      .forgot-link {
+      .footer a {
         color: #1d4ed8;
         text-decoration: none;
         font-weight: 600;
       }
 
-      .footer a:hover,
-      .forgot-link:hover {
+      .footer a:hover {
         text-decoration: underline;
       }
 
-      .forgot-wrapper {
-        text-align: right;
-        margin-top: -8px;
+      .warning {
+        font-size: 14px;
+        color: #64748b;
         margin-bottom: 18px;
       }
     </style>
@@ -142,52 +115,53 @@
   <body>
     <div class="container">
       <div class="brand">
-        <h1>AfterHours</h1>
-        <p>Login to your account</p>
+        <h1>Delete Account</h1>
+        <p>This action cannot be undone</p>
       </div>
 
       <% if (msg && msg.trim() !== "") { %>
-        <div class="message <%= type === 'success' ? 'success' : 'error' %>">
-          <%= msg %>
-        </div>
+        <div class="message"><%= msg %></div>
       <% } %>
 
-      <form action="/user/login" method="POST">
+      <div class="warning">
+        Are you sure you want to delete your account? <br> Please enter your email and username to confirm.
+      </div>
+
+      <form action="/user/delete" method="POST">
         <div class="form-group">
-          <label for="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value="<%= typeof email !== 'undefined' ? email : '' %>"
-            required
-            pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
-            title="Please enter a valid email address, for example name@example.com"
-          />
+            <label for="email">Email</label>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                value="<%= typeof email !== 'undefined' ? email : '' %>"
+            />
         </div>
 
         <div class="form-group">
-          <label for="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-          />
-          <small class="helper-text">
-            Please enter the email and password you registered with
-          </small>
+            <label for="username">Username</label>
+            <input
+                type="text"
+                id="username"
+                name="username"
+                value="<%= typeof username !== 'undefined' ? username : '' %>"
+            />
         </div>
 
-        <div class="forgot-wrapper">
-          <a class="forgot-link" href="/user/forgot-password">Forgot Password?</a>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input
+                type="password"
+                id="password"
+                name="password"
+            />
         </div>
 
-        <button type="submit">Login</button>
+        <button type="submit">Delete My Account</button>
       </form>
 
       <div class="footer">
-        Don’t have an account?
-        <a href="/user/register">Register here</a>
+        <a href="/movies">Cancel</a>
       </div>
     </div>
   </body>

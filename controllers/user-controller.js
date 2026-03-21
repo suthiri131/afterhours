@@ -225,31 +225,59 @@ exports.changePassword = async (req, res) => {
 
 // thet
 exports.showLoginForm = (req, res) => {
-  const msg = req.session.loginMsg || "";
-  const type = req.session.loginMsgType || "";
+  let msg = "";
+  let type = "";
+  let email = "";
 
-  req.session.loginMsg = null;
-  req.session.loginMsgType = null;
+  if (req.query.deleted === "1") {
+    msg = "Account deleted successfully.";
+    type = "success";
+  }
+
+  if (req.session.loginMsg) {
+    msg = req.session.loginMsg;
+    type = req.session.loginMsgType || "success";
+    delete req.session.loginMsg;
+    delete req.session.loginMsgType;
+  }
 
   res.render("loginUser", {
     msg,
     type,
-    email: ""
+    email
   });
 };
 
 exports.loginUser = async (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
-
+  
   email = email?.trim().toLowerCase();
   password = password?.trim();
 
-  if (!email || !password) {
+  if (!email) {
     return res.render("loginUser", {
-      msg: "Please enter both email and password",
+      msg: "Please enter your email",
       type: "error",
       email: ""
+    });
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailRegex.test(email)) {
+    return res.render("loginUser", {
+      msg: "Please enter a valid email address",
+      type: "error",
+      email: ""
+    });
+  }
+
+  if (!password) {
+    return res.render("loginUser", {
+      msg: "Please enter your password",
+      type: "error",
+      email: email
     });
   }
 
@@ -290,6 +318,7 @@ exports.loginUser = async (req, res) => {
 };
 
 exports.logoutUser = (req, res) => {
+  console.log("logout clicked");
   req.session.destroy((err) => {
     if (err) {
       console.error(err);
@@ -448,6 +477,85 @@ exports.resetPassword = async (req, res) => {
       msg: "Error resetting password",
       type: "error",
       userId
+    });
+  }
+};
+
+exports.showDeleteUserPage = (req, res) => {
+  if (!req.session.userId) {
+    return res.redirect("/user/login");
+  }
+
+  return res.render("deleteUser", {
+    msg: "",
+    email: "",
+    username: ""
+  });
+};
+
+exports.deleteUserAccount = async (req, res) => {
+  if (!req.session.userId) {
+    return res.redirect("/user/login");
+  }
+
+  let email = req.body.email;
+  let username = req.body.username;
+  let password = req.body.password;
+
+  email = email?.trim().toLowerCase();
+  username = username?.trim();
+  password = password?.trim();
+
+  if (!email || !username || !password) {
+    return res.render("deleteUser", {
+      msg: "Please enter both email and username",
+      email: email || "",
+      username: username || ""
+    });
+  }
+
+  try {
+    const user = await User.findById(req.session.userId);
+
+    if (!user) {
+      return res.redirect("/user/login");
+    }
+
+    if (user.email !== email || user.username !== username) {
+      return res.render("deleteUser", {
+        msg: "Email or username does not match your account",
+        email,
+        username
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.render("deleteUser", {
+        msg: "Incorrect password",
+        email,
+        username,
+      });
+    }
+
+    await User.deleteUser(req.session.userId);
+
+    req.session.destroy((err) => {
+      if (err) {
+        console.error(err);
+        return res.redirect("/movies");
+      }
+
+      res.clearCookie("connect.sid");
+      return res.redirect("/user/login?deleted=1");
+    });
+  } catch (error) {
+    console.error(error);
+    return res.render("deleteUser", {
+      msg: "Error deleting account",
+      email: email || "",
+      username: username || ""
     });
   }
 };
