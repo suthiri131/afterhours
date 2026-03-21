@@ -508,7 +508,7 @@ exports.deleteUserAccount = async (req, res) => {
 
   if (!email || !username || !password) {
     return res.render("deleteUser", {
-      msg: "Please enter both email and username",
+      msg: "Please fill in all required fields",
       email: email || "",
       username: username || ""
     });
@@ -535,7 +535,7 @@ exports.deleteUserAccount = async (req, res) => {
       return res.render("deleteUser", {
         msg: "Incorrect password",
         email,
-        username,
+        username
       });
     }
 
