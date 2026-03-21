@@ -1,25 +1,60 @@
 const express = require("express");
 const userController = require("./../controllers/user-controller");
+const authMiddleware = require("./../middleware/auth-middleware");
 const router = express.Router();
 
-router.get("/register", userController.showRegisterForm);
-router.post("/register", userController.createUser);
+router.get(
+  "/register",
+  authMiddleware.isNotLoggedIn,
+  userController.showRegisterForm,
+);
+router.post(
+  "/register",
+  authMiddleware.isNotLoggedIn,
+  userController.createUser,
+);
 
-router.get("/profile", userController.showProfilePage);
-router.get("/change-password", userController.showChangePasswordPage);
-router.post("/change-password", userController.changePassword);
-
-// thet
-router.get("/login", userController.showLoginForm);
-router.post("/login", userController.loginUser);
-router.post("/logout", userController.logoutUser);
+router.get(
+  "/login",
+  authMiddleware.isNotLoggedIn,
+  userController.showLoginForm,
+);
+router.post("/login", authMiddleware.isNotLoggedIn, userController.loginUser);
 
 router.get("/forgot-password", userController.showForgotPasswordForm);
 router.post("/forgot-password", userController.verifyForgotPassword);
 router.get("/reset-password/:id", userController.showResetPasswordForm);
 router.post("/reset-password/:id", userController.resetPassword);
 
-router.get("/delete", userController.showDeleteUserPage);
-router.post("/delete", userController.deleteUserAccount);
+// only for logged in users
+router.get(
+  "/profile",
+  authMiddleware.isLoggedIn,
+  userController.showProfilePage,
+);
+router.get(
+  "/change-password",
+  authMiddleware.isLoggedIn,
+  userController.showChangePasswordPage,
+);
+
+router.post(
+  "/change-password",
+  authMiddleware.isLoggedIn,
+  userController.changePassword,
+);
+
+router.get(
+  "/delete",
+  authMiddleware.isLoggedIn,
+  userController.showDeleteUserPage,
+);
+router.post(
+  "/delete",
+  authMiddleware.isLoggedIn,
+  userController.deleteUserAccount,
+);
+
+router.post("/logout", authMiddleware.isLoggedIn, userController.logoutUser);
 
 module.exports = router;

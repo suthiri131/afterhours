@@ -35,3 +35,9 @@ exports.deleteMovie = async (req, res) => {
     res.redirect("/movies/add-movies");
   }
 };
+
+exports.showAllMovies = async (req, res) => {
+  res.render("movies", {
+    user: req.session.user,
+  });
+};

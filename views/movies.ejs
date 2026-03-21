@@ -1,0 +1,11 @@
+<h1>Movies Page</h1>
+
+<p>Welcome, <%= user.username %>!</p>
+
+<% if (user.role === "admin") { %>
+  <a href="/movies/add-movies">Create Movie</a>
+<% } %>
+
+<form action="/user/logout" method="POST">
+  <button type="submit">Logout</button>
+</form>

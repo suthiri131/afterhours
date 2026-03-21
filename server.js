@@ -3,45 +3,42 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const fs = require("fs");
 const session = require("express-session");
+dotenv.config({ path: "./config.env" });
+const authMiddleware = require("./middleware/auth-middleware");
 
-const booksRoutes = require("./routes/books-routes");
 const userRoutes = require("./routes/user-routes");
 const movieRoutes = require("./routes/movie-routes");
 
 const server = express();
 
-// make sure u add this line when you are using Express to do form (POST)
 server.use(express.urlencoded({ extended: true }));
-
-// express.json() is a middleware
 server.use(express.json());
+server.set("view engine", "ejs");
 
 server.use(
   session({
-    secret: process.env.SESSION_SECRET || "afterhours_secret",
+    secret: process.env.SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: {
-      httpOnly: true,
-    },
-  })
+    // cookie: {
+    //   httpOnly: true,
+    // },
+  }),
 );
-
-// Set EJS as the view engine for rendering dynamic HTML pages
-server.set("view engine", "ejs");
-
-// root routes
-server.use("/", booksRoutes);
+server.use(authMiddleware.attachUser);
 server.use("/user", userRoutes);
 server.use("/movies", movieRoutes);
 
-// Specify the path to the environment variablef file 'config.env'
-dotenv.config({ path: "./config.env" });
+server.get("/", (req, res) => {
+  if (req.session.user) {
+    return res.redirect("/movies");
+  } else {
+    return res.redirect("/user/login");
+  }
+});
 
-// async function to connect to DB
 async function connectDB() {
   try {
-    // connecting to Database with our config.env file and DB is constant in config.env
     await mongoose.connect(process.env.DB);
     console.log("MongoDB connected successfully");
   } catch (error) {
@@ -51,14 +48,11 @@ async function connectDB() {
 }
 
 function startServer() {
-  const hostname = "localhost"; // Define server hostname
-  const port = 8000; // Define port number
-
-  // Start the server and listen on the specified hostname and port
+  const hostname = "localhost";
+  const port = 8000;
   server.listen(port, hostname, () => {
     console.log(`Server running at http://${hostname}:${port}/`);
   });
 }
 
-// call connectDB first and when connection is ready we start the web server
 connectDB().then(startServer);

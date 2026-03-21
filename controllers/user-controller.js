@@ -244,14 +244,14 @@ exports.showLoginForm = (req, res) => {
   res.render("loginUser", {
     msg,
     type,
-    email
+    email,
   });
 };
 
 exports.loginUser = async (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
-  
+
   email = email?.trim().toLowerCase();
   password = password?.trim();
 
@@ -259,7 +259,7 @@ exports.loginUser = async (req, res) => {
     return res.render("loginUser", {
       msg: "Please enter your email",
       type: "error",
-      email: ""
+      email: "",
     });
   }
 
@@ -269,7 +269,7 @@ exports.loginUser = async (req, res) => {
     return res.render("loginUser", {
       msg: "Please enter a valid email address",
       type: "error",
-      email: ""
+      email: "",
     });
   }
 
@@ -277,7 +277,7 @@ exports.loginUser = async (req, res) => {
     return res.render("loginUser", {
       msg: "Please enter your password",
       type: "error",
-      email: email
+      email: email,
     });
   }
 
@@ -288,7 +288,7 @@ exports.loginUser = async (req, res) => {
       return res.render("loginUser", {
         msg: "Invalid email or password",
         type: "error",
-        email: ""
+        email: "",
       });
     }
 
@@ -298,13 +298,16 @@ exports.loginUser = async (req, res) => {
       return res.render("loginUser", {
         msg: "Invalid email or password",
         type: "error",
-        email: ""
+        email: "",
       });
     }
-
-    req.session.userId = user._id;
-    req.session.email = user.email;
-    req.session.username = user.username;
+    req.session.user = {
+      id: user._id,
+      email: user.email,
+      username: user.username,
+      fullName: user.fullName,
+      role: user.role,
+    };
 
     return res.redirect("/movies");
   } catch (error) {
@@ -312,7 +315,7 @@ exports.loginUser = async (req, res) => {
     return res.render("loginUser", {
       msg: "Error logging in",
       type: "error",
-      email: ""
+      email: "",
     });
   }
 };
@@ -334,7 +337,7 @@ exports.showForgotPasswordForm = (req, res) => {
   res.render("forgotPassword", {
     msg: "",
     email: "",
-    username: ""
+    username: "",
   });
 };
 
@@ -348,7 +351,7 @@ exports.verifyForgotPassword = async (req, res) => {
     return res.render("forgotPassword", {
       msg: "Please enter both email and username",
       email: email || "",
-      username: username || ""
+      username: username || "",
     });
   }
 
@@ -359,7 +362,7 @@ exports.verifyForgotPassword = async (req, res) => {
       return res.render("forgotPassword", {
         msg: "Account not found",
         email,
-        username
+        username,
       });
     }
 
@@ -367,20 +370,20 @@ exports.verifyForgotPassword = async (req, res) => {
       return res.render("forgotPassword", {
         msg: "Email and username do not match",
         email,
-        username
+        username,
       });
     }
 
     return res.render("resetPassword", {
       msg: "",
-      userId: user._id
+      userId: user._id,
     });
   } catch (error) {
     console.error(error);
     return res.render("forgotPassword", {
       msg: "Error verifying account",
       email,
-      username
+      username,
     });
   }
 };
@@ -393,21 +396,21 @@ exports.showResetPasswordForm = async (req, res) => {
       return res.render("forgotPassword", {
         msg: "Invalid reset request",
         email: "",
-        username: ""
+        username: "",
       });
     }
 
     return res.render("resetPassword", {
       msg: "",
       type: "",
-      userId: req.params.id
+      userId: req.params.id,
     });
   } catch (error) {
     console.error(error);
     return res.render("forgotPassword", {
       msg: "Invalid reset request",
       email: "",
-      username: ""
+      username: "",
     });
   }
 };
@@ -424,7 +427,7 @@ exports.resetPassword = async (req, res) => {
     return res.render("resetPassword", {
       msg: "Please fill in both password fields",
       type: "error",
-      userId
+      userId,
     });
   }
 
@@ -432,7 +435,7 @@ exports.resetPassword = async (req, res) => {
     return res.render("resetPassword", {
       msg: "New password must be at least 6 characters long",
       type: "error",
-      userId
+      userId,
     });
   }
 
@@ -440,7 +443,7 @@ exports.resetPassword = async (req, res) => {
     return res.render("resetPassword", {
       msg: "Confirm password must be at least 6 characters long",
       type: "error",
-      userId
+      userId,
     });
   }
 
@@ -448,7 +451,7 @@ exports.resetPassword = async (req, res) => {
     return res.render("resetPassword", {
       msg: "New password and confirm password do not match",
       type: "error",
-      userId
+      userId,
     });
   }
 
@@ -459,10 +462,10 @@ exports.resetPassword = async (req, res) => {
       return res.render("resetPassword", {
         msg: "User not found",
         type: "error",
-        userId
+        userId,
       });
     }
-    
+
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await User.updatePassword(userId, hashedPassword);
 
@@ -476,7 +479,7 @@ exports.resetPassword = async (req, res) => {
     return res.render("resetPassword", {
       msg: "Error resetting password",
       type: "error",
-      userId
+      userId,
     });
   }
 };
@@ -489,7 +492,7 @@ exports.showDeleteUserPage = (req, res) => {
   return res.render("deleteUser", {
     msg: "",
     email: "",
-    username: ""
+    username: "",
   });
 };
 
@@ -510,7 +513,7 @@ exports.deleteUserAccount = async (req, res) => {
     return res.render("deleteUser", {
       msg: "Please fill in all required fields",
       email: email || "",
-      username: username || ""
+      username: username || "",
     });
   }
 
@@ -525,7 +528,7 @@ exports.deleteUserAccount = async (req, res) => {
       return res.render("deleteUser", {
         msg: "Email or username does not match your account",
         email,
-        username
+        username,
       });
     }
 
@@ -535,7 +538,7 @@ exports.deleteUserAccount = async (req, res) => {
       return res.render("deleteUser", {
         msg: "Incorrect password",
         email,
-        username
+        username,
       });
     }
 
@@ -555,7 +558,7 @@ exports.deleteUserAccount = async (req, res) => {
     return res.render("deleteUser", {
       msg: "Error deleting account",
       email: email || "",
-      username: username || ""
+      username: username || "",
     });
   }
 };
