@@ -1,0 +1,255 @@
+<%# thet %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Write Review</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #f7f8fc, #eef1f8);
+      color: #1f2937;
+    }
+
+    .page-container {
+      width: 92%;
+      max-width: 760px;
+      margin: 40px auto;
+    }
+
+    .form-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 18px;
+      text-decoration: none;
+      color: #374151;
+      font-weight: bold;
+    }
+
+    h1 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 1.9rem;
+    }
+
+    .subtext {
+      margin-top: 0;
+      color: #6b7280;
+      line-height: 1.5;
+    }
+
+    .error-box {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+      padding: 12px 14px;
+      border-radius: 12px;
+      margin: 18px 0;
+    }
+
+    .field {
+      margin-top: 22px;
+    }
+
+    label.main-label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 1rem;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 160px;
+      resize: vertical;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid #d1d5db;
+      font-size: 15px;
+      outline: none;
+      transition: 0.2s ease;
+      font-family: Arial, sans-serif;
+      line-height: 1.5;
+    }
+
+    textarea:focus {
+      border-color: #111827;
+      box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
+    }
+
+    .helper-text {
+      color: #6b7280;
+      font-size: 0.95rem;
+      margin-top: 8px;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 28px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 0.96rem;
+      transition: 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      opacity: 0.96;
+    }
+
+    .btn-primary {
+      background: #111827;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .star-rating {
+      direction: rtl;
+      display: inline-flex;
+      gap: 6px;
+      font-size: 2.4rem;
+      user-select: none;
+    }
+
+    .star-rating input {
+      display: none;
+    }
+
+    .star-rating label {
+      color: #d1d5db;
+      cursor: pointer;
+      transition: color 0.2s ease, transform 0.15s ease;
+    }
+
+    .star-rating label:hover,
+    .star-rating label:hover ~ label {
+      color: #f5b301;
+      transform: scale(1.05);
+    }
+
+    .star-rating input:checked ~ label {
+      color: #f5b301;
+    }
+
+    .selected-rating {
+      margin-top: 10px;
+      font-weight: bold;
+      color: #7a5200;
+      min-height: 24px;
+    }
+
+    .movie-chip {
+      display: inline-block;
+      margin-top: 8px;
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      border-radius: 999px;
+      padding: 8px 12px;
+      color: #374151;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    <a href="/movies/<%= movie._id %>" class="back-link">← Back to Movie Details</a>
+
+    <div class="form-card">
+      <h1>Write a Review</h1>
+      <p class="subtext">A rating is required. A written review is optional.</p>
+
+      <div class="movie-chip"><%= movie.title %> • <%= movie.genre %></div>
+
+      <% if (error) { %>
+        <div class="error-box"><%= error %></div>
+      <% } %>
+
+      <form action="/reviews/movie/<%= movie._id %>" method="POST">
+        <div class="field">
+          <label class="main-label">Your Rating</label>
+
+          <div class="star-rating">
+            <input type="radio" id="star5" name="rating" value="5" <%= String(formData.rating) === "5" ? "checked" : "" %> />
+            <label for="star5">★</label>
+
+            <input type="radio" id="star4" name="rating" value="4" <%= String(formData.rating) === "4" ? "checked" : "" %> />
+            <label for="star4">★</label>
+
+            <input type="radio" id="star3" name="rating" value="3" <%= String(formData.rating) === "3" ? "checked" : "" %> />
+            <label for="star3">★</label>
+
+            <input type="radio" id="star2" name="rating" value="2" <%= String(formData.rating) === "2" ? "checked" : "" %> />
+            <label for="star2">★</label>
+
+            <input type="radio" id="star1" name="rating" value="1" <%= String(formData.rating) === "1" ? "checked" : "" %> />
+            <label for="star1">★</label>
+          </div>
+
+          <div class="selected-rating" id="selectedRatingText"></div>
+        </div>
+
+        <div class="field">
+          <label class="main-label" for="reviewText">Your Review (Optional)</label>
+          <textarea
+            name="reviewText"
+            id="reviewText"
+            placeholder="Share your thoughts here... or leave this blank if you only want to rate."
+          ><%= formData.reviewText || "" %></textarea>
+
+          <div class="helper-text">
+            You can submit with rating only. Written review is optional.
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button type="submit" class="btn btn-primary">Submit Review</button>
+          <a href="/movies/<%= movie._id %>" class="btn btn-secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const ratingInputs = document.querySelectorAll('input[name="rating"]');
+    const selectedRatingText = document.getElementById("selectedRatingText");
+
+    function updateSelectedRatingText() {
+      const checked = document.querySelector('input[name="rating"]:checked');
+      if (checked) {
+        selectedRatingText.textContent = `Selected: ${checked.value} out of 5 stars`;
+      } else {
+        selectedRatingText.textContent = "No rating selected yet";
+      }
+    }
+
+    ratingInputs.forEach((input) => {
+      input.addEventListener("change", updateSelectedRatingText);
+    });
+
+    updateSelectedRatingText();
+  </script>
+</body>
+</html>

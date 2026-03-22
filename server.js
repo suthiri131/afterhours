@@ -3,11 +3,14 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const fs = require("fs");
 const session = require("express-session");
+
+
 dotenv.config({ path: "./config.env" });
 const authMiddleware = require("./middleware/auth-middleware");
 
 const userRoutes = require("./routes/user-routes");
 const movieRoutes = require("./routes/movie-routes");
+const reviewRoutes = require("./routes/review-routes");
 
 const server = express();
 
@@ -26,8 +29,10 @@ server.use(
   }),
 );
 server.use(authMiddleware.attachUser);
+
 server.use("/user", userRoutes);
 server.use("/movies", movieRoutes);
+server.use("/reviews", reviewRoutes);
 
 server.get("/", (req, res) => {
   if (req.session.user) {

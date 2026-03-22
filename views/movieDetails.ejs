@@ -1,0 +1,281 @@
+<%# thet %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title><%= movie.title %> - Movie Details</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #f7f8fc, #eef1f8);
+      color: #1f2937;
+    }
+
+    .page-container {
+      width: 92%;
+      max-width: 1000px;
+      margin: 35px auto;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      text-decoration: none;
+      color: #374151;
+      font-weight: bold;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 24px;
+      margin-bottom: 22px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+    }
+
+    .movie-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .movie-title {
+      margin: 0 0 10px 0;
+      font-size: 2rem;
+    }
+
+    .movie-meta {
+      margin: 8px 0;
+      color: #4b5563;
+      font-size: 1rem;
+    }
+
+    .stats-box {
+      min-width: 240px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    .stats-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #111827;
+      margin: 0;
+    }
+
+    .stats-sub {
+      margin: 6px 0 0 0;
+      color: #6b7280;
+    }
+
+    .stars-display {
+      color: #f5b301;
+      letter-spacing: 2px;
+      font-size: 1.2rem;
+      margin-top: 8px;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 11px 18px;
+      text-decoration: none;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 0.95rem;
+      transition: 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      opacity: 0.95;
+    }
+
+    .btn-primary {
+      background: #111827;
+      color: white;
+    }
+
+    .btn-danger {
+      background: #d93025;
+      color: white;
+    }
+
+    .section-title {
+      margin: 0 0 16px 0;
+      font-size: 1.3rem;
+    }
+
+    .review-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .review-item {
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 18px;
+      background: #fcfcfd;
+    }
+
+    .review-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .reviewer-name {
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .rating-pill {
+      background: #fff7db;
+      color: #7a5200;
+      border: 1px solid #f7d774;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+
+    .review-text {
+      margin: 10px 0 0 0;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    .review-date {
+      display: block;
+      margin-top: 12px;
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+
+    .empty-state {
+      color: #6b7280;
+      margin: 0;
+    }
+
+    .notice {
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: #f9fafb;
+      color: #374151;
+      border: 1px solid #e5e7eb;
+    }
+
+    .mini-stars {
+      color: #f5b301;
+      letter-spacing: 1px;
+      margin-left: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    <a href="/movies" class="back-link">← Back to Movies</a>
+
+    <section class="card">
+      <div class="movie-header">
+        <div>
+          <h1 class="movie-title"><%= movie.title %></h1>
+          <p class="movie-meta"><strong>Genre:</strong> <%= movie.genre %></p>
+        </div>
+
+        <div class="stats-box">
+          <p class="stats-number"><%= averageRating %> / 5</p>
+          <p class="stats-sub">Average rating from <%= reviewCount %> review(s)</p>
+          <div class="stars-display">
+            <% const roundedAvg = Math.round(averageRating); %>
+            <% for (let i = 1; i <= 5; i++) { %>
+              <%= i <= roundedAvg ? "★" : "☆" %>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <% if (!user) { %>
+        <div class="notice">
+          Please <a href="/user/login">log in</a> to leave a rating or review.
+        </div>
+      <% } else if (existingReview) { %>
+        <div class="notice">
+          You have already reviewed this movie.
+        </div>
+        <div class="btn-row">
+          <a href="/reviews/<%= existingReview._id %>/edit" class="btn btn-primary">Edit Your Review</a>
+
+          <form action="/reviews/<%= existingReview._id %>/delete" method="POST" style="margin:0;">
+            <button type="submit" class="btn btn-danger">Delete Your Review</button>
+          </form>
+        </div>
+      <% } else { %>
+        <div class="notice">
+          You can give a rating only, or a rating with an optional written review.
+        </div>
+        <div class="btn-row">
+          <a href="/reviews/movie/<%= movie._id %>/new" class="btn btn-primary">Write a Review</a>
+        </div>
+      <% } %>
+    </section>
+
+    <section class="card">
+      <h2 class="section-title">Public Reviews</h2>
+
+      <% if (reviews.length === 0) { %>
+        <p class="empty-state">No reviews yet. Be the first to rate this movie.</p>
+      <% } else { %>
+        <div class="review-list">
+          <% reviews.forEach(function(review) { %>
+            <article class="review-item">
+              <div class="review-top">
+                <div class="reviewer-name"><%= review.userId.fullName || review.userId.username %></div>
+                <div class="rating-pill">
+                  <span><%= review.rating %>/5</span>
+                  <span class="mini-stars">
+                    <% for (let i = 1; i <= 5; i++) { %>
+                      <%= i <= review.rating ? "★" : "☆" %>
+                    <% } %>
+                  </span>
+                </div>
+              </div>
+
+              <% if (review.reviewText && review.reviewText.trim() !== "") { %>
+                <p class="review-text"><%= review.reviewText %></p>
+              <% } else { %>
+                <p class="review-text" style="color:#6b7280; font-style:italic;">No written review provided.</p>
+              <% } %>
+
+              <small class="review-date">
+                Posted on <%= new Date(review.createdAt).toLocaleDateString() %>
+              </small>
+            </article>
+          <% }) %>
+        </div>
+      <% } %>
+    </section>
+  </div>
+</body>
+</html>

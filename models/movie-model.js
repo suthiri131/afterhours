@@ -46,3 +46,8 @@ exports.addMovie = function (newMovie) {
 exports.deleteMovie = function (id) {
   return Movie.findByIdAndDelete(id);
 };
+
+// thet
+exports.findMovieById = function (id) {
+  return Movie.findById(id);
+};
