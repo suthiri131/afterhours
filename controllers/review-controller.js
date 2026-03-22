@@ -25,7 +25,7 @@ exports.showCreateReviewForm = async (req, res) => {
       movie,
       user,
       error: null,
-      formData: {},
+      formData: {}
     });
   } catch (err) {
     console.error(err);
@@ -59,7 +59,7 @@ exports.createReview = async (req, res) => {
         movie,
         user,
         error: "Please select a rating from 1 to 5.",
-        formData: { rating, reviewText },
+        formData: { rating, reviewText }
       });
     }
 
@@ -67,7 +67,7 @@ exports.createReview = async (req, res) => {
       movieId,
       userId: user.id,
       rating: numericRating,
-      reviewText: reviewText ? reviewText.trim() : "",
+      reviewText: reviewText ? reviewText.trim() : ""
     });
 
     res.redirect(`/movies/${movieId}`);
@@ -107,7 +107,7 @@ exports.showEditReviewForm = async (req, res) => {
       error: null,
       formData: {
         rating: review.rating,
-        reviewText: review.reviewText || "",
+        reviewText: review.reviewText || ""
       },
     });
   } catch (err) {
@@ -144,14 +144,15 @@ exports.updateReview = async (req, res) => {
         error: "Please select a rating from 1 to 5.",
         formData: {
           rating,
-          reviewText,
-        },
+          reviewText
+        }
       });
     }
 
     await Review.updateReview(reviewId, {
       rating: numericRating,
       reviewText: reviewText ? reviewText.trim() : "",
+      isEdited: true
     });
 
     res.redirect(`/movies/${review.movieId._id}`);

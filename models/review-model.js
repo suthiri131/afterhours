@@ -6,23 +6,27 @@ const reviewSchema = new mongoose.Schema(
     movieId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Movie",
-      required: [true, "Movie does not exist"],
+      required: [true, "Movie does not exist"]
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: [true, "User does not exist"],
+      required: [true, "User does not exist"]
     },
     rating: {
       type: Number,
       required: [true, "Rating is required"],
       min: [1, "Rating must be at least 1"],
-      max: [5, "Rating must be at most 5"],
+      max: [5, "Rating must be at most 5"]
     },
     reviewText: {
       type: String,
       trim: true,
-      default: "",
+      default: ""
+    },
+    isEdited: {
+      type: Boolean,
+      default: false
     },
   },
   { timestamps: true }
@@ -55,7 +59,7 @@ exports.findById = function (id) {
 exports.updateReview = function (id, updatedData) {
   return Review.findByIdAndUpdate(id, updatedData, {
     new: true,
-    runValidators: true,
+    runValidators: true
   });
 };
 
@@ -67,14 +71,14 @@ exports.getMovieReviewStats = async function (movieId) {
   const result = await Review.aggregate([
     {
       $match: {
-        movieId: new mongoose.Types.ObjectId(movieId),
+        movieId: new mongoose.Types.ObjectId(movieId)
       },
     },
     {
       $group: {
         _id: "$movieId",
         averageRating: { $avg: "$rating" },
-        reviewCount: { $sum: 1 },
+        reviewCount: { $sum: 1 }
       },
     },
   ]);
@@ -82,12 +86,12 @@ exports.getMovieReviewStats = async function (movieId) {
   if (result.length === 0) {
     return {
       averageRating: 0,
-      reviewCount: 0,
+      reviewCount: 0
     };
   }
 
   return {
     averageRating: Number(result[0].averageRating.toFixed(1)),
-    reviewCount: result[0].reviewCount,
+    reviewCount: result[0].reviewCount
   };
 };
