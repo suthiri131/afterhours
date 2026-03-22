@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin Movie Management Main Page</title>
+
+    <style>
+
+      body {
+        font-family: Arial, sans-serif;
+        color: #0f172a;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      th, td {
+        border: 1px solid #ccc;
+        padding: 8px;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 0 20px;
+      }
+
+      .msg {
+        color: #b91c1c;
+        margin-bottom: 12px;
+      }
+
+      .btn {
+        background-color: #14213d;
+        color: #ffffff;
+        border: none;
+        cursor: pointer;
+        padding: 8px 16px;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .btn:hover {
+        background-color: #1d4ed8;
+      }
+
+    </style>
+
+  </head>
+
+  <body>
+
+    <div class="container">
+
+      <h1>Admin Movie Management Main Page</h1>
+
+      <% if (msg) { %>
+        <div class="msg"><%= msg %></div>
+      <% } %>
+
+      <a href="/admin/movies/create" class="btn">Add New Movie</a>
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Genre</th>
+            <th>Director</th>
+            <th>Year</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <% if (movies.length === 0) { %>
+            <tr>
+              <td colspan="5">No movies found.</td>
+            </tr>
+          <% } %>
+
+          <% movies.forEach(movie => { %>
+            <tr>
+              <td><%= movie.title %></td>
+              <td><%= movie.genre %></td>
+              <td><%= movie.director || "-" %></td>
+              <td><%= movie.releaseYear || "-" %></td>
+              <td>
+                <a href="/admin/movies/<%= movie._id %>/edit" class="btn">Edit</a>
+
+                <form
+                  action="/admin/movies/<%= movie._id %>/delete"
+                  method="POST"
+                  onsubmit="return confirm('Delete this movie?')"
+                  style="display: inline;">
+                  <button type="submit" class="btn">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+
+        </tbody>
+
+      </table>
+
+    </div>
+    
+  </body>
+
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="UTF-8" />
+    <title>Admin Movie Creation Page</title>
+    <style>
+
+      body {
+        font-family: Arial, sans-serif;
+        color: #0f172a;
+      }
+
+      .container {
+        max-width: 500px;
+        margin: 40px auto;
+        padding: 0 20px;
+      }
+
+      .msg {
+        color: #b91c1c;
+        margin-bottom: 12px;
+      }
+
+      .btn {
+        background-color: #14213d;
+        color: #ffffff;
+        border: none;
+        cursor: pointer;
+        padding: 8px 16px;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .btn:hover {
+        background-color: #1d4ed8;
+      }
+
+    </style>
+
+  </head>
+
+  <body>
+
+    <div class="container">
+
+      <h1>Admin Movie Creation Page</h1>
+
+      <% if (msg) { %>
+        <div class="msg"><%= msg %></div>
+      <% } %>
+
+      <form action="/admin/movies/create" method="POST">
+
+        Title<br>
+        <input type="text" name="title" value="<%= formData.title || '' %>" /><br><br>
+
+        Genre<br>
+        <input type="text" name="genre" value="<%= formData.genre || '' %>" /><br><br>
+
+        Director<br>
+        <input type="text" name="director" value="<%= formData.director || '' %>" /><br><br>
+
+        Release Year<br>
+        <input type="number" name="releaseYear" value="<%= formData.releaseYear || '' %>" /><br><br>
+
+        Description<br>
+        <textarea name="description" rows="4"><%= formData.description || '' %></textarea><br><br>
+
+        <button type="submit" class="btn">Add Movie</button>
+
+      </form>
+
+      <br>
+      <a href="/admin/movies">Back to movie list</a>
+
+    </div>
+
+  </body>
+
+</html>

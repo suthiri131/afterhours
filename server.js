@@ -30,6 +30,7 @@ server.use(
 );
 server.use(authMiddleware.attachUser);
 
+server.use("/admin", movieRoutes);
 server.use("/user", userRoutes);
 server.use("/movies", movieRoutes);
 server.use("/reviews", reviewRoutes);
