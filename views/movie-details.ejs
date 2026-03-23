@@ -1,5 +1,4 @@
 <%# thet %>
-<%# thet %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -241,7 +240,7 @@
             <%= movie.releaseYear ? movie.releaseYear : "Not provided" %>
           </p>
 
-          <p class="movie-meta" style="margin-top:14px; line-height:1.7; color: #374151;">
+          <p class="movie-meta" style="margin-top:14px; line-height:1.7; color:#374151;">
             <strong>Description:</strong><br>
             <%= movie.description && movie.description.trim() !== "" ? movie.description : "No description available." %>
           </p>
@@ -249,9 +248,11 @@
 
         <div class="stats-box">
           <p class="stats-number"><%= averageRating %> / 5</p>
-          <p class="stats-sub">Average rating from <%= reviewCount %> review(s)</p>
+          <p class="stats-sub">
+            <%= reviewCount === 0 ? "No reviews yet" : `Average rating from ${reviewCount} review${reviewCount === 1 ? "" : "s"}` %>
+          </p>  
           <div class="stars-display">
-            <% const roundedAvg = Math.round(averageRating); %>
+            <% const roundedAvg = Math.round(Number(averageRating)); %>
             <% for (let i = 1; i <= 5; i++) { %>
               <%= i <= roundedAvg ? "★" : "☆" %>
             <% } %>
@@ -348,7 +349,6 @@
 
             <div class="review-owner-actions">
               <a href="/reviews/<%= myReview._id %>/edit" class="btn btn-primary">Edit</a>
-
               <form action="/reviews/<%= myReview._id %>/delete" method="POST" style="margin:0;">
                 <button type="submit" class="btn btn-danger">Delete</button>
               </form>
