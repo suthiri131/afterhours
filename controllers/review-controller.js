@@ -149,10 +149,19 @@ exports.updateReview = async (req, res) => {
       });
     }
 
+    const trimmedReviewText = reviewText ? reviewText.trim() : "";
+
+    const ratingChanged = review.rating !== numericRating;
+    const textChanged = (review.reviewText || "") !== trimmedReviewText;
+
+    if (!ratingChanged && !textChanged) {
+    return res.redirect(`/movies/${review.movieId._id}`);
+    }
+
     await Review.updateReview(reviewId, {
-      rating: numericRating,
-      reviewText: reviewText ? reviewText.trim() : "",
-      isEdited: true
+    rating: numericRating,
+    reviewText: trimmedReviewText,
+    isEdited: true
     });
 
     res.redirect(`/movies/${review.movieId._id}`);
