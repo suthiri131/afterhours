@@ -1,81 +1,270 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Movies</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movies</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #f5f7fb;
-    }
+    <style>
+      * {
+        box-sizing: border-box;
+      }
 
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 24px;
-      background-color: #14213d;
-      color: white;
-    }
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f5f7fb;
+        color: #1f2937;
+      }
 
-    .logo {
-      font-size: 18px;
-      font-weight: bold;
-    }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 24px;
+        background-color: #14213d;
+        color: white;
+      }
 
-    .right {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
+      .logo {
+        font-size: 20px;
+        font-weight: bold;
+      }
 
-    .link {
-      color: white;
-      text-decoration: none;
-      font-size: 14px;
-    }
+      .right {
+        display: flex;
+        gap: 16px;
+      }
 
-    .link:hover {
-      text-decoration: underline;
-    }
-    
-    .container {
-      padding: 24px;
-    }
+      .link {
+        color: white;
+        text-decoration: none;
+        font-size: 14px;
+      }
 
-    .btn {
-      display: inline-block;
-      padding: 10px 14px;
-      background-color: #14213d;
-      color: white;
-      text-decoration: none;
-      border-radius: 6px;
-      margin-top: 16px;
-    }
-  </style>
-</head>
+      .link:hover {
+        text-decoration: underline;
+      }
 
-<body>
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 28px 20px;
+      }
 
-  <div class="header">
-    <div class="logo">AfterHours</div>
+      .title {
+        margin: 0 0 6px;
+        font-size: 28px;
+        color: #14213d;
+      }
 
-    <div class="right">
-      <a class="link" href="/user/profile">Profile</a>
+      .subtitle {
+        margin: 0 0 24px;
+        font-size: 14px;
+        color: #6b7280;
+      }
+
+      .message {
+        margin-bottom: 18px;
+        padding: 12px 14px;
+        border-radius: 8px;
+        background-color: #fee2e2;
+        color: #991b1b;
+        font-size: 13px;
+      }
+
+      .movies-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 18px;
+      }
+
+      .movie-card {
+        background-color: white;
+        border-radius: 14px;
+        border: 1px solid #e5e7eb;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .movie-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+      }
+
+      .movie-banner {
+        height: 130px;
+        background: linear-gradient(135deg, #14213d, #1f325c);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        font-weight: bold;
+      }
+
+      .movie-content {
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+      }
+
+      .movie-title {
+        font-size: 16px;
+        line-height: 1.4;
+        margin: 0 0 8px;
+        color: #14213d;
+
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .movie-info {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-bottom: 8px;
+      }
+
+      .badge {
+        padding: 4px 8px;
+        border-radius: 999px;
+        background-color: #eef2ff;
+        font-size: 11px;
+        color: #14213d;
+      }
+
+      .description {
+        font-size: 13px;
+        color: #4b5563;
+        margin: 0 0 6px;
+        line-height: 1.5;
+
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .director {
+        font-size: 12px;
+        color: #374151;
+        margin: 0 0 10px;
+      }
+
+      .watchlist-form {
+        margin-top: auto;
+      }
+
+      .btn {
+        width: 100%;
+        border: none;
+        border-radius: 8px;
+        padding: 10px;
+        background-color: #14213d;
+        color: white;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .btn:hover {
+        background-color: #1f325c;
+      }
+
+      .empty {
+        text-align: center;
+        padding: 40px;
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        color: #6b7280;
+      }
+
+      @media (max-width: 768px) {
+        .header {
+          padding: 16px 18px;
+        }
+
+        .container {
+          padding: 24px 16px;
+        }
+
+        .title {
+          font-size: 24px;
+        }
+
+        .movies-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="logo">AfterHours</div>
+
+      <div class="right">
+        <a class="link" href="/watchlist">WatchList</a>
+        <a class="link" href="/user/profile">Profile</a>
+      </div>
     </div>
-  </div>
 
-  <div class="container">
-    <h1>Movies Page</h1>
+    <div class="container">
+      <h1 class="title">All Movies</h1>
+      <p class="subtitle">Welcome, <%= user.username %></p>
 
-    <p>Welcome, <%= user.username %>!</p>
+      <% if (typeof msg !== "undefined" && msg) { %>
+        <div class="message"><%= msg %></div>
+      <% } %>
 
-    <% if (user.role === "admin") { %>
-      <a class="btn" href="/admin/movies">+ Create Movie</a>
-    <% } %>
-  </div>
+      <% if (!movies || movies.length === 0) { %>
+        <div class="empty">
+          <p>No movies available</p>
+        </div>
+      <% } else { %>
+        <div class="movies-grid">
+          <% movies.forEach(movie => { %>
+            <div class="movie-card">
+              <div class="movie-banner">
+                <%= movie.title ? movie.title.charAt(0).toUpperCase() : "M" %>
+              </div>
 
-</body>
+              <div class="movie-content">
+                <h2 class="movie-title"><%= movie.title %></h2>
+
+                <div class="movie-info">
+                  <span class="badge"><%= movie.genre || "Unknown Genre" %></span>
+                  <% if (movie.releaseYear) { %>
+                    <span class="badge"><%= movie.releaseYear %></span>
+                  <% } %>
+                </div>
+
+                <p class="description">
+                  <%= movie.description && movie.description.trim() !== ""
+                    ? movie.description
+                    : "No description available" %>
+                </p>
+
+                <p class="director">
+                  <strong>Director:</strong>
+                  <%= movie.director && movie.director.trim() !== "" ? movie.director : "Unknown" %>
+                </p>
+
+                <form class="watchlist-form" action="/watchlist/add/<%= movie._id %>" method="POST">
+                  <button type="submit" class="btn">Add to Watchlist</button>
+                </form>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+    </div>
+  </body>
 </html>

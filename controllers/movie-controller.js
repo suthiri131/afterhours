@@ -2,9 +2,19 @@ const Movie = require("./../models/movie-model");
 const Review = require("../models/review-model");
 
 exports.showAllMovies = async (req, res) => {
-  res.render("movies", {
-    user: req.session.user,
-  });
+  try {
+    const movies = await Movie.findAll();
+
+    res.render("movies", {
+      movies,
+    });
+  } catch (error) {
+    console.error(error);
+    res.render("movies", {
+      movies: [],
+      msg: "Error loading movies",
+    });
+  }
 };
 
 // thet
