@@ -8,6 +8,7 @@ const session = require("express-session");
 dotenv.config({ path: "./config.env" });
 const authMiddleware = require("./middleware/auth-middleware");
 
+const adminRoutes = require("./routes/admin-routes");
 const userRoutes = require("./routes/user-routes");
 const movieRoutes = require("./routes/movie-routes");
 const reviewRoutes = require("./routes/review-routes");
@@ -30,7 +31,7 @@ server.use(
 );
 server.use(authMiddleware.attachUser);
 
-server.use("/admin", movieRoutes);
+server.use("/admin", adminRoutes);
 server.use("/user", userRoutes);
 server.use("/movies", movieRoutes);
 server.use("/reviews", reviewRoutes);
