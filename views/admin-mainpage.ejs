@@ -69,6 +69,7 @@
 
         <thead>
           <tr>
+            <th>Image</th>
             <th>Title</th>
             <th>Genre</th>
             <th>Director</th>
@@ -81,12 +82,19 @@
 
           <% if (movies.length === 0) { %>
             <tr>
-              <td colspan="5">No movies found.</td>
+              <td colspan="6">No movies found.</td>
             </tr>
           <% } %>
 
           <% movies.forEach(movie => { %>
             <tr>
+              <td>
+                <% if (movie.movieImage) { %>
+                  <img src="<%= movie.movieImage %>" width="60" />
+                <% } else { %>
+                  -
+                <% } %>
+              </td>
               <td><%= movie.title %></td>
               <td><%= movie.genre %></td>
               <td><%= movie.director || "-" %></td>

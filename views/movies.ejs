@@ -211,6 +211,9 @@
       <div class="logo">AfterHours</div>
 
       <div class="right">
+        <% if (user.role === "admin") { %>
+          <a class="link" href="/admin/movies">Manage Movies</a>
+        <% } %>
         <a class="link" href="/watchlist">WatchList</a>
         <a class="link" href="/user/profile">Profile</a>
       </div>

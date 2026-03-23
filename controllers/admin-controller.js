@@ -3,7 +3,7 @@ const Watchlist = require("../models/watchlist-model");
 
 // START of admin functions for adding/editing/deleting movies
 
-exports.showCreateMovieForm = (req, res) => {
+exports.adminShowCreateForm = (req, res) => {
 
   res.render("admin-create-movie", {
     user: req.session.user,
@@ -13,11 +13,11 @@ exports.showCreateMovieForm = (req, res) => {
 
 };
 
-exports.showAdminMovies = async (req, res) => {
+exports.adminShowMovies = async (req, res) => {
 
   try {
     const movies = await Movie.findAll();
-    res.render("admin-movie-list", {
+    res.render("admin-mainpage", {
       movies,
       user: req.session.user,
       msg: "",
@@ -30,10 +30,11 @@ exports.showAdminMovies = async (req, res) => {
 
 };
 
-exports.createMovie = async (req, res) => {
+exports.adminCreateMovie = async (req, res) => {
 
   const user = req.session.user;
   const currentYear = new Date().getFullYear();
+
   let { title, genre, description, releaseYear, director } = req.body;
 
   title = title?.trim();
@@ -61,6 +62,7 @@ exports.createMovie = async (req, res) => {
     description: description || "",
     releaseYear: releaseYear ? Number(releaseYear) : null,
     director: director || "",
+    movieImage: req.file ? "/uploads/" + req.file.filename : null,
   };
 
   try {
@@ -74,10 +76,11 @@ exports.createMovie = async (req, res) => {
 
 };
 
-exports.showEditMovieForm = async (req, res) => {
+exports.adminShowEditForm = async (req, res) => {
 
   try {
     const movie = await Movie.findMovieById(req.params.id);
+
     if (!movie) {
       return res.status(404).send("Movie not found");
     }
@@ -95,7 +98,7 @@ exports.showEditMovieForm = async (req, res) => {
 
 };
 
-exports.updateMovie = async (req, res) => {
+exports.adminUpdateMovie = async (req, res) => {
 
   const user = req.session.user;
   const currentYear = new Date().getFullYear();
@@ -127,6 +130,7 @@ exports.updateMovie = async (req, res) => {
     description: description || "",
     releaseYear: releaseYear ? Number(releaseYear) : null,
     director: director || "",
+    movieImage: req.file ? "/uploads/" + req.file.filename : movie.movieImage,
   };
 
   try {
@@ -140,7 +144,7 @@ exports.updateMovie = async (req, res) => {
 
 };
 
-exports.deleteMovie = async (req, res) => {
+exports.adminDeleteMovie = async (req, res) => {
 
   try {
     // I comment out this portion first, after watchlist is done,
@@ -157,12 +161,14 @@ exports.deleteMovie = async (req, res) => {
     // }
 
     const movie = await Movie.findMovieById(req.params.id);
+    
     if (!movie) {
       return res.status(404).send("Movie not found");
     }
 
     await Movie.deleteMovie(req.params.id);
     res.redirect("/admin/movies");
+    
   } catch (error) {
     console.error(error);
     res.status(500).send("Error deleting movie");
