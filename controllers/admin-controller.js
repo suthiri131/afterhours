@@ -45,7 +45,18 @@ exports.adminCreateMovie = async (req, res) => {
   
   const formData = { title, genre, description, releaseYear, director };
 
+  const cleanUpFile = () => {
+    if (req.file) {
+
+      const fs = require("fs");
+      const path = require("path");
+
+      fs.unlinkSync(path.join(__dirname, "../public/uploads/", req.file.filename));
+    }
+  };
+
   const renderForm = (msg) => {
+    cleanUpFile();
     return res.render("admin-create-movie", { user, msg, formData });
   };
 
@@ -117,7 +128,18 @@ exports.adminUpdateMovie = async (req, res) => {
 
   const formData = { title, genre, description, releaseYear, director };
 
+  const cleanUpFile = () => {
+    if (req.file) {
+
+      const fs = require("fs");
+      const path = require("path");
+      
+      fs.unlinkSync(path.join(__dirname, "../public/uploads/", req.file.filename));
+    }
+  };
+
   const renderForm = (msg) => {
+     cleanUpFile();
     return res.render("admin-edit-movie", { movie, user, msg, formData });
   };
 
@@ -137,6 +159,20 @@ exports.adminUpdateMovie = async (req, res) => {
     director: director || "",
     movieImage: req.file ? "/uploads/" + req.file.filename : movie.movieImage,
   };
+
+  if (req.file && movie.movieImage) {
+
+    const fs = require("fs");
+    const path = require("path");
+
+    const oldImagePath = path.join(__dirname, "../public", movie.movieImage);
+
+    if (fs.existsSync(oldImagePath)) {
+      fs.unlinkSync(oldImagePath);
+      console.log("Old image deleted:", movie.movieImage);
+    }
+
+  }
 
   try {
     await Movie.updateMovie(req.params.id, movieData);
@@ -168,6 +204,20 @@ exports.adminDeleteMovie = async (req, res) => {
     
     if (!movie) {
       return res.status(404).send("Movie not found");
+    }
+
+     if (movie.movieImage) {
+
+      const fs = require("fs");
+      const path = require("path");
+
+      const imagePath = path.join(__dirname, "../public", movie.movieImage);
+
+      if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath);
+        console.log("Movie image deleted:", movie.movieImage);
+      }
+      
     }
 
     await Movie.deleteMovie(req.params.id);
