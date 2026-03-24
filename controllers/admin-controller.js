@@ -1,3 +1,6 @@
+const fs = require("fs");
+const path = require("path");
+
 const Movie = require("./../models/movie-model");
 const Review = require("./../models/review-model");
 const Watchlist = require("../models/watchlist-model");
@@ -47,10 +50,6 @@ exports.adminCreateMovie = async (req, res) => {
 
   const cleanUpFile = () => {
     if (req.file) {
-
-      const fs = require("fs");
-      const path = require("path");
-
       fs.unlinkSync(path.join(__dirname, "../public/uploads/", req.file.filename));
     }
   };
@@ -60,12 +59,32 @@ exports.adminCreateMovie = async (req, res) => {
     return res.render("admin-create-movie", { user, msg, formData });
   };
 
-  if (!title || !genre) {
-    return renderForm("Title and genre are required.");
+  if (!title) {
+    return renderForm("Title is required.");
+  }
+
+  if (!genre) {
+    return renderForm("Genre is required.");
+  }
+
+  if (!director) {
+    return renderForm("Director is required.");
+  }
+
+  if (!description) {
+    return renderForm("Description is required.");
+  }
+
+  if (!req.file) {
+    return renderForm("Movie Image is required.");
+  }
+
+  if (!releaseYear) {
+    return renderForm("Release Year is required.");
   }
 
   if (releaseYear && (isNaN(releaseYear) || releaseYear < 1888 || releaseYear > currentYear)) {
-    return renderForm("Release year must be between 1888 and " + currentYear + ".");
+    return renderForm("Release Year must be between 1888 and " + currentYear + ".");
   }
 
   const movieData = {
@@ -129,11 +148,7 @@ exports.adminUpdateMovie = async (req, res) => {
   const formData = { title, genre, description, releaseYear, director };
 
   const cleanUpFile = () => {
-    if (req.file) {
-
-      const fs = require("fs");
-      const path = require("path");
-      
+    if (req.file) {      
       fs.unlinkSync(path.join(__dirname, "../public/uploads/", req.file.filename));
     }
   };
@@ -143,12 +158,32 @@ exports.adminUpdateMovie = async (req, res) => {
     return res.render("admin-edit-movie", { movie, user, msg, formData });
   };
 
-  if (!title || !genre) {
-    return renderForm("Title and genre are required.");
+  if (!title) {
+    return renderForm("Title is required.");
+  }
+
+  if (!genre) {
+    return renderForm("Genre is required.");
+  }
+
+  if (!director) {
+    return renderForm("Director is required.");
+  }
+
+  if (!description) {
+    return renderForm("Description is required.");
+  }
+
+  if (!req.file && !movie.movieImage) {
+    return renderForm("Movie Image is required.");
+  }
+
+  if (!releaseYear) {
+    return renderForm("Release Year is required.");
   }
 
   if (releaseYear && (isNaN(releaseYear) || releaseYear < 1888 || releaseYear > currentYear)) {
-    return renderForm("Release year must be between 1888 and " + currentYear + ".");
+    return renderForm("Release Year must be between 1888 and " + currentYear + ".");
   }
 
   const movieData = {
@@ -161,9 +196,6 @@ exports.adminUpdateMovie = async (req, res) => {
   };
 
   if (req.file && movie.movieImage) {
-
-    const fs = require("fs");
-    const path = require("path");
 
     const oldImagePath = path.join(__dirname, "../public", movie.movieImage);
 
@@ -207,9 +239,6 @@ exports.adminDeleteMovie = async (req, res) => {
     }
 
      if (movie.movieImage) {
-
-      const fs = require("fs");
-      const path = require("path");
 
       const imagePath = path.join(__dirname, "../public", movie.movieImage);
 
