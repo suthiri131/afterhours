@@ -100,14 +100,18 @@
               <td><%= movie.director || "-" %></td>
               <td><%= movie.releaseYear || "-" %></td>
               <td>
-                <a href="/admin/movies/<%= movie._id %>/edit" class="btn">Edit</a>
+                <a href="/admin/movies/<%= movie._id %>/edit" class="btn"
+                style="width: 80px; text-align: center; box-sizing: border-box;"
+                >Edit</a><br><br>
 
                 <form
                   action="/admin/movies/<%= movie._id %>/delete"
                   method="POST"
                   onsubmit="return confirm('Delete this movie?')"
-                  style="display: inline;">
-                  <button type="submit" class="btn">Delete</button>
+                  style="margin: 0; padding: 0;">
+                  
+                  <button type="submit" class="btn"
+                  style="width: 80px; box-sizing: border-box;">Delete</button>
                 </form>
               </td>
             </tr>
