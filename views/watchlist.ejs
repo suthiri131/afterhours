@@ -99,6 +99,13 @@
         color: #14213d;
       }
 
+      .movie-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: auto;
+      }
+
       .badge {
         display: inline-block;
         padding: 4px 8px;
@@ -107,6 +114,24 @@
         font-size: 11px;
         color: #14213d;
         margin-bottom: 12px;
+      }
+
+      .btn {
+        width: 100%;
+        border: none;
+        border-radius: 8px;
+        padding: 10px;
+        background-color: #14213d;
+        color: white;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: auto;
+      }
+
+      .btn-disabled{
+        background-color: #dde0e3;
+        color: #9399a4;
       }
 
       .btn-delete {
@@ -126,20 +151,30 @@
         background-color: #7f1d1d;
       }
 
-      .empty {
+      .empty-state {
         text-align: center;
         padding: 50px;
         background: white;
         border-radius: 12px;
         border: 1px solid #e5e7eb;
       }
+
+      .link-back {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #14213d;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+    }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>My Watchlist</h1>
+        <h1>My Watchlist (<%= movies.length %>)</h1>
 
-        <% if (movies && movies.length > 0) { %>
+        <% if (typeof movies !== 'undefined' && movies !== null && movies.length > 0) { %>
             <div class="movies-grid">
                 <% movies.forEach(item => { %>
                     <% if (item.movieId) { %>
@@ -155,21 +190,37 @@
                             <div class="movie-content">
                                 <h2 class="movie-title"><%= item.movieId.title %></h2>
                                 <div class="movie-info">
-                                    <span class="badge"><%= item.status || 'Plan to Watch' %></span>
+                                    <span class="badge <%= item.status === 'Watched' ? 'status-watched' : 'status-plan' %>">
+                                        <%= item.status ? item.status : 'Plan to Watch' %>
+                                    </span>
                                 </div>
                                 
-                                <form action="/watchlist/delete/<%= item._id %>" method="POST" style="margin-top: auto;">
-                                    <button type="submit" class="btn-delete">Remove</button>
-                                </form>
+                                <div class="movie-actions">
+                                    <% if (item.status !== "Watched") { %>
+                                        <form action="/watchlist/watched/<%= item._id %>" method="POST">
+                                            <button type="submit" class="btn btn-watch">
+                                                Mark as Watched
+                                            </button>
+                                        </form>
+                                    <% } else { %>
+                                        <button disabled class="btn btn-disabled">
+                                            Finished Watching
+                                        </button>
+                                    <% } %>
+
+                                    <form action="/watchlist/delete/<%= item._id %>" method="POST" class="form-delete">
+                                        <button type="submit" class="btn-delete">Remove</button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     <% } %>
                 <% }) %>
             </div>
         <% } else { %>
-            <div style="text-align: center; padding: 50px;">
+            <div class="empty-state">
                 <p>Your watchlist is empty. Go add some movies!</p>
-                <a href="/movies" style="color: #14213d; font-weight: bold;">Back to All Movies</a>
+                <a href="/movies" class="link-back">Back to All Movies</a>
             </div>
         <% } %>
     </div>

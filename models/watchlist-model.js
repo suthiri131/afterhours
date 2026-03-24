@@ -10,6 +10,10 @@ const watchlistSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Movie'
   },
+  status: { 
+    type: String, 
+    default: 'Plan to Watch' 
+  },
   addedAt: {
     type: Date,
     default: Date.now,

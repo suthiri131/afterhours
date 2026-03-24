@@ -6,10 +6,11 @@ exports.showWatchList = async (req, res) => {
 
     const items = await Watchlist.find({ user: userId }).populate("movieId");
 
+    const cleanMovies = items.filter(item => item.movieId !== null);
     res.render("watchlist", {
-      movies: items,
+      movies: cleanMovies,
       user: req.session.user,
-      msg: ""
+      msg: req.query.msg || ""
     });
   } catch (error) {
     console.error(error);
@@ -19,10 +20,6 @@ exports.showWatchList = async (req, res) => {
 
 exports.addToWatchList = async (req, res) => {
   try {
-    console.log("--- DEBUG START ---");
-    console.log("Params:", req.params);
-    console.log("Session User:", req.session.user);
-    console.log("--- DEBUG END ---");
     const { movieId } = req.params; 
     const userId = req.session.user.id || req.session.user._id; 
 
@@ -42,10 +39,24 @@ exports.addToWatchList = async (req, res) => {
 
 exports.deleteFromWatchlist = async (req, res) => {
   try {
-    await Watchlist.findByIdAndDelete(req.params.id);
+    const {id} = req.params;
+    await Watchlist.findByIdAndDelete(id);
     res.redirect("/watchlist");
   } catch (error) {
     console.error(error);
     res.status(500).send("Error deleting movie from the watchlist.");
+  }
+};
+
+exports.markAsWatched = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await Watchlist.findByIdAndUpdate(req.params.id, { status: "Watched" });
+    console.log("status updated to Watched!");
+    res.redirect("/watchlist"); 
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error updating status.");
   }
 };

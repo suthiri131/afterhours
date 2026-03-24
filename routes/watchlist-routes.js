@@ -5,4 +5,5 @@ const watchlistController = require('../controllers/watchlist-controller');
 router.get('/', watchlistController.showWatchList);
 router.post('/add/:movieId', watchlistController.addToWatchList);
 router.post('/delete/:id', watchlistController.deleteFromWatchlist);
+router.post('/watched/:id', watchlistController.markAsWatched);
 module.exports = router;
