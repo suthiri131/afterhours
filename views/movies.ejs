@@ -293,6 +293,12 @@
                   <%= movie.director && movie.director.trim() !== "" ? movie.director : "Unknown" %>
                 </p>
 
+                <!-- updated by thet -->
+                <!-- tell users where they can view full ratings and reviews -->
+                <p style="margin: 0 0 10px; font-size: 12px; color: #6b7280; text-align: center;">
+                  Click the movie poster or title to view full ratings and reviews.
+                </p>
+
                 <form class="watchlist-form" action="/watchlist/add/<%= movie._id %>" method="POST">
                   <button type="submit" class="btn">Add to Watchlist</button>
                 </form>

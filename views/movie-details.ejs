@@ -283,24 +283,28 @@
         <div class="notice">
           Please <a href="/user/login">log in</a> to leave a rating or review.
         </div>
+      <% } %>
 
-      <% } else if (myReview) { %>
+      <% if (user && myReview) { %>
         <div class="notice">
           You have already submitted your review for this movie.
         </div>
+      <% } %>
 
-      <% } else if (!watchlistItem) { %>
+      <% if (user && !myReview && !watchlistItem) { %>
         <div class="notice">
           Add this movie to your watchlist first before leaving a review.
         </div>
 
         <div class="btn-row">
           <form action="/watchlist/add/<%= movie._id %>" method="POST" style="display:inline;">
-            <input type="hidden" name="returnTo" value="/watchlist">
+            <input type="hidden" name="returnTo" value="/movies/<%= movie._id %>">
             <button type="submit" class="btn btn-primary">Add to Watchlist</button>
           </form>
+        </div>
+      <% } %>
 
-      <% } else if (watchlistItem && !hasWatched) { %>
+      <% if (user && !myReview && watchlistItem && !hasWatched) { %>
         <div class="notice">
           Mark this movie as Watched to unlock the review form.
         </div>
@@ -311,8 +315,9 @@
             <button type="submit" class="btn btn-primary">Mark as Watched</button>
           </form>
         </div>
+      <% } %>
 
-      <% } else if (watchlistItem && hasWatched) { %>
+      <% if (user && !myReview && watchlistItem && hasWatched) { %>
         <div class="notice">
           You can give a rating only, or a rating with an optional written review.
         </div>
@@ -326,6 +331,9 @@
     <section class="card">
       <% if (user && myReview) { %>
         <h2 class="section-title">Your Review</h2>
+        <p style="margin-top: -6px; margin-bottom: 18px; color: #6b7280; font-size: 14px;">
+          Full rating and review details are shown on this page.
+        </p>
 
         <div class="review-list" style="margin-bottom: 24px;">
           <article class="review-item own-review-card">
@@ -387,6 +395,9 @@
         </div>
 
         <h2 class="section-title">Other Public Reviews</h2>
+        <p style="margin-top: -6px; margin-bottom: 18px; color: #6b7280; font-size: 14px;">
+          Other users’ ratings and reviews for this movie are shown here.
+        </p>
 
         <% if (otherReviews.length === 0) { %>
           <p class="empty-state">No other public reviews yet.</p>

@@ -200,9 +200,19 @@
                                         <%= item.status ? item.status : 'Plan to Watch' %>
                                     </span>
                                 </div>
+
+                                <!-- updated by thet -->
+                                <!-- show users where to view full ratings and reviews -->
+                                <% if (item.status === "Watched") { %>
+                                  <p style="margin: 0 0 12px 0; font-size: 12px; color: #6b7280; text-align: center;">
+                                      Click the movie poster or title to see full ratings and reviews.
+                                  </p>
+                                <% } %>
+
                                 <!-- updated by thet -->
                                 <!-- if movie is not watched yet, show Mark as Watched button -->
-                                <!-- if already watched, show Write a Review button instead -->
+                                <!-- if already watched with no review, show Write a Review -->
+                                <!-- if already watched with review, show Edit Review -->
                                 <!-- Remove button is always available -->
                                 <div class="movie-actions">
                                   <% if (item.status !== "Watched") { %>
@@ -212,16 +222,24 @@
                                               Mark as Watched
                                           </button>
                                       </form>
-                                  <% } else { %>
+                                  <% } %>
+
+                                  <% if (item.status === "Watched" && !item.hasReview) { %>
                                       <a href="/reviews/movie/<%= item.movieId._id %>/new" class="btn" style="text-align:center; text-decoration:none;">
                                           Write a Review
+                                      </a>
+                                  <% } %>
+
+                                  <% if (item.status === "Watched" && item.hasReview) { %>
+                                      <a href="/reviews/<%= item.reviewId %>/edit" class="btn" style="text-align:center; text-decoration:none;">
+                                          Edit Review
                                       </a>
                                   <% } %>
 
                                   <form action="/watchlist/delete/<%= item._id %>" method="POST" class="form-delete">
                                       <button type="submit" class="btn-delete">Remove</button>
                                   </form>
-                              </div>
+                                </div>
                             </div>
                         </div>
                     <% } %>

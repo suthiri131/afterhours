@@ -1,5 +1,11 @@
 const Watchlist = require("../models/watchlist-model");
+const Review = require("../models/review-model");
 
+// updated by thet
+// load watchlist items and check whether the current user
+// already wrote a review for each movie
+// if yes, pass hasReview and reviewId so watchlist page can show Edit Review
+// if no, keep showing Write a Review
 exports.showWatchList = async (req, res) => {
   try {
     const userId = req.session.user.id;
@@ -7,8 +13,21 @@ exports.showWatchList = async (req, res) => {
     const items = await Watchlist.find({ user: userId }).populate("movieId");
 
     const cleanMovies = items.filter(item => item.movieId !== null);
+
+    const moviesWithReviewStatus = await Promise.all(
+      cleanMovies.map(async (item) => {
+        const review = await Review.findByMovieIdAndUserId(item.movieId._id, userId);
+
+        return {
+          ...item.toObject(),
+          hasReview: !!review,
+          reviewId: review ? review._id : null
+        };
+      })
+    );
+    
     res.render("watchlist", {
-      movies: cleanMovies,
+      movies: moviesWithReviewStatus,
       user: req.session.user,
       msg: req.query.msg || ""
     });
