@@ -95,3 +95,8 @@ exports.getMovieReviewStats = async function (movieId) {
     reviewCount: result[0].reviewCount
   };
 };
+
+// what code does: delete all ratings and reviews that belong to one movie
+exports.deleteReviewsByMovieId = function (movieId) {
+  return Review.deleteMany({ movieId });
+};

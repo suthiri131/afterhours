@@ -1,5 +1,5 @@
 const Movie = require("./../models/movie-model");
-
+const Review = require("./../models/review-model");
 const Watchlist = require("../models/watchlist-model");
 
 // START of admin functions for adding/editing/deleting movies
@@ -220,8 +220,12 @@ exports.adminDeleteMovie = async (req, res) => {
       
     }
 
+    // updated by thet
+    // when admin deletes a movie, also delete all ratings and reviews for that movie
+    await Review.deleteReviewsByMovieId(req.params.id);
+
     await Movie.deleteMovie(req.params.id);
-    console.log("Movie deleted successfully:", movie.title);
+    console.log("Movie and related reviews deleted successfully:", movie.title);
     res.redirect("/admin/movies");
     
   } catch (error) {
