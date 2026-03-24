@@ -91,6 +91,7 @@ exports.adminShowEditForm = async (req, res) => {
       movie,
       user: req.session.user,
       msg: "",
+      formData: null,
     });
 
   } catch (error) {
@@ -114,8 +115,10 @@ exports.adminUpdateMovie = async (req, res) => {
 
   const movie = await Movie.findMovieById(req.params.id);
 
+  const formData = { title, genre, description, releaseYear, director };
+
   const renderForm = (msg) => {
-    return res.render("admin-edit-movie", { movie, user, msg });
+    return res.render("admin-edit-movie", { movie, user, msg, formData });
   };
 
   if (!title || !genre) {
