@@ -68,7 +68,7 @@ Movie.findMovieById = function (id) {
 
 Movie.updateMovie = function (id, updatedData) {
   return Movie.findByIdAndUpdate(id, updatedData, {
-    new: true,
+    returnDocument: "after",
     runValidators: true,
   });
 };

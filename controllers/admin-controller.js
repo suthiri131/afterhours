@@ -1,4 +1,5 @@
 const Movie = require("./../models/movie-model");
+
 const Watchlist = require("../models/watchlist-model");
 
 // START of admin functions for adding/editing/deleting movies
@@ -67,6 +68,7 @@ exports.adminCreateMovie = async (req, res) => {
 
   try {
     await Movie.addMovie(movieData);
+    console.log("Movie created successfully:", title);
     res.redirect("/admin/movies");
 
   } catch (error) {
@@ -135,6 +137,7 @@ exports.adminUpdateMovie = async (req, res) => {
 
   try {
     await Movie.updateMovie(req.params.id, movieData);
+    console.log("Movie updated successfully:", title);
     res.redirect("/admin/movies");
 
   } catch (error) {
@@ -147,18 +150,16 @@ exports.adminUpdateMovie = async (req, res) => {
 exports.adminDeleteMovie = async (req, res) => {
 
   try {
-    // I comment out this portion first, after watchlist is done,
-    // then I will comment it back in (HS)
+    const watchlistEntries = await Watchlist.find({ movieId: req.params.id });
 
-    // const watchlistEntries = await Watchlist.findByMovieId(req.params.id);
-    // if (watchlistEntries.length > 0) {
-    //   const movies = await Movie.findAll();
-    //   return res.render("admin-movies", {
-    //     movies,
-    //     user: req.session.user,
-    //     msg: "Unable to delete as this movie is in one or more users' watchlists.",
-    //   });
-    // }
+    if (watchlistEntries.length > 0) {
+      const movies = await Movie.findAll();
+      return res.render("admin-mainpage", {
+        movies,
+        user: req.session.user,
+        msg: "Unable to delete as this movie is in one or more users' watchlists.",
+      });
+    }
 
     const movie = await Movie.findMovieById(req.params.id);
     
@@ -167,6 +168,7 @@ exports.adminDeleteMovie = async (req, res) => {
     }
 
     await Movie.deleteMovie(req.params.id);
+    console.log("Movie deleted successfully:", movie.title);
     res.redirect("/admin/movies");
     
   } catch (error) {
