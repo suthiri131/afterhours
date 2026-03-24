@@ -5,13 +5,21 @@ exports.showAllMovies = async (req, res) => {
   try {
     const movies = await Movie.findAll();
 
+    let msg = "";
+    if (req.query.msg === "added") msg = "Successfully added to watchlist!";
+    if (req.query.msg === "exists") msg = "This movie is already in your watchlist.";
+    if (req.query.msg === "error") msg = "Something went wrong. try again!";
+
     res.render("movies", {
       movies,
+      user: req.session.user,
+      msg: msg
     });
   } catch (error) {
     console.error(error);
     res.render("movies", {
       movies: [],
+      user: req.session.user,
       msg: "Error loading movies",
     });
   }

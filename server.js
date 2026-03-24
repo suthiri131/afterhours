@@ -12,6 +12,7 @@ const adminRoutes = require("./routes/admin-routes");
 const userRoutes = require("./routes/user-routes");
 const movieRoutes = require("./routes/movie-routes");
 const reviewRoutes = require("./routes/review-routes");
+const watchlistRoutes = require("./routes/watchlist-routes");
 
 const server = express();
 
@@ -36,6 +37,7 @@ server.use("/admin", adminRoutes);
 server.use("/user", userRoutes);
 server.use("/movies", movieRoutes);
 server.use("/reviews", reviewRoutes);
+server.use("/watchlist", watchlistRoutes);
 
 server.get("/", (req, res) => {
   if (req.session.user) {

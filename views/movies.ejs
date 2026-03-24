@@ -95,14 +95,23 @@
       }
 
       .movie-banner {
-        height: 130px;
-        background: linear-gradient(135deg, #14213d, #1f325c);
+        height: 410px;
+        background: #14213d; 
         color: white;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 36px;
         font-weight: bold;
+        overflow: hidden; 
+        position: relative;
+      }
+
+      .movie-banner img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
       }
 
       .movie-content {
@@ -236,7 +245,11 @@
           <% movies.forEach(movie => { %>
             <div class="movie-card">
               <div class="movie-banner">
-                <%= movie.title ? movie.title.charAt(0).toUpperCase() : "M" %>
+                  <% if (movie.movieImage) { %>
+                    <img src="<%= movie.movieImage %>" alt="<%= movie.title %>" style="width: 100%; height: 100%; object-fit: cover;">
+                  <% } else { %>
+                    <%= movie.title ? movie.title.charAt(0).toUpperCase() : "M" %>
+                  <% } %>
               </div>
 
               <div class="movie-content">

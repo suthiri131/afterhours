@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Watchlist</title>
+
+    <style>
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f5f7fb;
+        color: #1f2937;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 24px;
+        background-color: #14213d;
+        color: white;
+      }
+
+      .logo { font-size: 20px; font-weight: bold; }
+
+      .right { display: flex; gap: 16px; }
+
+      .link {
+        color: white;
+        text-decoration: none;
+        font-size: 14px;
+      }
+
+      .link:hover { text-decoration: underline; }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 28px 20px;
+      }
+
+      .title {
+        margin: 0 0 6px;
+        font-size: 28px;
+        color: #14213d;
+      }
+
+      .movies-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 18px;
+      }
+
+      .movie-card {
+        background-color: white;
+        border-radius: 14px;
+        border: 1px solid #e5e7eb;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .movie-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+      }
+
+      .movie-banner {
+        height: 410px; 
+        min-height: 410px; 
+        
+        width: 100%;
+        background-color: #14213d;
+        overflow: hidden;
+        display: block; 
+      }
+
+      .movie-banner img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .movie-content {
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+      }
+
+      .movie-title {
+        font-size: 16px;
+        line-height: 1.4;
+        margin: 0 0 8px;
+        color: #14213d;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 999px;
+        background-color: #eef2ff;
+        font-size: 11px;
+        color: #14213d;
+        margin-bottom: 12px;
+      }
+
+      .btn-delete {
+        width: 100%;
+        border: none;
+        border-radius: 8px;
+        padding: 10px;
+        background-color: #991b1b;
+        color: white;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: auto;
+      }
+
+      .btn-delete:hover {
+        background-color: #7f1d1d;
+      }
+
+      .empty {
+        text-align: center;
+        padding: 50px;
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+      }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>My Watchlist</h1>
+
+        <% if (movies && movies.length > 0) { %>
+            <div class="movies-grid">
+                <% movies.forEach(item => { %>
+                    <% if (item.movieId) { %>
+                        <div class="movie-card">
+                            <div class="movie-banner"> 
+                                <% if (item.movieId.movieImage) { %>
+                                    <img src="<%= item.movieId.movieImage %>" alt="<%= item.movieId.title %>">
+                                <% } else { %>
+                                    <div class="placeholder">No Image</div>
+                                <% } %>
+                            </div>
+
+                            <div class="movie-content">
+                                <h2 class="movie-title"><%= item.movieId.title %></h2>
+                                <div class="movie-info">
+                                    <span class="badge"><%= item.status || 'Plan to Watch' %></span>
+                                </div>
+                                
+                                <form action="/watchlist/delete/<%= item._id %>" method="POST" style="margin-top: auto;">
+                                    <button type="submit" class="btn-delete">Remove</button>
+                                </form>
+                            </div>
+                        </div>
+                    <% } %>
+                <% }) %>
+            </div>
+        <% } else { %>
+            <div style="text-align: center; padding: 50px;">
+                <p>Your watchlist is empty. Go add some movies!</p>
+                <a href="/movies" style="color: #14213d; font-weight: bold;">Back to All Movies</a>
+            </div>
+        <% } %>
+    </div>
+</body>
+</html>
