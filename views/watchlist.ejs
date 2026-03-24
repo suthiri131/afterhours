@@ -179,39 +179,49 @@
                 <% movies.forEach(item => { %>
                     <% if (item.movieId) { %>
                         <div class="movie-card">
-                            <div class="movie-banner"> 
-                                <% if (item.movieId.movieImage) { %>
-                                    <img src="<%= item.movieId.movieImage %>" alt="<%= item.movieId.title %>">
-                                <% } else { %>
-                                    <div class="placeholder">No Image</div>
-                                <% } %>
+                            <div class="movie-banner">
+                              <a href="/movies/<%= item.movieId._id %>" style="display:block; width:100%; height:100%;">
+                                  <% if (item.movieId.movieImage) { %>
+                                      <img src="<%= item.movieId.movieImage %>" alt="<%= item.movieId.title %>">
+                                  <% } else { %>
+                                      <div class="placeholder">No Image</div>
+                                  <% } %>
+                              </a>
                             </div>
 
                             <div class="movie-content">
-                                <h2 class="movie-title"><%= item.movieId.title %></h2>
+                                <h2 class="movie-title">
+                                    <a href="/movies/<%= item.movieId._id %>" style="text-decoration:none; color:inherit;">
+                                        <%= item.movieId.title %>
+                                    </a>
+                                </h2>
                                 <div class="movie-info">
                                     <span class="badge <%= item.status === 'Watched' ? 'status-watched' : 'status-plan' %>">
                                         <%= item.status ? item.status : 'Plan to Watch' %>
                                     </span>
                                 </div>
-                                
+                                <!-- updated by thet -->
+                                <!-- if movie is not watched yet, show Mark as Watched button -->
+                                <!-- if already watched, show Write a Review button instead -->
+                                <!-- Remove button is always available -->
                                 <div class="movie-actions">
-                                    <% if (item.status !== "Watched") { %>
-                                        <form action="/watchlist/watched/<%= item._id %>" method="POST">
-                                            <button type="submit" class="btn btn-watch">
-                                                Mark as Watched
-                                            </button>
-                                        </form>
-                                    <% } else { %>
-                                        <button disabled class="btn btn-disabled">
-                                            Finished Watching
-                                        </button>
-                                    <% } %>
+                                  <% if (item.status !== "Watched") { %>
+                                      <form action="/watchlist/watched/<%= item._id %>" method="POST">
+                                          <input type="hidden" name="returnTo" value="/watchlist">
+                                          <button type="submit" class="btn btn-watch">
+                                              Mark as Watched
+                                          </button>
+                                      </form>
+                                  <% } else { %>
+                                      <a href="/reviews/movie/<%= item.movieId._id %>/new" class="btn" style="text-align:center; text-decoration:none;">
+                                          Write a Review
+                                      </a>
+                                  <% } %>
 
-                                    <form action="/watchlist/delete/<%= item._id %>" method="POST" class="form-delete">
-                                        <button type="submit" class="btn-delete">Remove</button>
-                                    </form>
-                                </div>
+                                  <form action="/watchlist/delete/<%= item._id %>" method="POST" class="form-delete">
+                                      <button type="submit" class="btn-delete">Remove</button>
+                                  </form>
+                              </div>
                             </div>
                         </div>
                     <% } %>

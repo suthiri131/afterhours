@@ -283,10 +283,40 @@
         <div class="notice">
           Please <a href="/user/login">log in</a> to leave a rating or review.
         </div>
-      <% } else if (!myReview) { %>
+
+      <% } else if (myReview) { %>
+        <div class="notice">
+          You have already submitted your review for this movie.
+        </div>
+
+      <% } else if (!watchlistItem) { %>
+        <div class="notice">
+          Add this movie to your watchlist first before leaving a review.
+        </div>
+
+        <div class="btn-row">
+          <form action="/watchlist/add/<%= movie._id %>" method="POST" style="display:inline;">
+            <input type="hidden" name="returnTo" value="/watchlist">
+            <button type="submit" class="btn btn-primary">Add to Watchlist</button>
+          </form>
+
+      <% } else if (watchlistItem && !hasWatched) { %>
+        <div class="notice">
+          Mark this movie as Watched to unlock the review form.
+        </div>
+
+        <div class="btn-row">
+          <form action="/watchlist/watched/<%= watchlistItem._id %>" method="POST" style="display:inline;">
+            <input type="hidden" name="returnTo" value="/movies/<%= movie._id %>">
+            <button type="submit" class="btn btn-primary">Mark as Watched</button>
+          </form>
+        </div>
+
+      <% } else if (watchlistItem && hasWatched) { %>
         <div class="notice">
           You can give a rating only, or a rating with an optional written review.
         </div>
+
         <div class="btn-row">
           <a href="/reviews/movie/<%= movie._id %>/new" class="btn btn-primary">Write a Review</a>
         </div>

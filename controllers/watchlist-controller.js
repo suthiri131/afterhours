@@ -18,19 +18,25 @@ exports.showWatchList = async (req, res) => {
   }
 };
 
+// updated by thet
+// add movie to watchlist
+// if returnTo is sent from another page, redirect there after adding
+// otherwise go back to the movies page with a success/existing message
+
 exports.addToWatchList = async (req, res) => {
   try {
-    const { movieId } = req.params; 
-    const userId = req.session.user.id || req.session.user._id; 
+    const { movieId } = req.params;
+    const userId = req.session.user.id || req.session.user._id;
+    const returnTo = req.body.returnTo;
 
-    const existing = await Watchlist.findOne({ user: userId, movieId: movieId }); 
+    const existing = await Watchlist.findOne({ user: userId, movieId: movieId });
+
     if (!existing) {
       await Watchlist.create({ user: userId, movieId: movieId });
-      return res.redirect("/movies?msg=added");
+      return res.redirect(returnTo || "/movies?msg=added");
     } else {
-      return res.redirect("/movies?msg=exists");
+      return res.redirect(returnTo || "/movies?msg=exists");
     }
-    res.redirect("/movies");
   } catch (error) {
     console.error(error);
     res.status(500).send("Error adding to watchlist.");
@@ -48,13 +54,17 @@ exports.deleteFromWatchlist = async (req, res) => {
   }
 };
 
+// updated by thet
+// Mark movie as watched and return to the previous page (or watchlist by default)
 exports.markAsWatched = async (req, res) => {
   try {
     const { id } = req.params;
 
-    await Watchlist.findByIdAndUpdate(req.params.id, { status: "Watched" });
+    await Watchlist.findByIdAndUpdate(id, { status: "Watched" });
     console.log("status updated to Watched!");
-    res.redirect("/watchlist"); 
+
+    const returnTo = req.body.returnTo;
+    res.redirect(returnTo || "/watchlist");
   } catch (error) {
     console.error(error);
     res.status(500).send("Error updating status.");

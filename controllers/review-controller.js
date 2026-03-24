@@ -1,6 +1,7 @@
 // thet
 const Movie = require("../models/movie-model");
 const Review = require("../models/review-model");
+const Watchlist = require("../models/watchlist-model");
 
 exports.showCreateReviewForm = async (req, res) => {
   try {
@@ -14,6 +15,15 @@ exports.showCreateReviewForm = async (req, res) => {
     const movie = await Movie.findMovieById(movieId);
     if (!movie) {
       return res.status(404).send("Movie not found");
+    }
+
+    const watchlistItem = await Watchlist.findOne({
+      user: user.id,
+      movieId: movieId
+    });
+
+    if (!watchlistItem || watchlistItem.status !== "Watched") {
+      return res.status(403).send("You can only review movies marked as Watched in your watchlist.");
     }
 
     const existingReview = await Review.findByMovieIdAndUserId(movieId, user.id);
@@ -46,6 +56,15 @@ exports.createReview = async (req, res) => {
     const movie = await Movie.findMovieById(movieId);
     if (!movie) {
       return res.status(404).send("Movie not found");
+    }
+
+    const watchlistItem = await Watchlist.findOne({
+      user: user.id,
+      movieId: movieId
+    });
+
+    if (!watchlistItem || watchlistItem.status !== "Watched") {
+      return res.status(403).send("You can only review movies marked as Watched in your watchlist.");
     }
 
     const existingReview = await Review.findByMovieIdAndUserId(movieId, user.id);

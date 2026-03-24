@@ -1,5 +1,6 @@
 const Movie = require("./../models/movie-model");
 const Review = require("../models/review-model");
+const Watchlist = require("../models/watchlist-model");
 
 exports.showAllMovies = async (req, res) => {
   try {
@@ -39,9 +40,19 @@ exports.showMovieDetails = async (req, res) => {
     const reviews = await Review.findByMovieId(movieId);
     const stats = await Review.getMovieReviewStats(movieId);
 
-    let existingReview = null;
+    let myReview = null;
+    let watchlistItem = null;
+    let hasWatched = false;
+
     if (user) {
-      existingReview = await Review.findByMovieIdAndUserId(movieId, user.id);
+      myReview = await Review.findByMovieIdAndUserId(movieId, user.id);
+
+      watchlistItem = await Watchlist.findOne({
+        user: user.id,
+        movieId: movieId
+      });
+
+      hasWatched = !!watchlistItem && watchlistItem.status === "Watched";
     }
 
     res.render("movie-details", {
@@ -50,7 +61,9 @@ exports.showMovieDetails = async (req, res) => {
       averageRating: stats.averageRating,
       reviewCount: stats.reviewCount,
       user,
-      existingReview,
+      myReview,
+      watchlistItem,
+      hasWatched
     });
   } catch (err) {
     console.error(err);

@@ -257,15 +257,23 @@
           <% movies.forEach(movie => { %>
             <div class="movie-card">
               <div class="movie-banner">
+                <a href="/movies/<%= movie._id %>" style="display:block; width:100%; height:100%;">
                   <% if (movie.movieImage) { %>
                     <img src="<%= movie.movieImage %>" alt="<%= movie.title %>" style="width: 100%; height: 100%; object-fit: cover;">
                   <% } else { %>
-                    <%= movie.title ? movie.title.charAt(0).toUpperCase() : "M" %>
+                    <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:white; font-size:48px; font-weight:bold;">
+                      <%= movie.title ? movie.title.charAt(0).toUpperCase() : "M" %>
+                    </div>
                   <% } %>
+                </a>
               </div>
 
               <div class="movie-content">
-                <h2 class="movie-title"><%= movie.title %></h2>
+                <h2 class="movie-title">
+                  <a href="/movies/<%= movie._id %>" style="text-decoration:none; color:inherit;">
+                    <%= movie.title %>
+                  </a>
+                </h2>
 
                 <div class="movie-info">
                   <span class="badge"><%= movie.genre || "Unknown Genre" %></span>
