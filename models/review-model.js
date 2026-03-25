@@ -58,7 +58,7 @@ exports.findById = function (id) {
 
 exports.updateReview = function (id, updatedData) {
   return Review.findByIdAndUpdate(id, updatedData, {
-    new: true,
+    returnDocument: 'after',
     runValidators: true
   });
 };
