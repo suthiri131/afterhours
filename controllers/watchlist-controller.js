@@ -8,9 +8,16 @@ const Review = require("../models/review-model");
 // if no, keep showing Write a Review
 exports.showWatchList = async (req, res) => {
   try {
+    if (!req.session || !req.session.user) {
+      return res.redirect("/login");
+    }
+
     const userId = req.session.user.id;
 
-    const items = await Watchlist.find({ user: userId }).populate("movieId");
+    const items = await Watchlist.find({ 
+          user: userId, 
+          isRemoved: false 
+        }).populate("movieId");
 
     const cleanMovies = items.filter(item => item.movieId !== null);
 
@@ -53,6 +60,10 @@ exports.addToWatchList = async (req, res) => {
     if (!existing) {
       await Watchlist.create({ user: userId, movieId: movieId });
       return res.redirect(returnTo || "/movies?msg=added");
+    } else if (existing.isRemoved) {
+      existing.isRemoved = false;
+      await existing.save();
+      return res.redirect(returnTo || "/movies?msg=added");
     } else {
       return res.redirect(returnTo || "/movies?msg=exists");
     }
@@ -65,7 +76,7 @@ exports.addToWatchList = async (req, res) => {
 exports.deleteFromWatchlist = async (req, res) => {
   try {
     const {id} = req.params;
-    await Watchlist.findByIdAndDelete(id);
+    await Watchlist.findByIdAndUpdate(id, {isRemoved: true});
     res.redirect("/watchlist");
   } catch (error) {
     console.error(error);

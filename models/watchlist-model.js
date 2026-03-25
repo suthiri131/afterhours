@@ -18,6 +18,10 @@ const watchlistSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  isRemoved: {
+    type: Boolean,
+    default: false
+  }
 });
 
 watchlistSchema.index({ user: 1, movieId: 1 }, { unique: true });
