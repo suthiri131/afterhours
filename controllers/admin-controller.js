@@ -11,7 +11,7 @@ exports.adminShowCreateForm = (req, res) => {
 
   res.render("admin-create-movie", {
     user: req.session.user,
-    msg: "",
+    errors: [],
     formData: {},
   });
 
@@ -54,37 +54,35 @@ exports.adminCreateMovie = async (req, res) => {
     }
   };
 
-  const renderForm = (msg) => {
+  const renderForm = (errors) => {
     cleanUpFile();
-    return res.render("admin-create-movie", { user, msg, formData });
+    return res.render("admin-create-movie", { user, errors, formData });
   };
 
-  if (!title) {
-    return renderForm("Title is required.");
-  }
+  const errors = [];
 
-  if (!genre) {
-    return renderForm("Genre is required.");
-  }
+  if (!title) errors.push("Title is required.");
 
-  if (!director) {
-    return renderForm("Director is required.");
-  }
+  if (!genre) errors.push("Genre is required.");
 
-  if (!description) {
-    return renderForm("Description is required.");
-  }
+  if (!director) errors.push("Director is required.");
 
-  if (!req.file) {
-    return renderForm("Movie Image is required.");
-  }
-
-  if (!releaseYear) {
-    return renderForm("Release Year is required.");
-  }
+  if (!releaseYear) errors.push("Release Year is required.");
 
   if (releaseYear && (isNaN(releaseYear) || releaseYear < 1888 || releaseYear > currentYear)) {
-    return renderForm("Release Year must be between 1888 and " + currentYear + ".");
+    errors.push("Release Year must be between 1888 and " + currentYear + ".");
+  }
+
+  if (!description) errors.push("Description is required.");
+
+  if (req.uploadError) {
+    errors.push(req.uploadError);
+  } else if (!req.file) {
+    errors.push("Movie Image is required.");
+  }
+
+  if (errors.length > 0) {
+    return renderForm(errors);
   }
 
   const movieData = {
@@ -120,7 +118,7 @@ exports.adminShowEditForm = async (req, res) => {
     res.render("admin-edit-movie", {
       movie,
       user: req.session.user,
-      msg: "",
+      errors: [],
       formData: null,
     });
 
@@ -153,37 +151,35 @@ exports.adminUpdateMovie = async (req, res) => {
     }
   };
 
-  const renderForm = (msg) => {
+  const renderForm = (errors) => {
      cleanUpFile();
-    return res.render("admin-edit-movie", { movie, user, msg, formData });
+    return res.render("admin-edit-movie", { movie, user, errors, formData });
   };
 
-  if (!title) {
-    return renderForm("Title is required.");
-  }
+  const errors = [];
 
-  if (!genre) {
-    return renderForm("Genre is required.");
-  }
+  if (!title) errors.push("Title is required.");
 
-  if (!director) {
-    return renderForm("Director is required.");
-  }
+  if (!genre) errors.push("Genre is required.");
 
-  if (!description) {
-    return renderForm("Description is required.");
-  }
+  if (!director) errors.push("Director is required.");
 
-  if (!req.file && !movie.movieImage) {
-    return renderForm("Movie Image is required.");
-  }
-
-  if (!releaseYear) {
-    return renderForm("Release Year is required.");
-  }
+  if (!releaseYear) errors.push("Release Year is required.");
 
   if (releaseYear && (isNaN(releaseYear) || releaseYear < 1888 || releaseYear > currentYear)) {
-    return renderForm("Release Year must be between 1888 and " + currentYear + ".");
+    errors.push("Release Year must be between 1888 and " + currentYear + ".");
+  }
+
+  if (!description) errors.push("Description is required.");
+
+  if (req.uploadError) {
+    errors.push(req.uploadError);
+  } else if (!req.file && !movie.movieImage) {
+    errors.push("Movie Image is required.");
+  }
+
+  if (errors.length > 0) {
+    return renderForm(errors);
   }
 
   const movieData = {

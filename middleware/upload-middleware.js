@@ -30,11 +30,31 @@ const upload = multer({
       cb(null, true);
       
     } else {
-      cb(new Error("Only jpeg, jpg, png, webp images are allowed."));
+      cb(new Error("Invalid file format. Please upload a JPEG, JPG, PNG or WEBP image."));
     }
 
   },
 
 });
 
-module.exports = upload;
+const handleUpload = (req, res, next) => {
+
+  upload.single("movieImage")(req, res, (err) => {
+
+    if (err) {
+
+      if (err.code === "LIMIT_FILE_SIZE") {
+        req.uploadError = "File size too large. Maximum allowed size is 5MB. Also ensure your file is JPEG, JPG, PNG or WEBP.";
+      } else {
+        req.uploadError = err.message;
+      }
+
+    }
+
+    next();
+
+  });
+  
+};
+
+module.exports = { handleUpload };

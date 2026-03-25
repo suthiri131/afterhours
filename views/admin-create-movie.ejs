@@ -47,8 +47,14 @@
 
       <h1>Admin Movie Creation Page</h1>
 
-      <% if (msg) { %>
-        <div class="msg"><%= msg %></div>
+      <% if (errors && errors.length > 0) { %>
+        <div class="msg">
+          <ol>
+            <% errors.forEach(error => { %>
+              <li><%= error %></li>
+            <% }) %>
+          </ol>
+        </div>
       <% } %>
 
       <form action="/admin/movies/create" method="POST" enctype="multipart/form-data">
@@ -86,7 +92,9 @@
 
         Movie Image<br>
         <input type="file" name="movieImage" accept="image/*"
-        style="border: 1px solid #ccc; padding: 4px;"><br><br>
+        style="border: 1px solid #ccc; padding: 4px;"><br>
+        <small>Accepted formats: JPEG, JPG, PNG, WEBP (max 5MB)</small><br>
+        <small>If there is an error, please re-attach the image.</small><br><br>
 
         <button type="submit" class="btn">Add Movie</button>
 
