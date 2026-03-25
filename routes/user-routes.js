@@ -21,10 +21,28 @@ router.get(
 );
 router.post("/login", authMiddleware.isNotLoggedIn, userController.loginUser);
 
-router.get("/forgot-password", userController.showForgotPasswordForm);
-router.post("/forgot-password", userController.verifyForgotPassword);
-router.get("/reset-password/:id", userController.showResetPasswordForm);
-router.post("/reset-password/:id", userController.resetPassword);
+router.get(
+  "/verify-otp",
+  authMiddleware.isNotLoggedIn,
+  userController.showVerifyOtpForm,
+);
+
+router.post(
+  "/verify-otp",
+  authMiddleware.isNotLoggedIn,
+  userController.verifyOtp,
+);
+
+router.get(
+  "/resend-otp",
+  authMiddleware.isNotLoggedIn,
+  userController.resendOtp,
+);
+
+// router.get("/forgot-password", userController.showForgotPasswordForm);
+// router.post("/forgot-password", userController.verifyForgotPassword);
+// router.get("/reset-password/:id", userController.showResetPasswordForm);
+// router.post("/reset-password/:id", userController.resetPassword);
 
 // only for logged in users
 router.get(

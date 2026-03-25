@@ -27,6 +27,18 @@ const userSchema = new mongoose.Schema({
     enum: ["user", "admin"],
     default: "user",
   },
+  isVerified: {
+    type: Boolean,
+    default: false,
+  },
+  otp: {
+    code: {
+      type: String,
+    },
+    expiresAt: {
+      type: Date,
+    },
+  },
   createdAt: { type: Date, default: Date.now },
 });
 const User = mongoose.model("User", userSchema, "users");
@@ -41,6 +53,10 @@ exports.findByEmail = function (email) {
 };
 exports.findByUsername = function (username) {
   return User.findOne({ username: username });
+};
+
+exports.updateByEmail = function (email, updatedData) {
+  return User.findOneAndUpdate({ email }, updatedData, { new: true });
 };
 exports.deleteUser = function (id) {
   return User.findByIdAndDelete(id);

@@ -1,5 +1,10 @@
 const User = require("./../models/user-model");
 const bcrypt = require("bcrypt");
+const sendOtpEmail = require("../utils/sendOtpEmail");
+
+function generateOtp() {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
 
 exports.showRegisterForm = (req, res) => {
   res.render("register-user", {
@@ -36,13 +41,6 @@ exports.createUser = async (req, res) => {
     });
   }
 
-  if (email.endsWith("@gmal.com")) {
-    return res.render("register-user", {
-      msg: "Did you mean gmail.com?",
-      formData,
-    });
-  }
-
   if (password.length < 6) {
     return res.render("register-user", {
       msg: "Password must be at least 6 characters",
@@ -68,28 +66,39 @@ exports.createUser = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const otp = generateOtp();
+    const hashedOtp = await bcrypt.hash(otp, 10);
+    const otpExpiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
     await User.addUser({
       fullName,
       username,
       email,
       password: hashedPassword,
+      isVerified: false,
+      otp: {
+        code: hashedOtp,
+        expiresAt: otpExpiresAt,
+      },
     });
 
-    return res.redirect("/user/login");
+    try {
+      await sendOtpEmail(email, otp);
+    } catch (emailError) {
+      console.error("Email sending error:", emailError);
+
+      return res.redirect(
+        `/user/verify-otp?email=${encodeURIComponent(email)}&msg=${encodeURIComponent("Account created, but failed to send OTP email. Please resend OTP.")}`,
+      );
+    }
+
+    return res.redirect(`/user/verify-otp?email=${encodeURIComponent(email)}`);
   } catch (error) {
     console.error(error);
 
     if (error.code === 11000 && error.keyPattern?.email) {
       return res.render("register-user", {
         msg: "Email already exists",
-        formData,
-      });
-    }
-
-    if (error.code === 11000 && error.keyPattern?.username) {
-      return res.render("register-user", {
-        msg: "Username already exists",
         formData,
       });
     }
@@ -106,6 +115,137 @@ exports.createUser = async (req, res) => {
       msg: "Error registering user",
       formData,
     });
+  }
+};
+
+exports.showVerifyOtpForm = (req, res) => {
+  const { email, msg = "" } = req.query;
+
+  return res.render("verify-otp", {
+    email: email || "",
+    msg,
+  });
+};
+
+exports.verifyOtp = async (req, res) => {
+  let { email, otp } = req.body;
+
+  email = email?.trim().toLowerCase();
+  otp = otp?.trim();
+
+  if (!email || !otp) {
+    return res.render("verify-otp", {
+      email,
+      msg: "Please enter the OTP",
+    });
+  }
+
+  try {
+    const user = await User.findByEmail(email);
+
+    if (!user) {
+      return res.render("verify-otp", {
+        email,
+        msg: "User not found",
+      });
+    }
+
+    if (user.isVerified) {
+      req.session.loginMsg = "Your email is already verified. Please log in.";
+      req.session.loginMsgType = "success";
+
+      return res.redirect("/user/login");
+    }
+
+    if (!user.otp || !user.otp.code || !user.otp.expiresAt) {
+      return res.render("verify-otp", {
+        email,
+        msg: "No OTP found. Please resend OTP.",
+      });
+    }
+
+    if (new Date() > new Date(user.otp.expiresAt)) {
+      return res.render("verify-otp", {
+        email,
+        msg: "OTP has expired. Please resend OTP.",
+      });
+    }
+
+    const isOtpValid = await bcrypt.compare(otp, user.otp.code);
+
+    if (!isOtpValid) {
+      return res.render("verify-otp", {
+        email,
+        msg: "Invalid OTP",
+      });
+    }
+
+    await User.updateByEmail(email, {
+      isVerified: true,
+      otp: {
+        code: null,
+        expiresAt: null,
+      },
+    });
+
+    req.session.loginMsg = "Email verified successfully. You can now log in.";
+    req.session.loginMsgType = "success";
+
+    return res.redirect("/user/login");
+  } catch (error) {
+    console.error(error);
+
+    return res.render("verify-otp", {
+      email,
+      msg: "Error verifying OTP",
+    });
+  }
+};
+
+exports.resendOtp = async (req, res) => {
+  let email = req.query.email || req.body.email;
+
+  email = email?.trim().toLowerCase();
+
+  if (!email) {
+    return res.redirect("/user/register");
+  }
+
+  try {
+    const user = await User.findByEmail(email);
+
+    if (!user) {
+      return res.redirect("/user/register");
+    }
+
+    if (user.isVerified) {
+      req.session.loginMsg = "Your email is already verified. Please log in.";
+      req.session.loginMsgType = "success";
+      return res.redirect("/user/login");
+    }
+
+    const otp = generateOtp();
+    const hashedOtp = await bcrypt.hash(otp, 10);
+    const otpExpiresAt = new Date(Date.now() + 5 * 60 * 1000);
+
+    await User.updateByEmail(email, {
+      otp: {
+        code: hashedOtp,
+        expiresAt: otpExpiresAt,
+      },
+    });
+
+    await sendOtpEmail(email, otp);
+
+    return res.redirect(
+      `/user/verify-otp?email=${encodeURIComponent(email)}&msg=${encodeURIComponent("A new OTP has been sent to your email.")}`,
+    );
+  } catch (error) {
+    console.error(error);
+
+    return res.redirect(
+      `/user/verify-otp?email=${encodeURIComponent(email)}&msg=${encodeURIComponent("Failed to resend OTP. Please try again.")}`,
+    );
   }
 };
 
@@ -300,6 +440,12 @@ exports.loginUser = async (req, res) => {
         email: "",
       });
     }
+    if (!user.isVerified) {
+      return res.redirect(
+        `/user/verify-otp?email=${encodeURIComponent(email)}&msg=${encodeURIComponent("Please verify your email first.")}`,
+      );
+    }
+
     req.session.user = {
       id: user._id,
       email: user.email,
