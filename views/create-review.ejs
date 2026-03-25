@@ -15,16 +15,9 @@
     }
 
     .page-container {
-      width: 92%;
-      max-width: 760px;
-      margin: 40px auto;
-    }
-
-    .form-card {
-      background: #ffffff;
-      border-radius: 20px;
-      padding: 28px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      width: 94%;
+      max-width: 1180px;
+      margin: 36px auto;
     }
 
     .back-link {
@@ -35,16 +28,47 @@
       font-weight: bold;
     }
 
-    h1 {
-      margin-top: 0;
-      margin-bottom: 10px;
-      font-size: 1.9rem;
+    .review-layout {
+      display: grid;
+      grid-template-columns: 1.05fr 1.35fr;
+      gap: 24px;
+      align-items: start;
     }
 
-    .subtext {
-      margin-top: 0;
-      color: #6b7280;
-      line-height: 1.5;
+    .panel {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .section-label {
+      margin: 0 0 18px 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .movie-chip {
+      display: inline-block;
+      margin-bottom: 18px;
+      background: #eef2ff;
+      border: 1px solid #dbeafe;
+      border-radius: 999px;
+      padding: 8px 14px;
+      color: #1e3a8a;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .guideline-list {
+      margin: 0;
+      padding-left: 22px;
+      line-height: 1.9;
+      color: #374151;
+    }
+
+    .guideline-list li {
+      margin-bottom: 8px;
     }
 
     .error-box {
@@ -53,11 +77,99 @@
       border: 1px solid #fecaca;
       padding: 12px 14px;
       border-radius: 12px;
-      margin: 18px 0;
+      margin-bottom: 18px;
+    }
+
+    .rating-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    .rating-card {
+      background: #fffdf7;
+      border: 1px solid #f7e7a6;
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .rating-card h4 {
+      margin: 0 0 12px 0;
+      font-size: 1rem;
+    }
+
+    .star-rating {
+      direction: rtl;
+      display: inline-flex;
+      gap: 6px;
+      font-size: 2rem;
+      user-select: none;
+      flex-wrap: wrap;
+    }
+
+    .star-rating input {
+      display: none;
+    }
+
+    .star-rating label {
+      color: #d1d5db;
+      cursor: pointer;
+      transition: color 0.2s ease, transform 0.15s ease;
+    }
+
+    .star-rating label:hover,
+    .star-rating label:hover ~ label {
+      color: #f5b301;
+      transform: scale(1.05);
+    }
+
+    .star-rating input:checked ~ label {
+      color: #f5b301;
+    }
+
+    .overall-box {
+      margin-top: 18px;
+      background: #f8fafc;
+      border: 1px solid #dbe3ea;
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    .overall-box h3 {
+      margin: 0 0 10px 0;
+    }
+
+    .big-rating {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin: 0;
+    }
+
+    .helper {
+      color: #6b7280;
+      font-size: 0.92rem;
+      margin-top: 8px;
+    }
+
+    .form-panel {
+      margin-top: 24px;
+    }
+
+    .form-title {
+      margin: 0 0 6px 0;
+      font-size: 1.9rem;
+    }
+
+    .subtext {
+      margin-top: 0;
+      color: #6b7280;
+      line-height: 1.6;
+      margin-bottom: 22px;
     }
 
     .field {
-      margin-top: 22px;
+      margin-top: 20px;
     }
 
     label.main-label {
@@ -67,29 +179,32 @@
       font-size: 1rem;
     }
 
+    input[type="text"],
     textarea {
       width: 100%;
-      min-height: 160px;
-      resize: vertical;
-      padding: 14px;
       border-radius: 14px;
       border: 1px solid #d1d5db;
       font-size: 15px;
       outline: none;
       transition: 0.2s ease;
       font-family: Arial, sans-serif;
-      line-height: 1.5;
     }
 
+    input[type="text"] {
+      padding: 14px;
+    }
+
+    textarea {
+      min-height: 220px;
+      resize: vertical;
+      padding: 14px;
+      line-height: 1.6;
+    }
+
+    input[type="text"]:focus,
     textarea:focus {
       border-color: #111827;
       box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
-    }
-
-    .helper-text {
-      color: #6b7280;
-      font-size: 0.95rem;
-      margin-top: 8px;
     }
 
     .btn-row {
@@ -126,50 +241,14 @@
       color: #111827;
     }
 
-    .star-rating {
-      direction: rtl;
-      display: inline-flex;
-      gap: 6px;
-      font-size: 2.4rem;
-      user-select: none;
-    }
+    @media (max-width: 900px) {
+      .review-layout {
+        grid-template-columns: 1fr;
+      }
 
-    .star-rating input {
-      display: none;
-    }
-
-    .star-rating label {
-      color: #d1d5db;
-      cursor: pointer;
-      transition: color 0.2s ease, transform 0.15s ease;
-    }
-
-    .star-rating label:hover,
-    .star-rating label:hover ~ label {
-      color: #f5b301;
-      transform: scale(1.05);
-    }
-
-    .star-rating input:checked ~ label {
-      color: #f5b301;
-    }
-
-    .selected-rating {
-      margin-top: 10px;
-      font-weight: bold;
-      color: #7a5200;
-      min-height: 24px;
-    }
-
-    .movie-chip {
-      display: inline-block;
-      margin-top: 8px;
-      background: #f3f4f6;
-      border: 1px solid #e5e7eb;
-      border-radius: 999px;
-      padding: 8px 12px;
-      color: #374151;
-      font-weight: 600;
+      .rating-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -177,79 +256,129 @@
   <div class="page-container">
     <a href="/movies/<%= movie._id %>" class="back-link">← Back to Movie Details</a>
 
-    <div class="form-card">
-      <h1>Write a Review</h1>
-      <p class="subtext">A rating is required. A written review is optional.</p>
+    <% if (error) { %>
+      <div class="error-box"><%= error %></div>
+    <% } %>
 
-      <div class="movie-chip"><%= movie.title %> • <%= movie.genre %></div>
+    <div class="review-layout">
+      <section class="panel">
+        <h2 class="section-label">Step 1: Review Tips</h2>
+        <div class="movie-chip"><%= movie.title %> • <%= movie.genre %></div>
 
-      <% if (error) { %>
-        <div class="error-box"><%= error %></div>
-      <% } %>
+        <ul class="guideline-list">
+          <li>Write a short interesting headline.</li>
+          <li>Rate each category honestly.</li>
+          <li>Keep your review helpful and easy to read.</li>
+          <li>Avoid major spoilers if possible.</li>
+          <li>The overall score is calculated automatically.</li>
+        </ul>
+      </section>
 
-      <form action="/reviews/movie/<%= movie._id %>" method="POST">
-        <div class="field">
-          <label class="main-label">Your Rating</label>
+      <section class="panel">
+        <h2 class="section-label">Step 2: Rate This Movie</h2>
 
-          <div class="star-rating">
-            <input type="radio" id="star5" name="rating" value="5" <%= String(formData.rating) === "5" ? "checked" : "" %> />
-            <label for="star5">★</label>
+        <form id="reviewForm" action="/reviews/movie/<%= movie._id %>" method="POST">
+          <div class="rating-grid">
+            <% const categories = [
+              { key: "storyRating", label: "Story" },
+              { key: "actingRating", label: "Acting/Cast" },
+              { key: "musicRating", label: "Music" },
+              { key: "rewatchRating", label: "Rewatch Value" }
+            ]; %>
 
-            <input type="radio" id="star4" name="rating" value="4" <%= String(formData.rating) === "4" ? "checked" : "" %> />
-            <label for="star4">★</label>
+            <% categories.forEach(function(cat) { %>
+              <div class="rating-card">
+                <h4><%= cat.label %></h4>
+                <div class="star-rating">
+                  <input type="radio" id="<%= cat.key %>5" name="<%= cat.key %>" value="5" <%= String(formData[cat.key]) === "5" ? "checked" : "" %> />
+                  <label for="<%= cat.key %>5">★</label>
 
-            <input type="radio" id="star3" name="rating" value="3" <%= String(formData.rating) === "3" ? "checked" : "" %> />
-            <label for="star3">★</label>
+                  <input type="radio" id="<%= cat.key %>4" name="<%= cat.key %>" value="4" <%= String(formData[cat.key]) === "4" ? "checked" : "" %> />
+                  <label for="<%= cat.key %>4">★</label>
 
-            <input type="radio" id="star2" name="rating" value="2" <%= String(formData.rating) === "2" ? "checked" : "" %> />
-            <label for="star2">★</label>
+                  <input type="radio" id="<%= cat.key %>3" name="<%= cat.key %>" value="3" <%= String(formData[cat.key]) === "3" ? "checked" : "" %> />
+                  <label for="<%= cat.key %>3">★</label>
 
-            <input type="radio" id="star1" name="rating" value="1" <%= String(formData.rating) === "1" ? "checked" : "" %> />
-            <label for="star1">★</label>
+                  <input type="radio" id="<%= cat.key %>2" name="<%= cat.key %>" value="2" <%= String(formData[cat.key]) === "2" ? "checked" : "" %> />
+                  <label for="<%= cat.key %>2">★</label>
+
+                  <input type="radio" id="<%= cat.key %>1" name="<%= cat.key %>" value="1" <%= String(formData[cat.key]) === "1" ? "checked" : "" %> />
+                  <label for="<%= cat.key %>1">★</label>
+                </div>
+              </div>
+            <% }) %>
           </div>
 
-          <div class="selected-rating" id="selectedRatingText"></div>
-        </div>
-
-        <div class="field">
-          <label class="main-label" for="reviewText">Your Review (Optional)</label>
-          <textarea
-            name="reviewText"
-            id="reviewText"
-            placeholder="Share your thoughts here... or leave this blank if you only want to rate."
-          ><%= formData.reviewText || "" %></textarea>
-
-          <div class="helper-text">
-            You can submit with rating only. Written review is optional.
+          <div class="overall-box">
+            <h3>Overall Rating</h3>
+            <p class="big-rating" id="overallValue">0.0 / 5.0</p>
+            <div class="helper">Calculated from the four category ratings above.</div>
           </div>
-        </div>
 
-        <div class="btn-row">
-          <button type="submit" class="btn btn-primary">Submit Review</button>
-          <a href="/movies/<%= movie._id %>" class="btn btn-secondary">Cancel</a>
-        </div>
-      </form>
+          <div class="form-panel">
+            <h1 class="form-title">Step 3: Write Your Review</h1>
+            <p class="subtext">Add a headline and write your thoughts below.</p>
+
+            <div class="field">
+              <label class="main-label" for="headline">Review Headline</label>
+              <input
+                type="text"
+                id="headline"
+                name="headline"
+                value="<%= formData.headline || '' %>"
+                placeholder="Write a short interesting headline"
+                required
+              />
+            </div>
+
+            <div class="field">
+              <label class="main-label" for="reviewText">Your Review (Optional)</label>
+              <textarea
+                name="reviewText"
+                id="reviewText"
+                placeholder="Share your thoughts here..."
+              ><%= formData.reviewText || "" %></textarea>
+            </div>
+
+            <div class="btn-row">
+              <button type="submit" class="btn btn-primary">Submit Review</button>
+              <a href="/movies/<%= movie._id %>" class="btn btn-secondary">Cancel</a>
+            </div>
+          </div>
+        </form>
+      </section>
     </div>
   </div>
 
   <script>
-    const ratingInputs = document.querySelectorAll('input[name="rating"]');
-    const selectedRatingText = document.getElementById("selectedRatingText");
+    const categoryNames = ["storyRating", "actingRating", "musicRating", "rewatchRating"];
+    const overallValue = document.getElementById("overallValue");
 
-    function updateSelectedRatingText() {
-      const checked = document.querySelector('input[name="rating"]:checked');
-      if (checked) {
-        selectedRatingText.textContent = `Selected: ${checked.value} out of 5 stars`;
+    function updateOverall() {
+      let total = 0;
+      let count = 0;
+
+      categoryNames.forEach((name) => {
+        const checked = document.querySelector(`input[name="${name}"]:checked`);
+        if (checked) {
+          total += Number(checked.value);
+          count++;
+        }
+      });
+
+      if (count === 4) {
+        const avg = (total / 4).toFixed(1);
+        overallValue.textContent = `${avg} / 5.0`;
       } else {
-        selectedRatingText.textContent = "No rating selected yet";
+        overallValue.textContent = "0.0 / 5.0";
       }
     }
 
-    ratingInputs.forEach((input) => {
-      input.addEventListener("change", updateSelectedRatingText);
+    document.querySelectorAll('input[type="radio"]').forEach((input) => {
+      input.addEventListener("change", updateOverall);
     });
 
-    updateSelectedRatingText();
+    updateOverall();
   </script>
 </body>
 </html>

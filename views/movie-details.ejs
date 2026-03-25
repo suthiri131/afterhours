@@ -16,7 +16,7 @@
 
     .page-container {
       width: 92%;
-      max-width: 1000px;
+      max-width: 1120px;
       margin: 35px auto;
     }
 
@@ -56,7 +56,7 @@
     }
 
     .stats-box {
-      min-width: 240px;
+      min-width: 250px;
       background: #f9fafb;
       border: 1px solid #e5e7eb;
       border-radius: 16px;
@@ -118,18 +118,18 @@
 
     .section-title {
       margin: 0 0 16px 0;
-      font-size: 1.3rem;
+      font-size: 1.35rem;
     }
 
     .review-list {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 18px;
     }
 
     .review-item {
       border: 1px solid #e5e7eb;
-      border-radius: 14px;
+      border-radius: 16px;
       padding: 18px;
       background: #fcfcfd;
     }
@@ -137,6 +137,13 @@
     .own-review-card {
       border: 2px solid #dbeafe;
       background: #f8fbff;
+    }
+
+    .review-grid {
+      display: grid;
+      grid-template-columns: 1fr 210px;
+      gap: 18px;
+      align-items: start;
     }
 
     .review-top {
@@ -161,19 +168,33 @@
     }
 
     .rating-pill {
-      background: #fff7db;
-      color: #7a5200;
-      border: 1px solid #f7d774;
+      background: #eaf1f8;
+      color: #27415d;
+      border: 1px solid #d4e1ed;
       border-radius: 999px;
       padding: 7px 12px;
       font-weight: bold;
       font-size: 0.95rem;
     }
 
+    .mini-stars {
+      color: #f5b301;
+      letter-spacing: 1px;
+      margin-left: 6px;
+    }
+
+    .review-headline {
+      margin: 10px 0 8px 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1f2937;
+    }
+
     .review-text {
       margin: 10px 0 0 0;
-      line-height: 1.6;
+      line-height: 1.7;
       white-space: pre-wrap;
+      color: #1f2937;
     }
 
     .review-date {
@@ -196,6 +217,59 @@
       margin-top: 14px;
     }
 
+    .score-card {
+      background: #f8fafc;
+      border: 1px solid #dbe3ea;
+      border-radius: 14px;
+      overflow: hidden;
+      min-width: 170px;
+    }
+
+    .score-card-head {
+      background: #eaf1f8;
+      padding: 12px 14px;
+      border-bottom: 1px solid #dbe3ea;
+      font-weight: 700;
+      color: #27415d;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .score-card-score {
+      font-weight: 800;
+      color: #1d4b7a;
+    }
+
+    .score-card-body {
+      padding: 12px 14px;
+    }
+
+    .score-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      padding: 7px 0;
+      border-bottom: 1px solid #edf2f7;
+      font-size: 0.95rem;
+    }
+
+    .score-row:last-child {
+      border-bottom: none;
+    }
+
+    .score-label {
+      color: #374151;
+      font-weight: 600;
+    }
+
+    .score-value {
+      color: #111827;
+      font-weight: 700;
+    }
+
     .empty-state {
       color: #6b7280;
       margin: 0;
@@ -209,10 +283,14 @@
       border: 1px solid #e5e7eb;
     }
 
-    .mini-stars {
-      color: #f5b301;
-      letter-spacing: 1px;
-      margin-left: 6px;
+    @media (max-width: 820px) {
+      .review-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .score-card {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -247,10 +325,10 @@
         </div>
 
         <div class="stats-box">
-          <p class="stats-number"><%= averageRating %> / 5</p>
+          <p class="stats-number"><%= averageRating.toFixed(1) %> / 5.0</p>
           <p class="stats-sub">
             <%= reviewCount === 0 ? "No reviews yet" : `Average rating from ${reviewCount} review${reviewCount === 1 ? "" : "s"}` %>
-          </p>  
+          </p>
           <div class="stars-display">
             <% const roundedAvg = Math.round(Number(averageRating)); %>
             <% for (let i = 1; i <= 5; i++) { %>
@@ -262,68 +340,46 @@
     </section>
 
     <%
-      let myReview = null;
+      let myReviewFromList = null;
       let otherReviews = [];
 
-      if (user) {
-        reviews.forEach(function(review) {
-          if (String(review.userId._id) === String(user.id)) {
-            myReview = review;
-          } else {
-            otherReviews.push(review);
-          }
-        });
-      } else {
-        otherReviews = reviews;
-      }
+      reviews.forEach(review => {
+        if (!review.userId) {
+          otherReviews.push(review);
+        } else if (user && review.userId._id.toString() === user.id.toString()) {
+          myReviewFromList = review;
+        } else {
+          otherReviews.push(review);
+        }
+      });
     %>
 
     <section class="card">
       <% if (!user) { %>
         <div class="notice">
-          Please <a href="/user/login">log in</a> to leave a rating or review.
+          Please <a href="/user/login">log in</a> to view your review options.
         </div>
       <% } %>
 
       <% if (user && myReview) { %>
         <div class="notice">
-          You have already submitted your review for this movie.
+          You have already reviewed this movie. You can edit or delete your review below.
         </div>
       <% } %>
 
-      <% if (user && !myReview && !watchlistItem) { %>
+      <% if (user && !myReview && hasWatched) { %>
         <div class="notice">
-          Add this movie to your watchlist first before leaving a review.
+          You have watched this movie before. You can write your review now.
         </div>
 
         <div class="btn-row">
-          <form action="/watchlist/add/<%= movie._id %>" method="POST" style="display:inline;">
-            <input type="hidden" name="returnTo" value="/movies/<%= movie._id %>">
-            <button type="submit" class="btn btn-primary">Add to Watchlist</button>
-          </form>
+          <a href="/reviews/movie/<%= movie._id %>/new" class="btn btn-primary">Write Review</a>
         </div>
       <% } %>
 
-      <% if (user && !myReview && watchlistItem && !hasWatched) { %>
+      <% if (user && !myReview && !hasWatched) { %>
         <div class="notice">
-          Mark this movie as Watched to unlock the review form.
-        </div>
-
-        <div class="btn-row">
-          <form action="/watchlist/watched/<%= watchlistItem._id %>" method="POST" style="display:inline;">
-            <input type="hidden" name="returnTo" value="/movies/<%= movie._id %>">
-            <button type="submit" class="btn btn-primary">Mark as Watched</button>
-          </form>
-        </div>
-      <% } %>
-
-      <% if (user && !myReview && watchlistItem && hasWatched) { %>
-        <div class="notice">
-          You can give a rating only, or a rating with an optional written review.
-        </div>
-
-        <div class="btn-row">
-          <a href="/reviews/movie/<%= movie._id %>/new" class="btn btn-primary">Write a Review</a>
+          To write a review, first add this movie to your watchlist and mark it as Watched from the watchlist page.
         </div>
       <% } %>
     </section>
@@ -337,59 +393,90 @@
 
         <div class="review-list" style="margin-bottom: 24px;">
           <article class="review-item own-review-card">
-            <div class="review-top">
-              <div class="reviewer-name">
-                <%= myReview.userId.fullName || myReview.userId.username %>
-                <span class="you-badge">(You)</span>
+            <div class="review-grid">
+              <div>
+                <div class="review-top">
+                  <div class="reviewer-name">
+                    <%= myReview.userId.fullName || myReview.userId.username %>
+                    <span class="you-badge">(You)</span>
+                  </div>
+
+                  <div class="rating-pill">
+                    <span><%= myReview.rating.toFixed(1) %>/5.0</span>
+                    <span class="mini-stars">
+                      <% for (let i = 1; i <= 5; i++) { %>
+                        <%= i <= Math.round(myReview.rating) ? "★" : "☆" %>
+                      <% } %>
+                    </span>
+                  </div>
+                </div>
+
+                <h3 class="review-headline"><%= myReview.headline ? myReview.headline : "Untitled Review" %></h3>
+
+                <% if (myReview.reviewText && myReview.reviewText.trim() !== "") { %>
+                  <p class="review-text"><%= myReview.reviewText %></p>
+                <% } else { %>
+                  <p class="review-text" style="color:#6b7280; font-style:italic;">No written review provided.</p>
+                <% } %>
+
+                <small class="review-date">
+                  Posted on
+                  <%= new Date(myReview.createdAt).toLocaleDateString("en-GB") %>
+                  at
+                  <%= new Date(myReview.createdAt).toLocaleTimeString("en-GB", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                    hour12: false
+                  }) %>
+                </small>
+
+                <% if (myReview.isEdited) { %>
+                  <p class="review-date review-edited">
+                    Edited on
+                    <%= new Date(myReview.updatedAt).toLocaleDateString("en-GB") %>
+                    at
+                    <%= new Date(myReview.updatedAt).toLocaleTimeString("en-GB", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                      hour12: false
+                    }) %>
+                  </p>
+                <% } %>
+
+                <div class="review-owner-actions">
+                  <a href="/reviews/<%= myReview._id %>/edit" class="btn btn-primary">Edit</a>
+                  <form action="/reviews/<%= myReview._id %>/delete" method="POST" style="margin:0;">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                  </form>
+                </div>
               </div>
 
-              <div class="rating-pill">
-                <span><%= myReview.rating %>/5</span>
-                <span class="mini-stars">
-                  <% for (let i = 1; i <= 5; i++) { %>
-                    <%= i <= myReview.rating ? "★" : "☆" %>
-                  <% } %>
-                </span>
-              </div>
-            </div>
-
-            <% if (myReview.reviewText && myReview.reviewText.trim() !== "") { %>
-              <p class="review-text"><%= myReview.reviewText %></p>
-            <% } else { %>
-              <p class="review-text" style="color:#6b7280; font-style:italic;">No written review provided.</p>
-            <% } %>
-
-            <small class="review-date">
-              Posted on
-              <%= new Date(myReview.createdAt).toLocaleDateString("en-GB") %>
-              at
-              <%= new Date(myReview.createdAt).toLocaleTimeString("en-GB", {
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-                hour12: false
-              }) %>
-            </small>
-
-            <% if (myReview.isEdited) { %>
-              <p class="review-date review-edited">
-                Edited on
-                <%= new Date(myReview.updatedAt).toLocaleDateString("en-GB") %>
-                at
-                <%= new Date(myReview.updatedAt).toLocaleTimeString("en-GB", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  second: "2-digit",
-                  hour12: false
-                }) %>
-              </p>
-            <% } %>
-
-            <div class="review-owner-actions">
-              <a href="/reviews/<%= myReview._id %>/edit" class="btn btn-primary">Edit</a>
-              <form action="/reviews/<%= myReview._id %>/delete" method="POST" style="margin:0;">
-                <button type="submit" class="btn btn-danger">Delete</button>
-              </form>
+              <aside class="score-card">
+                <div class="score-card-head">
+                  <span>Overall</span>
+                  <span class="score-card-score"><%= myReview.rating != null ? myReview.rating.toFixed(1) + " / 5.0" : "-" %></span>
+                </div>
+                <div class="score-card-body">
+                  <div class="score-row">
+                    <span class="score-label">Story</span>
+                    <span class="score-value"><%= myReview.storyRating != null ? myReview.storyRating.toFixed(1) : "-" %></span>
+                  </div>
+                  <div class="score-row">
+                    <span class="score-label">Acting/Cast</span>
+                    <span class="score-value"><%= myReview.actingRating != null ? myReview.actingRating.toFixed(1) : "-" %></span>
+                  </div>
+                  <div class="score-row">
+                    <span class="score-label">Music</span>
+                    <span class="score-value"><%= myReview.musicRating != null ? myReview.musicRating.toFixed(1) : "-" %></span>
+                  </div>
+                  <div class="score-row">
+                    <span class="score-label">Rewatch Value</span>
+                    <span class="score-value"><%= myReview.rewatchRating != null ? myReview.rewatchRating.toFixed(1) : "-" %></span>
+                  </div>
+                </div>
+              </aside>
             </div>
           </article>
         </div>
@@ -405,49 +492,82 @@
           <div class="review-list">
             <% otherReviews.forEach(function(review) { %>
               <article class="review-item">
-                <div class="review-top">
-                  <div class="reviewer-name"><%= review.userId.fullName || review.userId.username %></div>
-                  <div class="rating-pill">
-                    <span><%= review.rating %>/5</span>
-                    <span class="mini-stars">
-                      <% for (let i = 1; i <= 5; i++) { %>
-                        <%= i <= review.rating ? "★" : "☆" %>
-                      <% } %>
-                    </span>
+                <div class="review-grid">
+                  <div>
+                    <div class="review-top">
+                      <div class="reviewer-name">
+                        <%= review.userId ? (review.userId.fullName || review.userId.username) : "Deleted User" %>
+                      </div>
+                      <div class="rating-pill">
+                        <span><%= review.rating.toFixed(1) %>/5.0</span>
+                        <span class="mini-stars">
+                          <% for (let i = 1; i <= 5; i++) { %>
+                            <%= i <= Math.round(review.rating) ? "★" : "☆" %>
+                          <% } %>
+                        </span>
+                      </div>
+                    </div>
+
+                    <h3 class="review-headline"><%= review.headline ? review.headline : "Untitled Review" %></h3>
+
+                    <% if (review.reviewText && review.reviewText.trim() !== "") { %>
+                      <p class="review-text"><%= review.reviewText %></p>
+                    <% } else { %>
+                      <p class="review-text" style="color:#6b7280; font-style:italic;">No written review provided.</p>
+                    <% } %>
+
+                    <small class="review-date">
+                      Posted on
+                      <%= new Date(review.createdAt).toLocaleDateString("en-GB") %>
+                      at
+                      <%= new Date(review.createdAt).toLocaleTimeString("en-GB", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                        hour12: false
+                      }) %>
+                    </small>
+
+                    <% if (review.isEdited) { %>
+                      <p class="review-date review-edited">
+                        Edited on
+                        <%= new Date(review.updatedAt).toLocaleDateString("en-GB") %>
+                        at
+                        <%= new Date(review.updatedAt).toLocaleTimeString("en-GB", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                          hour12: false
+                        }) %>
+                      </p>
+                    <% } %>
                   </div>
+
+                  <aside class="score-card">
+                    <div class="score-card-head">
+                      <span>Overall</span>
+                      <span class="score-card-score"><%= review.rating != null ? review.rating.toFixed(1) + " / 5.0" : "-" %></span>
+                    </div>
+                    <div class="score-card-body">
+                      <div class="score-row">
+                        <span class="score-label">Story</span>
+                        <span class="score-value"><%= review.storyRating != null ? review.storyRating.toFixed(1) : "-" %></span>
+                      </div>
+                      <div class="score-row">
+                        <span class="score-label">Acting/Cast</span>
+                        <span class="score-value"><%= review.actingRating != null ? review.actingRating.toFixed(1) : "-" %></span>
+                      </div>
+                      <div class="score-row">
+                        <span class="score-label">Music</span>
+                        <span class="score-value"><%= review.musicRating != null ? review.musicRating.toFixed(1) : "-" %></span>
+                      </div>
+                      <div class="score-row">
+                        <span class="score-label">Rewatch Value</span>
+                        <span class="score-value"><%= review.rewatchRating != null ? review.rewatchRating.toFixed(1) : "-" %></span>
+                      </div>
+                    </div>
+                  </aside>
                 </div>
-
-                <% if (review.reviewText && review.reviewText.trim() !== "") { %>
-                  <p class="review-text"><%= review.reviewText %></p>
-                <% } else { %>
-                  <p class="review-text" style="color:#6b7280; font-style:italic;">No written review provided.</p>
-                <% } %>
-
-                <small class="review-date">
-                  Posted on
-                  <%= new Date(review.createdAt).toLocaleDateString("en-GB") %>
-                  at
-                  <%= new Date(review.createdAt).toLocaleTimeString("en-GB", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                    hour12: false
-                  }) %>
-                </small>
-
-                <% if (review.isEdited) { %>
-                  <p class="review-date review-edited">
-                    Edited on
-                    <%= new Date(review.updatedAt).toLocaleDateString("en-GB") %>
-                    at
-                    <%= new Date(review.updatedAt).toLocaleTimeString("en-GB", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      second: "2-digit",
-                      hour12: false
-                    }) %>
-                  </p>
-                <% } %>
               </article>
             <% }) %>
           </div>
@@ -462,49 +582,82 @@
           <div class="review-list">
             <% reviews.forEach(function(review) { %>
               <article class="review-item">
-                <div class="review-top">
-                  <div class="reviewer-name"><%= review.userId.fullName || review.userId.username %></div>
-                  <div class="rating-pill">
-                    <span><%= review.rating %>/5</span>
-                    <span class="mini-stars">
-                      <% for (let i = 1; i <= 5; i++) { %>
-                        <%= i <= review.rating ? "★" : "☆" %>
-                      <% } %>
-                    </span>
+                <div class="review-grid">
+                  <div>
+                    <div class="review-top">
+                      <div class="reviewer-name">
+                        <%= review.userId ? (review.userId.fullName || review.userId.username) : "Deleted User" %>
+                      </div>
+                      <div class="rating-pill">
+                        <span><%= review.rating.toFixed(1) %>/5.0</span>
+                        <span class="mini-stars">
+                          <% for (let i = 1; i <= 5; i++) { %>
+                            <%= i <= Math.round(review.rating) ? "★" : "☆" %>
+                          <% } %>
+                        </span>
+                      </div>
+                    </div>
+
+                    <h3 class="review-headline"><%= review.headline ? review.headline : "Untitled Review" %></h3>
+
+                    <% if (review.reviewText && review.reviewText.trim() !== "") { %>
+                      <p class="review-text"><%= review.reviewText %></p>
+                    <% } else { %>
+                      <p class="review-text" style="color:#6b7280; font-style:italic;">No written review provided.</p>
+                    <% } %>
+
+                    <small class="review-date">
+                      Posted on
+                      <%= new Date(review.createdAt).toLocaleDateString("en-GB") %>
+                      at
+                      <%= new Date(review.createdAt).toLocaleTimeString("en-GB", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                        hour12: false
+                      }) %>
+                    </small>
+
+                    <% if (review.isEdited) { %>
+                      <p class="review-date review-edited">
+                        Edited on
+                        <%= new Date(review.updatedAt).toLocaleDateString("en-GB") %>
+                        at
+                        <%= new Date(review.updatedAt).toLocaleTimeString("en-GB", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                          hour12: false
+                        }) %>
+                      </p>
+                    <% } %>
                   </div>
+
+                  <aside class="score-card">
+                    <div class="score-card-head">
+                      <span>Overall</span>
+                      <span class="score-card-score"><%= review.rating != null ? review.rating.toFixed(1) + " / 5.0" : "-" %></span>
+                    </div>
+                    <div class="score-card-body">
+                      <div class="score-row">
+                        <span class="score-label">Story</span>
+                        <span class="score-value"><%= review.storyRating != null ? review.storyRating.toFixed(1) : "-" %></span>
+                      </div>
+                      <div class="score-row">
+                        <span class="score-label">Acting/Cast</span>
+                        <span class="score-value"><%= review.actingRating != null ? review.actingRating.toFixed(1) : "-" %></span>
+                      </div>
+                      <div class="score-row">
+                        <span class="score-label">Music</span>
+                        <span class="score-value"><%= review.musicRating != null ? review.musicRating.toFixed(1) : "-" %></span>
+                      </div>
+                      <div class="score-row">
+                        <span class="score-label">Rewatch Value</span>
+                        <span class="score-value"><%= review.rewatchRating != null ? review.rewatchRating.toFixed(1) : "-" %></span>
+                      </div>
+                    </div>
+                  </aside>
                 </div>
-
-                <% if (review.reviewText && review.reviewText.trim() !== "") { %>
-                  <p class="review-text"><%= review.reviewText %></p>
-                <% } else { %>
-                  <p class="review-text" style="color:#6b7280; font-style:italic;">No written review provided.</p>
-                <% } %>
-
-                <small class="review-date">
-                  Posted on
-                  <%= new Date(review.createdAt).toLocaleDateString("en-GB") %>
-                  at
-                  <%= new Date(review.createdAt).toLocaleTimeString("en-GB", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                    hour12: false
-                  }) %>
-                </small>
-
-                <% if (review.isEdited) { %>
-                  <p class="review-date review-edited">
-                    Edited on
-                    <%= new Date(review.updatedAt).toLocaleDateString("en-GB") %>
-                    at
-                    <%= new Date(review.updatedAt).toLocaleTimeString("en-GB", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      second: "2-digit",
-                      hour12: false
-                    }) %>
-                  </p>
-                <% } %>
               </article>
             <% }) %>
           </div>

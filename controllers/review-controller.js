@@ -47,7 +47,14 @@ exports.createReview = async (req, res) => {
   try {
     const movieId = req.params.movieId;
     const user = req.session.user;
-    const { rating, reviewText } = req.body;
+    const {
+      headline,
+      storyRating,
+      actingRating,
+      musicRating,
+      rewatchRating,
+      reviewText
+    } = req.body;
 
     if (!user) {
       return res.redirect("/user/login");
@@ -72,20 +79,50 @@ exports.createReview = async (req, res) => {
       return res.status(400).send("You have already reviewed this movie.");
     }
 
-    const numericRating = Number(rating);
-    if (!numericRating || numericRating < 1 || numericRating > 5) {
+    const numericStoryRating = Number(storyRating);
+    const numericActingRating = Number(actingRating);
+    const numericMusicRating = Number(musicRating);
+    const numericRewatchRating = Number(rewatchRating);
+
+    const validRatings =
+      numericStoryRating >= 1 && numericStoryRating <= 5 &&
+      numericActingRating >= 1 && numericActingRating <= 5 &&
+      numericMusicRating >= 1 && numericMusicRating <= 5 &&
+      numericRewatchRating >= 1 && numericRewatchRating <= 5;
+
+    if (!headline || !headline.trim() || !validRatings) {
       return res.render("create-review", {
         movie,
         user,
-        error: "Please select a rating from 1 to 5.",
-        formData: { rating, reviewText }
+        error: "Please enter a headline and select all 4 category ratings from 1 to 5.",
+        formData: {
+          headline,
+          storyRating,
+          actingRating,
+          musicRating,
+          rewatchRating,
+          reviewText
+        }
       });
     }
+
+    const overallRating =
+      (
+        numericStoryRating +
+        numericActingRating +
+        numericMusicRating +
+        numericRewatchRating
+      ) / 4;
 
     await Review.createReview({
       movieId,
       userId: user.id,
-      rating: numericRating,
+      headline: headline.trim(),
+      storyRating: numericStoryRating,
+      actingRating: numericActingRating,
+      musicRating: numericMusicRating,
+      rewatchRating: numericRewatchRating,
+      rating: Number(overallRating.toFixed(1)),
       reviewText: reviewText ? reviewText.trim() : ""
     });
 
@@ -125,9 +162,13 @@ exports.showEditReviewForm = async (req, res) => {
       user,
       error: null,
       formData: {
-        rating: review.rating,
+        headline: review.headline || "",
+        storyRating: review.storyRating,
+        actingRating: review.actingRating,
+        musicRating: review.musicRating,
+        rewatchRating: review.rewatchRating,
         reviewText: review.reviewText || ""
-      },
+      }
     });
   } catch (err) {
     console.error(err);
@@ -139,7 +180,14 @@ exports.updateReview = async (req, res) => {
   try {
     const reviewId = req.params.reviewId;
     const user = req.session.user;
-    const { rating, reviewText } = req.body;
+    const {
+      headline,
+      storyRating,
+      actingRating,
+      musicRating,
+      rewatchRating,
+      reviewText
+    } = req.body;
 
     if (!user) {
       return res.redirect("/user/login");
@@ -154,33 +202,72 @@ exports.updateReview = async (req, res) => {
       return res.status(403).send("You can only edit your own review.");
     }
 
-    const numericRating = Number(rating);
-    if (!numericRating || numericRating < 1 || numericRating > 5) {
+    const numericStoryRating = Number(storyRating);
+    const numericActingRating = Number(actingRating);
+    const numericMusicRating = Number(musicRating);
+    const numericRewatchRating = Number(rewatchRating);
+
+    const validRatings =
+      numericStoryRating >= 1 && numericStoryRating <= 5 &&
+      numericActingRating >= 1 && numericActingRating <= 5 &&
+      numericMusicRating >= 1 && numericMusicRating <= 5 &&
+      numericRewatchRating >= 1 && numericRewatchRating <= 5;
+
+    if (!headline || !headline.trim() || !validRatings) {
       return res.render("edit-review", {
         review,
         movie: review.movieId,
         user,
-        error: "Please select a rating from 1 to 5.",
+        error: "Please enter a headline and select all 4 category ratings from 1 to 5.",
         formData: {
-          rating,
+          headline,
+          storyRating,
+          actingRating,
+          musicRating,
+          rewatchRating,
           reviewText
         }
       });
     }
 
+    const overallRating =
+      (
+        numericStoryRating +
+        numericActingRating +
+        numericMusicRating +
+        numericRewatchRating
+      ) / 4;
+
+    const trimmedHeadline = headline.trim();
     const trimmedReviewText = reviewText ? reviewText.trim() : "";
 
-    const ratingChanged = review.rating !== numericRating;
+    const headlineChanged = (review.headline || "") !== trimmedHeadline;
+    const storyChanged = review.storyRating !== numericStoryRating;
+    const actingChanged = review.actingRating !== numericActingRating;
+    const musicChanged = review.musicRating !== numericMusicRating;
+    const rewatchChanged = review.rewatchRating !== numericRewatchRating;
     const textChanged = (review.reviewText || "") !== trimmedReviewText;
 
-    if (!ratingChanged && !textChanged) {
-    return res.redirect(`/movies/${review.movieId._id}`);
+    if (
+      !headlineChanged &&
+      !storyChanged &&
+      !actingChanged &&
+      !musicChanged &&
+      !rewatchChanged &&
+      !textChanged
+    ) {
+      return res.redirect(`/movies/${review.movieId._id}`);
     }
 
     await Review.updateReview(reviewId, {
-    rating: numericRating,
-    reviewText: trimmedReviewText,
-    isEdited: true
+      headline: trimmedHeadline,
+      storyRating: numericStoryRating,
+      actingRating: numericActingRating,
+      musicRating: numericMusicRating,
+      rewatchRating: numericRewatchRating,
+      rating: Number(overallRating.toFixed(1)),
+      reviewText: trimmedReviewText,
+      isEdited: true
     });
 
     res.redirect(`/movies/${review.movieId._id}`);

@@ -13,21 +13,58 @@ const reviewSchema = new mongoose.Schema(
       ref: "User",
       required: [true, "User does not exist"]
     },
+
+    headline: {
+      type: String,
+      required: [true, "Headline is required"],
+      trim: true
+    },
+
+    storyRating: {
+      type: Number,
+      required: [true, "Story rating is required"],
+      min: [1, "Story rating must be at least 1"],
+      max: [5, "Story rating must be at most 5"]
+    },
+
+    actingRating: {
+      type: Number,
+      required: [true, "Acting/Cast rating is required"],
+      min: [1, "Acting/Cast rating must be at least 1"],
+      max: [5, "Acting/Cast rating must be at most 5"]
+    },
+
+    musicRating: {
+      type: Number,
+      required: [true, "Music rating is required"],
+      min: [1, "Music rating must be at least 1"],
+      max: [5, "Music rating must be at most 5"]
+    },
+
+    rewatchRating: {
+      type: Number,
+      required: [true, "Rewatch value rating is required"],
+      min: [1, "Rewatch value rating must be at least 1"],
+      max: [5, "Rewatch value rating must be at most 5"]
+    },
+
     rating: {
       type: Number,
-      required: [true, "Rating is required"],
-      min: [1, "Rating must be at least 1"],
-      max: [5, "Rating must be at most 5"]
+      required: [true, "Overall rating is required"],
+      min: [1, "Overall rating must be at least 1"],
+      max: [5, "Overall rating must be at most 5"]
     },
+
     reviewText: {
       type: String,
       trim: true,
       default: ""
     },
+
     isEdited: {
       type: Boolean,
       default: false
-    },
+    }
   },
   { timestamps: true }
 );
@@ -72,15 +109,15 @@ exports.getMovieReviewStats = async function (movieId) {
     {
       $match: {
         movieId: new mongoose.Types.ObjectId(movieId)
-      },
+      }
     },
     {
       $group: {
         _id: "$movieId",
         averageRating: { $avg: "$rating" },
         reviewCount: { $sum: 1 }
-      },
-    },
+      }
+    }
   ]);
 
   if (result.length === 0) {
@@ -96,7 +133,6 @@ exports.getMovieReviewStats = async function (movieId) {
   };
 };
 
-// what code does: delete all ratings and reviews that belong to one movie
 exports.deleteReviewsByMovieId = function (movieId) {
   return Review.deleteMany({ movieId });
 };
