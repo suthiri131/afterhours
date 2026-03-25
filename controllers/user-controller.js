@@ -59,10 +59,55 @@ exports.createUser = async (req, res) => {
     const existingUser = await User.findByEmail(email);
 
     if (existingUser) {
-      return res.render("register-user", {
-        msg: "Email already exists",
-        formData,
+      if (existingUser.isVerified) {
+        return res.render("register-user", {
+          msg: "Email already exists",
+          formData,
+        });
+      }
+
+      const hasValidOtp =
+        existingUser.otp &&
+        existingUser.otp.code &&
+        existingUser.otp.expiresAt &&
+        new Date(existingUser.otp.expiresAt) > new Date();
+
+      if (hasValidOtp) {
+        return res.redirect(
+          `/user/verify-otp?email=${encodeURIComponent(email)}&msg=${encodeURIComponent(
+            "You already registered but have not verified your email. Please check your email for the OTP.",
+          )}`,
+        );
+      }
+
+      const otp = generateOtp();
+      const hashedOtp = await bcrypt.hash(otp, 10);
+      const otpExpiresAt = new Date(Date.now() + 5 * 60 * 1000);
+
+      await User.updateByEmail(email, {
+        otp: {
+          code: hashedOtp,
+          expiresAt: otpExpiresAt,
+        },
       });
+
+      try {
+        await sendOtpEmail(email, otp);
+      } catch (emailError) {
+        console.error("Email sending error:", emailError);
+
+        return res.redirect(
+          `/user/verify-otp?email=${encodeURIComponent(email)}&msg=${encodeURIComponent(
+            "You already registered but have not verified your email. Failed to send a new OTP. Please use resend OTP.",
+          )}`,
+        );
+      }
+
+      return res.redirect(
+        `/user/verify-otp?email=${encodeURIComponent(email)}&msg=${encodeURIComponent(
+          "You already registered but have not verified your email. A new OTP has been sent.",
+        )}`,
+      );
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -88,7 +133,9 @@ exports.createUser = async (req, res) => {
       console.error("Email sending error:", emailError);
 
       return res.redirect(
-        `/user/verify-otp?email=${encodeURIComponent(email)}&msg=${encodeURIComponent("Account created, but failed to send OTP email. Please resend OTP.")}`,
+        `/user/verify-otp?email=${encodeURIComponent(email)}&msg=${encodeURIComponent(
+          "Account created, but failed to send OTP email. Please resend OTP.",
+        )}`,
       );
     }
 
@@ -238,13 +285,17 @@ exports.resendOtp = async (req, res) => {
     await sendOtpEmail(email, otp);
 
     return res.redirect(
-      `/user/verify-otp?email=${encodeURIComponent(email)}&msg=${encodeURIComponent("A new OTP has been sent to your email.")}`,
+      `/user/verify-otp?email=${encodeURIComponent(email)}&msg=${encodeURIComponent(
+        "A new OTP has been sent to your email.",
+      )}`,
     );
   } catch (error) {
     console.error(error);
 
     return res.redirect(
-      `/user/verify-otp?email=${encodeURIComponent(email)}&msg=${encodeURIComponent("Failed to resend OTP. Please try again.")}`,
+      `/user/verify-otp?email=${encodeURIComponent(email)}&msg=${encodeURIComponent(
+        "Failed to resend OTP. Please try again.",
+      )}`,
     );
   }
 };
@@ -416,7 +467,7 @@ exports.loginUser = async (req, res) => {
     return res.render("loginUser", {
       msg: "Please enter your password",
       type: "error",
-      email: email,
+      email,
     });
   }
 
@@ -440,9 +491,26 @@ exports.loginUser = async (req, res) => {
         email: "",
       });
     }
+
     if (!user.isVerified) {
+      const hasValidOtp =
+        user.otp &&
+        user.otp.code &&
+        user.otp.expiresAt &&
+        new Date(user.otp.expiresAt) > new Date();
+
+      if (hasValidOtp) {
+        return res.redirect(
+          `/user/verify-otp?email=${encodeURIComponent(email)}&msg=${encodeURIComponent(
+            "Please verify your email first. Enter the OTP sent to your email.",
+          )}`,
+        );
+      }
+
       return res.redirect(
-        `/user/verify-otp?email=${encodeURIComponent(email)}&msg=${encodeURIComponent("Please verify your email first.")}`,
+        `/user/verify-otp?email=${encodeURIComponent(email)}&msg=${encodeURIComponent(
+          "Please verify your email first. Your OTP has expired or is missing. Please resend OTP.",
+        )}`,
       );
     }
 
@@ -457,6 +525,7 @@ exports.loginUser = async (req, res) => {
     return res.redirect("/movies");
   } catch (error) {
     console.error(error);
+
     return res.render("loginUser", {
       msg: "Error logging in",
       type: "error",
