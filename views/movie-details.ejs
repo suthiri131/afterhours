@@ -276,11 +276,13 @@
     }
 
     .notice {
-      padding: 14px 16px;
+      padding: 16px 18px;
       border-radius: 12px;
-      background: #f9fafb;
-      color: #374151;
-      border: 1px solid #e5e7eb;
+      background: #fff7ed;         
+      color: #9a3412;             
+      border: 1px solid #fdba74;
+      font-weight: 600;
+      font-size: 0.95rem;
     }
 
     @media (max-width: 820px) {
@@ -379,7 +381,14 @@
 
       <% if (user && !myReview && !hasWatched) { %>
         <div class="notice">
-          To write a review, first add this movie to your watchlist and mark it as Watched from the watchlist page.
+          Not watched yet. Add this movie to your watchlist first in order to review it.
+        </div>
+
+        <div class="btn-row">
+          <form action="/watchlist/add/<%= movie._id %>" method="POST" style="margin:0;">
+            <input type="hidden" name="returnTo" value="/watchlist">
+            <button type="submit" class="btn btn-primary">Add to Watchlist</button>
+          </form>
         </div>
       <% } %>
     </section>
@@ -397,7 +406,7 @@
               <div>
                 <div class="review-top">
                   <div class="reviewer-name">
-                    <%= myReview.userId.fullName || myReview.userId.username %>
+                    <%= myReview.userId ? (myReview.userId.fullName || myReview.userId.username) : (user.fullname || user.username) %>
                     <span class="you-badge">(You)</span>
                   </div>
 
