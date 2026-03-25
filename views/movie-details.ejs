@@ -406,7 +406,7 @@
               <div>
                 <div class="review-top">
                   <div class="reviewer-name">
-                    <%= myReview.userId ? (myReview.userId.fullName || myReview.userId.username) : (user.fullname || user.username) %>
+                    <%= (user && (user.username || user.fullname || user.fullName)) || (myReview.userId && (myReview.userId.username || myReview.userId.fullname || myReview.userId.fullName)) || "You" %>
                     <span class="you-badge">(You)</span>
                   </div>
 
@@ -505,7 +505,7 @@
                   <div>
                     <div class="review-top">
                       <div class="reviewer-name">
-                        <%= review.userId ? (review.userId.fullName || review.userId.username) : "Deleted User" %>
+                        <%= review.userId ? (review.userId.fullname || review.userId.username) : "Deleted User" %>
                       </div>
                       <div class="rating-pill">
                         <span><%= review.rating.toFixed(1) %>/5.0</span>
@@ -595,7 +595,7 @@
                   <div>
                     <div class="review-top">
                       <div class="reviewer-name">
-                        <%= review.userId ? (review.userId.fullName || review.userId.username) : "Deleted User" %>
+                        <%= review.userId ? (review.userId.fullname || review.userId.username) : "Deleted User" %>
                       </div>
                       <div class="rating-pill">
                         <span><%= review.rating.toFixed(1) %>/5.0</span>
