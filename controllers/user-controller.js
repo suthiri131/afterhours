@@ -431,7 +431,7 @@ exports.showLoginForm = (req, res) => {
     delete req.session.loginMsgType;
   }
 
-  res.render("loginUser", {
+  res.render("auth/login", {
     msg,
     type,
     email,
@@ -446,7 +446,7 @@ exports.loginUser = async (req, res) => {
   password = password?.trim();
 
   if (!email) {
-    return res.render("loginUser", {
+    return res.render("auth/login", {
       msg: "Please enter your email",
       type: "error",
       email: "",
@@ -456,7 +456,7 @@ exports.loginUser = async (req, res) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   if (!emailRegex.test(email)) {
-    return res.render("loginUser", {
+    return res.render("auth/login", {
       msg: "Please enter a valid email address",
       type: "error",
       email: "",
@@ -464,7 +464,7 @@ exports.loginUser = async (req, res) => {
   }
 
   if (!password) {
-    return res.render("loginUser", {
+    return res.render("auth/login", {
       msg: "Please enter your password",
       type: "error",
       email,
@@ -475,7 +475,7 @@ exports.loginUser = async (req, res) => {
     const user = await User.findByEmail(email);
 
     if (!user) {
-      return res.render("loginUser", {
+      return res.render("auth/login", {
         msg: "Invalid email or password",
         type: "error",
         email: "",
@@ -485,7 +485,7 @@ exports.loginUser = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      return res.render("loginUser", {
+      return res.render("auth/login", {
         msg: "Invalid email or password",
         type: "error",
         email: "",
@@ -526,7 +526,7 @@ exports.loginUser = async (req, res) => {
   } catch (error) {
     console.error(error);
 
-    return res.render("loginUser", {
+    return res.render("auth/login", {
       msg: "Error logging in",
       type: "error",
       email: "",
