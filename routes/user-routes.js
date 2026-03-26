@@ -39,11 +39,6 @@ router.get(
   userController.resendOtp,
 );
 
-// router.get("/forgot-password", userController.showForgotPasswordForm);
-// router.post("/forgot-password", userController.verifyForgotPassword);
-// router.get("/reset-password/:id", userController.showResetPasswordForm);
-// router.post("/reset-password/:id", userController.resetPassword);
-
 // only for logged in users
 router.get(
   "/profile",

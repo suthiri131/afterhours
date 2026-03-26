@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Super Admin Manage Users</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        color: #0f172a;
+        margin: 0;
+      }
+
+      .container {
+        max-width: 1000px;
+        margin: 40px auto;
+        padding: 0 20px;
+      }
+
+      .msg {
+        color: #b91c1c;
+        margin-bottom: 12px;
+      }
+
+      .btn {
+        background-color: #14213d;
+        color: #ffffff;
+        border: none;
+        cursor: pointer;
+        padding: 8px 16px;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .btn:hover {
+        background-color: #1d4ed8;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      th,
+      td {
+        border: 1px solid #d1d5db;
+        padding: 10px;
+        text-align: left;
+        vertical-align: middle;
+      }
+
+      th {
+        background-color: #f3f4f6;
+      }
+
+      select {
+        padding: 6px 8px;
+      }
+
+      .inline-form {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .note {
+        color: #6b7280;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <%- include("../navbar") %>
+
+    <div class="container">
+      <h1>Super Admin Manage Users</h1>
+      <p class="note">Manage user roles and permissions here.</p>
+
+      <% if (typeof errors !== "undefined" && errors.length > 0) { %>
+        <div class="msg">
+          <ol>
+            <% errors.forEach(error => { %>
+              <li><%= error %></li>
+            <% }) %>
+          </ol>
+        </div>
+      <% } %>
+
+      <% if (users && users.length > 0) { %>
+        <table>
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Current Role</th>
+              <th>Change Role</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% users.forEach(u => { %>
+              <tr>
+                <td><%= u.username || "-" %></td>
+                <td><%= u.email || "-" %></td>
+                <td><%= u.role || "user" %></td>
+                <td>
+                  <% if (user && u._id && String(u._id) === String(user._id || user.id)) { %>
+                    <span class="note">You cannot change your own role</span>
+                  <% } else if (u._id) { %>
+                    <form
+                      action="/superAdmin/users/<%= u._id %>/role"
+                      method="POST"
+                      class="inline-form"
+                    >
+                      <select name="role">
+                        <option value="user" <%= u.role === "user" ? "selected" : "" %>>
+                          User
+                        </option>
+                        <option value="admin" <%= u.role === "admin" ? "selected" : "" %>>
+                          Admin
+                        </option>
+                        <option value="superAdmin" <%= u.role === "superAdmin" ? "selected" : "" %>>
+                          Super Admin
+                        </option>
+                      </select>
+
+                      <button type="submit" class="btn">Update</button>
+                    </form>
+                  <% } else { %>
+                    <span class="note">User ID missing</span>
+                  <% } %>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <p>No users found.</p>
+      <% } %>
+    </div>
+  </body>
+</html>

@@ -12,9 +12,27 @@ exports.isAdmin = (req, res, next) => {
     console.log("User not logged in");
     return res.redirect("/user/login");
   }
-  if (req.session.user.role !== "admin") {
+
+  if (
+    req.session.user.role !== "admin" &&
+    req.session.user.role !== "superAdmin"
+  ) {
     console.log("Access denied: not admin");
     return res.status(403).send("Access denied. Admins only.");
+  }
+
+  next();
+};
+
+exports.isSuperAdmin = (req, res, next) => {
+  if (!req.session.user) {
+    console.log("User not logged in");
+    return res.redirect("/user/login");
+  }
+
+  if (req.session.user.role !== "superAdmin") {
+    console.log("Access denied: not superAdmin");
+    return res.status(403).send("Access denied. Super admins only.");
   }
 
   next();

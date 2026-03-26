@@ -306,19 +306,19 @@ exports.showProfilePage = async (req, res) => {
     const user = await User.findById(userId);
 
     if (!user) {
-      return res.render("profile", {
+      return res.render("user/profile", {
         user: null,
         msg: "No user found.",
       });
     }
 
-    res.render("profile", {
+    res.render("user/profile", {
       user,
       msg: "",
     });
   } catch (error) {
     console.error(error);
-    res.render("profile", {
+    res.render("user/profile", {
       user: null,
       msg: "Error loading profile.",
     });
@@ -545,157 +545,6 @@ exports.logoutUser = (req, res) => {
     res.clearCookie("connect.sid");
     return res.redirect("/user/login");
   });
-};
-
-exports.showForgotPasswordForm = (req, res) => {
-  res.render("forgotPassword", {
-    msg: "",
-    email: "",
-    username: "",
-  });
-};
-
-exports.verifyForgotPassword = async (req, res) => {
-  let { email, username } = req.body;
-
-  email = email?.trim().toLowerCase();
-  username = username?.trim();
-
-  if (!email || !username) {
-    return res.render("forgotPassword", {
-      msg: "Please enter both email and username",
-      email: email || "",
-      username: username || "",
-    });
-  }
-
-  try {
-    const user = await User.findByEmail(email);
-
-    if (!user) {
-      return res.render("forgotPassword", {
-        msg: "Account not found",
-        email,
-        username,
-      });
-    }
-
-    if (user.username !== username) {
-      return res.render("forgotPassword", {
-        msg: "Email and username do not match",
-        email,
-        username,
-      });
-    }
-
-    return res.render("resetPassword", {
-      msg: "",
-      userId: user._id,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.render("forgotPassword", {
-      msg: "Error verifying account",
-      email,
-      username,
-    });
-  }
-};
-
-exports.showResetPasswordForm = async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-
-    if (!user) {
-      return res.render("forgotPassword", {
-        msg: "Invalid reset request",
-        email: "",
-        username: "",
-      });
-    }
-
-    return res.render("resetPassword", {
-      msg: "",
-      type: "",
-      userId: req.params.id,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.render("forgotPassword", {
-      msg: "Invalid reset request",
-      email: "",
-      username: "",
-    });
-  }
-};
-
-exports.resetPassword = async (req, res) => {
-  const userId = req.params.id;
-  let newPassword = req.body.newPassword;
-  let confirmPassword = req.body.confirmPassword;
-
-  newPassword = newPassword?.trim();
-  confirmPassword = confirmPassword?.trim();
-
-  if (!newPassword || !confirmPassword) {
-    return res.render("resetPassword", {
-      msg: "Please fill in both password fields",
-      type: "error",
-      userId,
-    });
-  }
-
-  if (newPassword.length < 6) {
-    return res.render("resetPassword", {
-      msg: "New password must be at least 6 characters long",
-      type: "error",
-      userId,
-    });
-  }
-
-  if (confirmPassword.length < 6) {
-    return res.render("resetPassword", {
-      msg: "Confirm password must be at least 6 characters long",
-      type: "error",
-      userId,
-    });
-  }
-
-  if (newPassword !== confirmPassword) {
-    return res.render("resetPassword", {
-      msg: "New password and confirm password do not match",
-      type: "error",
-      userId,
-    });
-  }
-
-  try {
-    const user = await User.findById(userId);
-
-    if (!user) {
-      return res.render("resetPassword", {
-        msg: "User not found",
-        type: "error",
-        userId,
-      });
-    }
-
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-    await User.updatePassword(userId, hashedPassword);
-
-    req.session.loginMsg =
-      "Password reset successful. Please log in with your new password.";
-    req.session.loginMsgType = "success";
-
-    return res.redirect("/user/login");
-  } catch (error) {
-    console.error(error);
-    return res.render("resetPassword", {
-      msg: "Error resetting password",
-      type: "error",
-      userId,
-    });
-  }
 };
 
 exports.showDeleteUserPage = (req, res) => {

@@ -108,7 +108,7 @@
     <div class="logo">AfterHours</div>
 
     <div class="right">
-      <% if (user && user.role === "admin") { %>
+      <% if (user && user.role === "admin" || "superAdmin") { %>
         <a class="link" href="/admin/movies">Manage Movies</a>
         <a class="link" href="/admin/genres">Genres</a>
       <% } %>

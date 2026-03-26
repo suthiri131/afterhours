@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ["user", "admin"],
+    enum: ["user", "admin", "superAdmin"],
     default: "user",
   },
   isVerified: {
@@ -70,12 +70,15 @@ exports.updatePassword = function (id, hashedPassword) {
   );
 };
 
-/*
-// thet
-exports.updateUser = function (id, updatedData) {
-  return User.findByIdAndUpdate(id, updatedData, {
-    new: true,
-    runValidators: true,
-  });
+// super admin
+exports.findAllUsers = function () {
+  return User.find().sort({ createdAt: -1 });
 };
-*/
+
+exports.updateUserRole = function (id, role) {
+  return User.findByIdAndUpdate(
+    id,
+    { role },
+    { returnDocument: "after", runValidators: true },
+  );
+};

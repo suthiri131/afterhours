@@ -4,7 +4,6 @@ const mongoose = require("mongoose");
 const fs = require("fs");
 const session = require("express-session");
 
-
 dotenv.config({ path: "./config.env" });
 const authMiddleware = require("./middleware/auth-middleware");
 
@@ -14,6 +13,8 @@ const movieRoutes = require("./routes/movie-routes");
 const reviewRoutes = require("./routes/review-routes");
 const watchlistRoutes = require("./routes/watchlist-routes");
 const genreRoutes = require("./routes/genre-routes");
+const superAdminRoutes = require("./routes/superAdmin-routes");
+
 const server = express();
 
 server.use(express.urlencoded({ extended: true }));
@@ -39,6 +40,7 @@ server.use("/movies", movieRoutes);
 server.use("/reviews", reviewRoutes);
 server.use("/watchlist", watchlistRoutes);
 server.use("/admin/genres", genreRoutes);
+server.use("/superAdmin", superAdminRoutes);
 
 server.get("/", (req, res) => {
   if (req.session.user) {

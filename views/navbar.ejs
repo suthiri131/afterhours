@@ -1,0 +1,41 @@
+<div style="
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:16px 24px;
+  background-color:#14213d;
+  color:white;
+">
+
+  <div style="font-weight:bold; font-size:18px;">
+    AfterHours
+  </div>
+
+  <div style="display:flex; gap:16px; align-items:center;">
+
+    <a href="/movies" style="color:white; text-decoration:none;">Movies</a>
+
+    <% if (user) { %>
+
+      <a href="/watchlist" style="color:white; text-decoration:none;">Watchlist</a>
+      <a href="/user/profile" style="color:white; text-decoration:none;">Profile</a>
+
+      <% if (user.role === "admin" || user.role === "superAdmin") { %>
+        <a href="/admin/movies" style="color:white; text-decoration:none;">Manage Movies</a>
+      <% } %>
+
+      <% if (user.role === "superAdmin") { %>
+        <a href="/superAdmin/users" style="color:white; text-decoration:none;">Manage Users</a>
+      <% } %>
+
+      <a href="/user/logout" style="color:white; text-decoration:none;">Logout</a>
+
+    <% } else { %>
+
+      <a href="/user/login" style="color:white; text-decoration:none;">Login</a>
+      <a href="/user/register" style="color:white; text-decoration:none;">Register</a>
+
+    <% } %>
+
+  </div>
+</div>
