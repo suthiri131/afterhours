@@ -1,0 +1,32 @@
+<%# thet %>
+<%# reusable form section (headline, review text, submit/cancel buttons) %>
+<div class="form-panel">
+  <h1 class="form-title"><%= formTitle %></h1>
+  <p class="subtext"><%= subtext %></p>
+
+  <div class="field">
+    <label class="main-label" for="headline">Review Headline</label>
+    <input
+      type="text"
+      id="headline"
+      name="headline"
+      value="<%= formData.headline || '' %>"
+      placeholder="Write a short interesting headline"
+      required
+    />
+  </div>
+
+  <div class="field">
+    <label class="main-label" for="reviewText">Your Review (Optional)</label>
+    <textarea
+      name="reviewText"
+      id="reviewText"
+      placeholder="<%= reviewPlaceholder %>"
+    ><%= formData.reviewText || "" %></textarea>
+  </div>
+
+  <div class="btn-row">
+    <button type="submit" class="btn btn-primary"><%= submitLabel %></button>
+    <a href="/movies/<%= movie._id %>" class="btn btn-secondary">Cancel</a>
+  </div>
+</div>

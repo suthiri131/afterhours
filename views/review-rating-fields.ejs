@@ -1,0 +1,38 @@
+<%# thet %>
+<%# reusable rating section (star ratings + auto-calculated overall score) %>
+<div class="rating-grid">
+  <% const categories = [
+    { key: "storyRating", label: "Story" },
+    { key: "actingRating", label: "Acting/Cast" },
+    { key: "musicRating", label: "Music" },
+    { key: "rewatchRating", label: "Rewatch Value" }
+  ]; %>
+
+  <% categories.forEach(function(cat) { %>
+    <div class="rating-card">
+      <h4><%= cat.label %></h4>
+      <div class="star-rating">
+        <input type="radio" id="<%= cat.key %>5" name="<%= cat.key %>" value="5" <%= String(formData[cat.key]) === "5" ? "checked" : "" %> />
+        <label for="<%= cat.key %>5">★</label>
+
+        <input type="radio" id="<%= cat.key %>4" name="<%= cat.key %>" value="4" <%= String(formData[cat.key]) === "4" ? "checked" : "" %> />
+        <label for="<%= cat.key %>4">★</label>
+
+        <input type="radio" id="<%= cat.key %>3" name="<%= cat.key %>" value="3" <%= String(formData[cat.key]) === "3" ? "checked" : "" %> />
+        <label for="<%= cat.key %>3">★</label>
+
+        <input type="radio" id="<%= cat.key %>2" name="<%= cat.key %>" value="2" <%= String(formData[cat.key]) === "2" ? "checked" : "" %> />
+        <label for="<%= cat.key %>2">★</label>
+
+        <input type="radio" id="<%= cat.key %>1" name="<%= cat.key %>" value="1" <%= String(formData[cat.key]) === "1" ? "checked" : "" %> />
+        <label for="<%= cat.key %>1">★</label>
+      </div>
+    </div>
+  <% }) %>
+</div>
+
+<div class="overall-box">
+  <h3>Overall Rating</h3>
+  <p class="big-rating" id="overallValue">0.0 / 5.0</p>
+  <div class="helper">Calculated from the four category ratings above.</div>
+</div>
