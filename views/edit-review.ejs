@@ -48,18 +48,6 @@
       font-weight: 700;
     }
 
-    .movie-chip {
-      display: inline-block;
-      margin-bottom: 18px;
-      background: #eef2ff;
-      border: 1px solid #dbeafe;
-      border-radius: 999px;
-      padding: 8px 14px;
-      color: #1e3a8a;
-      font-weight: 600;
-      font-size: 0.95rem;
-    }
-
     .guideline-list {
       margin: 0;
       padding-left: 22px;
@@ -251,8 +239,10 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="/css/review-movie-poster.css" />
 </head>
 <body>
+  <%- include("navbar") %>
   <div class="page-container">
     <a href="/movies/<%= movie._id %>" class="back-link">← Back to Movie Details</a>
 
@@ -263,8 +253,12 @@
     <div class="review-layout">
       <section class="panel">
         <h2 class="section-label">Step 1: Edit Tips</h2>
-        <div class="movie-chip"><%= movie.title %> • <%= movie.genre.name %></div>
+        <%- include("review-movie-poster", {
+          movie: movie,
+          showAverageBox: false
+        }) %>
 
+        <hr>
         <ul class="guideline-list">
           <li>Update your headline if needed.</li>
           <li>You can change one or all category ratings.</li>

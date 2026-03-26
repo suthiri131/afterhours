@@ -147,7 +147,11 @@ exports.showEditReviewForm = async (req, res) => {
       return res.redirect("/user/login");
     }
 
-    const review = await Review.findById(reviewId);
+    const review = await Review.findById(reviewId).populate({
+      path: "movieId",
+      populate: { path: "genre" }
+    });
+
     if (!review) {
       return res.status(404).send("Review not found");
     }
@@ -193,7 +197,11 @@ exports.updateReview = async (req, res) => {
       return res.redirect("/user/login");
     }
 
-    const review = await Review.findById(reviewId);
+    const review = await Review.findById(reviewId).populate({
+      path: "movieId",
+      populate: { path: "genre" }
+    });
+
     if (!review) {
       return res.status(404).send("Review not found");
     }

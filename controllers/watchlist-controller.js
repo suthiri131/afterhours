@@ -53,23 +53,31 @@ exports.addToWatchList = async (req, res) => {
   try {
     const { movieId } = req.params;
     const userId = req.session.user.id || req.session.user._id;
-    const returnTo = req.body.returnTo;
+    const returnTo = req.body.returnTo || "/movies";
+
+    const [basePath, hash] = returnTo.split("#");
+
+    const buildRedirectUrl = (msg) => {
+      return `${basePath}?msg=${msg}${hash ? `#${hash}` : ""}`;
+    };
 
     const existing = await Watchlist.findOne({ user: userId, movieId: movieId });
 
     if (!existing) {
       await Watchlist.create({ user: userId, movieId: movieId });
-      return res.redirect(returnTo || "/movies?msg=added");
+      return res.redirect(buildRedirectUrl("added"));
     } else if (existing.isRemoved) {
       existing.isRemoved = false;
       await existing.save();
-      return res.redirect(returnTo || "/movies?msg=added");
+      return res.redirect(buildRedirectUrl("added"));
     } else {
-      return res.redirect(returnTo || "/movies?msg=exists");
+      return res.redirect(buildRedirectUrl("exists"));
     }
   } catch (error) {
     console.error(error);
-    res.status(500).send("Error adding to watchlist.");
+    const returnTo = req.body.returnTo || "/movies";
+    const [basePath, hash] = returnTo.split("#");
+    return res.redirect(`${basePath}?msg=error${hash ? `#${hash}` : ""}`);
   }
 };
 

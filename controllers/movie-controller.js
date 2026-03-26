@@ -54,6 +54,23 @@ exports.showMovieDetails = async (req, res) => {
     const reviews = await Review.findByMovieId(movieId);
     const stats = await Review.getMovieReviewStats(movieId);
 
+    let activeWatchlistMovieIds = [];
+    if (user) {
+      const activeWatchlistItems = await Watchlist.find({
+        user: user.id,
+        isRemoved: false
+      }).select("movieId");
+
+      activeWatchlistMovieIds = activeWatchlistItems.map(item => item.movieId.toString());
+    }
+
+    const suggestedMovies = await Movie.find({
+      _id: { $ne: movieId },
+      genre: movie.genre._id
+    })
+    .populate("genre")
+    .limit(4);
+
     let myReview = null;
     let watchlistItem = null;
     let hasWatched = false;
@@ -82,6 +99,10 @@ exports.showMovieDetails = async (req, res) => {
       hasWatched = !!watchedRecord;
     }
 
+    let suggestedMsg = "";
+    if (req.query.msg === "added") suggestedMsg = "Successfully added to watchlist!";
+    if (req.query.msg === "error") suggestedMsg = "Something went wrong. try again!";
+
     res.render("movie-details", {
       movie,
       reviews,
@@ -91,7 +112,10 @@ exports.showMovieDetails = async (req, res) => {
       myReview,
       watchlistItem,
       hasWatched,
-      isInWatchlist: !!watchlistItem
+      isInWatchlist: !!watchlistItem,
+      suggestedMovies,
+      suggestedMsg,
+      activeWatchlistMovieIds
     });
   } catch (err) {
     console.error(err);
