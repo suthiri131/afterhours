@@ -16,11 +16,7 @@
     <a href="/movies" style="color:white; text-decoration:none;">Movies</a>
 
     <% if (user) { %>
-
-      <a href="/watchlist" style="color:white; text-decoration:none;">Watchlist</a>
-      <a href="/user/profile" style="color:white; text-decoration:none;">Profile</a>
-
-      <% if (user.role === "admin" || user.role === "superAdmin") { %>
+        <% if (user.role === "admin" || user.role === "superAdmin") { %>
         <a href="/admin/movies" style="color:white; text-decoration:none;">Manage Movies</a>
       <% } %>
 
@@ -28,6 +24,8 @@
         <a href="/superAdmin/users" style="color:white; text-decoration:none;">Manage Users</a>
       <% } %>
 
+      <a href="/watchlist" style="color:white; text-decoration:none;">Watchlist</a>
+      <a href="/user/profile" style="color:white; text-decoration:none;">Profile</a>
       <a href="/user/logout" style="color:white; text-decoration:none;">Logout</a>
 
     <% } else { %>
