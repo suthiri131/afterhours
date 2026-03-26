@@ -19,7 +19,9 @@
         <div class="movie-summary-info">
           <p class="movie-summary-meta">
             <strong>Genre:</strong>
-            <%= movie.genre && movie.genre.name ? movie.genre.name : "No genre" %>
+            <%= movie.genre && movie.genre.length
+                ? movie.genre.map(g => g.name).join(", ")
+                : "No genre" %>
           </p>
 
           <% if (movie.director && movie.director.trim() !== "") { %>

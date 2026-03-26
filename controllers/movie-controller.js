@@ -64,12 +64,32 @@ exports.showMovieDetails = async (req, res) => {
       activeWatchlistMovieIds = activeWatchlistItems.map(item => item.movieId.toString());
     }
 
-    const suggestedMovies = await Movie.find({
+    const genreIds = Array.isArray(movie.genre) ? movie.genre.map(g => g._id.toString()) : [];
+
+    let suggestedMovies = await Movie.find({
       _id: { $ne: movieId },
-      genre: movie.genre._id
-    })
-    .populate("genre")
-    .limit(4);
+      genre: { $in: genreIds }
+    }).populate("genre");
+
+    suggestedMovies = suggestedMovies
+      .map(suggestedMovie => {
+        const suggestedGenreIds = Array.isArray(suggestedMovie.genre)
+          ? suggestedMovie.genre.map(g => g._id.toString())
+          : [];
+
+        const overlapCount = suggestedGenreIds.filter(id => genreIds.includes(id)).length;
+
+        return {
+          ...suggestedMovie.toObject(),
+          overlapCount
+        };
+      })
+      .sort((a, b) => {
+        if (b.overlapCount !== a.overlapCount) {
+          return b.overlapCount - a.overlapCount;
+        }
+        return a.title.localeCompare(b.title);
+      });
 
     let myReview = null;
     let watchlistItem = null;
