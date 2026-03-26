@@ -361,7 +361,8 @@
                   <% } else { %>
                     <!-- for movie w more than 1 genre -->
                     <span class="badge"><%= movie.genre[0].name %>...</span>
-                <% } else { %>
+                    <% } %>
+                  <% } else { %>
                   <span class="badge">Unknown Genre</span>
                 <% } %>
 
