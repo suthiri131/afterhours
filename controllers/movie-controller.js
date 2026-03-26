@@ -8,23 +8,25 @@ exports.showAllMovies = async (req, res) => {
     const genres = await Genre.findAll();
     const selectedGenre = req.query.genre || "";
 
-    let filter = {}; //create filter to search genre
+    const filter = {};
     if (selectedGenre) {
-      filter.genre = selectedGenre; //filter by genre_id, this is correct if genre is stored as ObjectId in movie
-    }    
-    const movies = await Movie.find(filter).populate("genre"); //use filter;
+      filter.genre = selectedGenre;
+    }
+
+    const movies = await Movie.find(filter).populate("genre");
 
     let msg = "";
     if (req.query.msg === "added") msg = "Successfully added to watchlist!";
-    if (req.query.msg === "exists") msg = "This movie is already in your watchlist.";
-    if (req.query.msg === "error") msg = "Something went wrong. try again!";
+    if (req.query.msg === "exists") {
+      msg = "This movie is already in your watchlist.";
+    }
+    if (req.query.msg === "error") msg = "Something went wrong. Try again!";
 
     res.render("movies", {
       movies,
       genres,
       selectedGenre,
-      user: req.session.user,
-      msg: msg
+      msg,
     });
   } catch (error) {
     console.error(error);
@@ -32,7 +34,6 @@ exports.showAllMovies = async (req, res) => {
       movies: [],
       genres: [],
       selectedGenre: "",
-      user: req.session.user,
       msg: "Error loading movies",
     });
   }
@@ -58,30 +59,36 @@ exports.showMovieDetails = async (req, res) => {
     if (user) {
       const activeWatchlistItems = await Watchlist.find({
         user: user.id,
-        isRemoved: false
+        isRemoved: false,
       }).select("movieId");
 
-      activeWatchlistMovieIds = activeWatchlistItems.map(item => item.movieId.toString());
+      activeWatchlistMovieIds = activeWatchlistItems.map((item) =>
+        item.movieId.toString(),
+      );
     }
 
-    const genreIds = Array.isArray(movie.genre) ? movie.genre.map(g => g._id.toString()) : [];
+    const genreIds = Array.isArray(movie.genre)
+      ? movie.genre.map((g) => g._id.toString())
+      : [];
 
     let suggestedMovies = await Movie.find({
       _id: { $ne: movieId },
-      genre: { $in: genreIds }
+      genre: { $in: genreIds },
     }).populate("genre");
 
     suggestedMovies = suggestedMovies
-      .map(suggestedMovie => {
+      .map((suggestedMovie) => {
         const suggestedGenreIds = Array.isArray(suggestedMovie.genre)
-          ? suggestedMovie.genre.map(g => g._id.toString())
+          ? suggestedMovie.genre.map((g) => g._id.toString())
           : [];
 
-        const overlapCount = suggestedGenreIds.filter(id => genreIds.includes(id)).length;
+        const overlapCount = suggestedGenreIds.filter((id) =>
+          genreIds.includes(id),
+        ).length;
 
         return {
           ...suggestedMovie.toObject(),
-          overlapCount
+          overlapCount,
         };
       })
       .sort((a, b) => {
@@ -104,7 +111,7 @@ exports.showMovieDetails = async (req, res) => {
       watchlistItem = await Watchlist.findOne({
         user: user.id,
         movieId: movieId,
-        isRemoved: false
+        isRemoved: false,
       });
 
       // updated by thet
@@ -113,15 +120,17 @@ exports.showMovieDetails = async (req, res) => {
       const watchedRecord = await Watchlist.findOne({
         user: user.id,
         movieId: movieId,
-        status: "Watched"
+        status: "Watched",
       });
 
       hasWatched = !!watchedRecord;
     }
 
     let suggestedMsg = "";
-    if (req.query.msg === "added") suggestedMsg = "Successfully added to watchlist!";
-    if (req.query.msg === "error") suggestedMsg = "Something went wrong. try again!";
+    if (req.query.msg === "added")
+      suggestedMsg = "Successfully added to watchlist!";
+    if (req.query.msg === "error")
+      suggestedMsg = "Something went wrong. try again!";
 
     res.render("movie-details", {
       movie,
@@ -135,7 +144,7 @@ exports.showMovieDetails = async (req, res) => {
       isInWatchlist: !!watchlistItem,
       suggestedMovies,
       suggestedMsg,
-      activeWatchlistMovieIds
+      activeWatchlistMovieIds,
     });
   } catch (err) {
     console.error(err);
