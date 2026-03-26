@@ -379,17 +379,24 @@
         </div>
       <% } %>
 
-      <% if (user && !myReview && !hasWatched) { %>
+      <% if (user && !myReview && !isInWatchlist) { %>
         <div class="notice">
           Not watched yet. Add this movie to your watchlist first in order to review it.
         </div>
 
         <div class="btn-row">
           <form action="/watchlist/add/<%= movie._id %>" method="POST" style="margin:0;">
-            <input type="hidden" name="returnTo" value="/watchlist">
+            <input type="hidden" name="returnTo" value="/movies/<%= movie._id %>">
             <button type="submit" class="btn btn-primary">Add to Watchlist</button>
           </form>
         </div>
+
+      <% } else if (user && !myReview && isInWatchlist && !hasWatched) { %>
+
+        <div class="notice">
+          Added to watchlist. Go to Watchlist to mark as watched and review.
+        </div>
+
       <% } %>
     </section>
 

@@ -90,7 +90,8 @@ exports.showMovieDetails = async (req, res) => {
       user,
       myReview,
       watchlistItem,
-      hasWatched
+      hasWatched,
+      isInWatchlist: !!watchlistItem
     });
   } catch (err) {
     console.error(err);
