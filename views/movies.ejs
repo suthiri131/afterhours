@@ -247,6 +247,22 @@
           <%= msg %>
         </div>
       <% } %>
+      <!-- Genre filer -->
+      <h3>Genre Filter: </h3>
+      <form method="GET" action="/movies" style="margin-bottom: 20px;">
+        <select name="genre" onchange="this.form.submit()">
+          <option value="" <%= !selectedGenre ? "selected" : "" %>>-- All Genres --</option>
+          <% if (genres && genres.length > 0) { %>
+            <% genres.forEach(g => { %>
+              <option value="<%= g._id %>"
+                <%= selectedGenre == g._id ? "selected" : "" %>>
+                <%= g.name %>
+              </option>
+            <% }) %>
+      <% } %>
+        </select>
+      </form>
+      <br>
 
       <% if (!movies || movies.length === 0) { %>
         <div class="empty">
@@ -276,7 +292,7 @@
                 </h2>
 
                 <div class="movie-info">
-                  <span class="badge"><%= movie.genre || "Unknown Genre" %></span>
+                    <span class="badge"><%= movie.genre ? movie.genre.name : "Unknown Genre" %></span>
                   <% if (movie.releaseYear) { %>
                     <span class="badge"><%= movie.releaseYear %></span>
                   <% } %>

@@ -1,26 +1,33 @@
 const fs = require("fs");
 const path = require("path");
-
+const Genre = require("../models/genre-model");
 const Movie = require("./../models/movie-model");
 const Review = require("./../models/review-model");
 const Watchlist = require("../models/watchlist-model");
 
 // START of admin functions for adding/editing/deleting movies
 
-exports.adminShowCreateForm = (req, res) => {
+exports.adminShowCreateForm = async (req, res) => {
+  try {
+    const genres = await Genre.findAll();
 
-  res.render("admin-create-movie", {
-    user: req.session.user,
-    errors: [],
-    formData: {},
-  });
-
+    res.render("admin-create-movie", {
+      user: req.session.user,
+      errors:[],
+      formData: {},
+      genres
+    });
+    
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error loading create form");
+  }
 };
 
 exports.adminShowMovies = async (req, res) => {
 
   try {
-    const movies = await Movie.findAll();
+    const movies = await Movie.findAll().populate("genre");
     res.render("admin-mainpage", {
       movies,
       user: req.session.user,
@@ -38,7 +45,7 @@ exports.adminCreateMovie = async (req, res) => {
 
   const user = req.session.user;
   const currentYear = new Date().getFullYear();
-
+  const genres = await Genre.findAll();
   let { title, genre, description, releaseYear, director } = req.body;
 
   title = title?.trim();
@@ -56,7 +63,7 @@ exports.adminCreateMovie = async (req, res) => {
 
   const renderForm = (errors) => {
     cleanUpFile();
-    return res.render("admin-create-movie", { user, errors, formData });
+    return res.render("admin-create-movie", { user, errors, formData, genres });
   };
 
   const errors = [];
@@ -109,8 +116,8 @@ exports.adminCreateMovie = async (req, res) => {
 exports.adminShowEditForm = async (req, res) => {
 
   try {
-    const movie = await Movie.findMovieById(req.params.id);
-
+    const movie = await Movie.findMovieById(req.params.id).populate("genre");
+    const genres = await Genre.findAll();
     if (!movie) {
       return res.status(404).send("Movie not found");
     }
@@ -120,6 +127,7 @@ exports.adminShowEditForm = async (req, res) => {
       user: req.session.user,
       errors: [],
       formData: null,
+      genres
     });
 
   } catch (error) {
@@ -133,7 +141,7 @@ exports.adminUpdateMovie = async (req, res) => {
 
   const user = req.session.user;
   const currentYear = new Date().getFullYear();
-
+  const genres = await Genre.findAll();
   let { title, genre, description, releaseYear, director } = req.body;
 
   title = title?.trim();
@@ -153,7 +161,7 @@ exports.adminUpdateMovie = async (req, res) => {
 
   const renderForm = (errors) => {
      cleanUpFile();
-    return res.render("admin-edit-movie", { movie, user, errors, formData });
+    return res.render("admin-edit-movie", { movie, user, errors, formData, genres });
   };
 
   const errors = [];
@@ -220,7 +228,7 @@ exports.adminDeleteMovie = async (req, res) => {
     const watchlistEntries = await Watchlist.find({ movieId: req.params.id });
 
     if (watchlistEntries.length > 0) {
-      const movies = await Movie.findAll();
+      const movies = await Movie.findAll().populate("genre");
       return res.render("admin-mainpage", {
         movies,
         user: req.session.user,

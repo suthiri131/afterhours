@@ -64,21 +64,18 @@
 
         Genre<br>
         <select name="genre">
-          <option value="">-- Select Genre --</option>
-          <option value="Action" <%= (formData ? formData.genre : movie.genre) === "Action" ? "selected" : "" %>>Action</option>
-          <option value="Adventure" <%= (formData ? formData.genre : movie.genre) === "Adventure" ? "selected" : "" %>>Adventure</option>
-          <option value="Animation" <%= (formData ? formData.genre : movie.genre) === "Animation" ? "selected" : "" %>>Animation</option>
-          <option value="Comedy" <%= (formData ? formData.genre : movie.genre) === "Comedy" ? "selected" : "" %>>Comedy</option>
-          <option value="Crime" <%= (formData ? formData.genre : movie.genre) === "Crime" ? "selected" : "" %>>Crime</option>
-          <option value="Documentary" <%= (formData ? formData.genre : movie.genre) === "Documentary" ? "selected" : "" %>>Documentary</option>
-          <option value="Drama" <%= (formData ? formData.genre : movie.genre) === "Drama" ? "selected" : "" %>>Drama</option>
-          <option value="Fantasy" <%= (formData ? formData.genre : movie.genre) === "Fantasy" ? "selected" : "" %>>Fantasy</option>
-          <option value="Horror" <%= (formData ? formData.genre : movie.genre) === "Horror" ? "selected" : "" %>>Horror</option>
-          <option value="Musical" <%= (formData ? formData.genre : movie.genre) === "Musical" ? "selected" : "" %>>Musical</option>
-          <option value="Mystery" <%= (formData ? formData.genre : movie.genre) === "Mystery" ? "selected" : "" %>>Mystery</option>
-          <option value="Romance" <%= (formData ? formData.genre : movie.genre) === "Romance" ? "selected" : "" %>>Romance</option>
-          <option value="Sci-Fi" <%= (formData ? formData.genre : movie.genre) === "Sci-Fi" ? "selected" : "" %>>Sci-Fi</option>
-          <option value="Thriller" <%= (formData ? formData.genre : movie.genre) === "Thriller" ? "selected" : "" %>>Thriller</option>
+          <% if (genres && genres.length > 0) { %>
+            <% genres.forEach(g => { %>
+              
+              <option value="<%= g._id %>"
+                <%= String(formData ? formData.genre : (movie.genre ? movie.genre._id : "" )) === String(g._id) ? "selected" : "" %>>
+                <%= g.name %>
+              </option>
+
+            <% }) %>
+            <% } %>
+
+        </select>
         </select><br><br>
 
         Director<br>

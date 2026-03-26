@@ -9,9 +9,10 @@ const movieSchema = new mongoose.Schema({
   },
 
   genre: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId, //to reuse generated genres
+    ref: "Genre",
     required: [true, "A movie must have a genre"],
-    trim: true,
+    trim: true
   },
 
   description: {
@@ -50,10 +51,9 @@ Movie.addMovie = function (newMovie) {
 };
 
 Movie.findAll = function () {
-  return Movie.find().sort({ createdAt: -1 });
+  return Movie.find().populate("genre").sort({ createdAt: -1 });
 };
 
-// thet
 Movie.addMovie = function (newMovie) {
   return Movie.create(newMovie);
 };
@@ -63,7 +63,7 @@ Movie.findAll = function () {
 };
 
 Movie.findMovieById = function (id) {
-  return Movie.findById(id);
+  return Movie.findById(id).populate("genre");;
 };
 
 Movie.updateMovie = function (id, updatedData) {

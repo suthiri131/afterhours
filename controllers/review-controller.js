@@ -12,7 +12,7 @@ exports.showCreateReviewForm = async (req, res) => {
       return res.redirect("/user/login");
     }
 
-    const movie = await Movie.findMovieById(movieId);
+    const movie = await Movie.findMovieById(movieId).populate("genre");
     if (!movie) {
       return res.status(404).send("Movie not found");
     }
@@ -60,7 +60,7 @@ exports.createReview = async (req, res) => {
       return res.redirect("/user/login");
     }
 
-    const movie = await Movie.findMovieById(movieId);
+    const movie = await Movie.findMovieById(movieId).populate("genre");
     if (!movie) {
       return res.status(404).send("Movie not found");
     }

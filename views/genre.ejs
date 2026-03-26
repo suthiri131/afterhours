@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Manage Genres</title>
+
+  <style>
+    /* HEADER */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background-color: #14213d;
+      color: white;
+    }
+    .logo {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .right {
+      display: flex;
+      gap: 16px;
+    }
+    .link {
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .link:hover {
+      text-decoration: underline;
+    }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f5f7fb;
+    }
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    h1 {
+      margin-bottom: 20px;
+      color: #14213d;
+    }
+    .form-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .btn {
+      background-color: #14213d;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background-color: #1d4ed8;
+    }
+    .btn-danger {
+      background-color: #dc2626;
+    }
+    .btn-danger:hover {
+      background-color: #b91c1c;
+    }
+    .btn-edit {
+      background-color: #16a34a;
+    }
+    .btn-edit:hover {
+      background-color: #15803d;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #f1f5f9;
+    }
+    tr {
+      border-bottom: 1px solid #e5e7eb;
+    }
+    tr:hover {
+      background-color: #f9fafb;
+    }
+    .actions {
+      display: flex;
+      gap: 8px;
+    }
+    .msg {
+      margin-bottom: 15px;
+      color: #b91c1c;
+    }
+    .success {
+      color: #065f46;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <div class="header">
+    <div class="logo"><a href="/movies" class="btn">AfterHours</a></div>
+
+    <div class="right">
+      <a class="link" href="/admin/movies">Manage Movies</a>
+      <a class="link" href="/watchlist">WatchList</a>
+      <a class="link" href="/user/profile">Profile</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <h1>Manage Genres</h1>
+
+    <!-- add genre form -->
+    <form action="/admin/genres/create" method="POST">
+      <div class="form-group">
+        <input type="text" name="name" placeholder="Enter genre name" required>
+        <button class="btn">Add Genre</button>
+      </div>
+    </form>
+
+    <!-- genre table -->
+    <table>
+      <thead>
+        <tr>
+          <th>Genre Name</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% if (genres.length === 0) { %>
+          <tr>
+            <td colspan="2">No genres found</td>
+          </tr>
+        <% } %>
+
+        <% genres.forEach(g => { %>
+          <tr>
+            <td><%= g.name %></td>
+
+            <td>
+              <div class="actions">
+
+                <!-- edit -->
+                <form action="/admin/genres/<%= g._id %>/edit" method="GET">
+                  <button class="btn btn-edit">Edit</button>
+                </form>
+
+                <!-- delete -->
+                <form action="/admin/genres/<%= g._id %>/delete" method="POST" onsubmit="return confirm('Delete this genre?')">
+                  <button class="btn btn-danger">Delete</button>
+                </form>
+
+              </div>
+            </td>
+
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

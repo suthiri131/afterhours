@@ -64,21 +64,16 @@
 
         Genre<br>
         <select name="genre">
-          <option value="">-- Select Genre --</option>
-          <option value="Action" <%= formData.genre === "Action" ? "selected" : "" %>>Action</option>
-          <option value="Adventure" <%= formData.genre === "Adventure" ? "selected" : "" %>>Adventure</option>
-          <option value="Animation" <%= formData.genre === "Animation" ? "selected" : "" %>>Animation</option>
-          <option value="Comedy" <%= formData.genre === "Comedy" ? "selected" : "" %>>Comedy</option>
-          <option value="Crime" <%= formData.genre === "Crime" ? "selected" : "" %>>Crime</option>
-          <option value="Documentary" <%= formData.genre === "Documentary" ? "selected" : "" %>>Documentary</option>
-          <option value="Drama" <%= formData.genre === "Drama" ? "selected" : "" %>>Drama</option>
-          <option value="Fantasy" <%= formData.genre === "Fantasy" ? "selected" : "" %>>Fantasy</option>
-          <option value="Horror" <%= formData.genre === "Horror" ? "selected" : "" %>>Horror</option>
-          <option value="Musical" <%= formData.genre === "Musical" ? "selected" : "" %>>Musical</option>
-          <option value="Mystery" <%= formData.genre === "Mystery" ? "selected" : "" %>>Mystery</option>
-          <option value="Romance" <%= formData.genre === "Romance" ? "selected" : "" %>>Romance</option>
-          <option value="Sci-Fi" <%= formData.genre === "Sci-Fi" ? "selected" : "" %>>Sci-Fi</option>
-          <option value="Thriller" <%= formData.genre === "Thriller" ? "selected" : "" %>>Thriller</option>
+          <option value="">-- Select A Genre --</option>
+
+        <% if (genres && genres.length > 0) { %>
+          <% genres.forEach(g => { %>
+            <option value="<%= g._id %>"
+              <%= String(formData.genre) === String(g._id) ? "selected" : "" %>>
+              <%= g.name %>
+            </option>
+          <% }) %>
+        <% } %>
         </select><br><br>
 
         Director<br>

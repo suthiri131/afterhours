@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const adminController = require("../controllers/admin-controller");
-
+const genreController = require("../controllers/genre-controller");
 const authMiddleware = require("../middleware/auth-middleware");
 const { handleUpload } = require("../middleware/upload-middleware");
 
@@ -14,5 +14,12 @@ router.get("/movies/:id/edit", authMiddleware.isAdmin, adminController.adminShow
 router.post("/movies/:id/edit", authMiddleware.isAdmin, handleUpload, adminController.adminUpdateMovie);
 
 router.post("/movies/:id/delete", authMiddleware.isAdmin, adminController.adminDeleteMovie);
+
+//genres
+router.get("/genres", genreController.showGenres);
+router.post("/genres/create", genreController.createGenre);
+router.post("/genres/:id/delete", genreController.deleteGenre);
+router.get("/genres/:id/edit", genreController.showEditGenreForm);
+router.post("/genres/:id/edit", genreController.updateGenre);
 
 module.exports = router;

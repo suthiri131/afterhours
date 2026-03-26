@@ -63,6 +63,7 @@
 
       <a href="/admin/movies/create" class="btn">Add New Movie</a>
       <a href="/movies" class="btn">Back to Main Page</a>
+      <a href="/admin/genres" class="btn">Manage Genres</a>
       <br><br>
 
       <table>
@@ -96,7 +97,7 @@
                 <% } %>
               </td>
               <td><%= movie.title %></td>
-              <td><%= movie.genre %></td>
+              <td><%= movie.genre.name %></td>
               <td><%= movie.director || "-" %></td>
               <td><%= movie.releaseYear || "-" %></td>
               <td>

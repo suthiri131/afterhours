@@ -1,10 +1,18 @@
 const Movie = require("./../models/movie-model");
 const Review = require("../models/review-model");
 const Watchlist = require("../models/watchlist-model");
+const Genre = require("../models/genre-model");
 
 exports.showAllMovies = async (req, res) => {
   try {
-    const movies = await Movie.findAll();
+    const genres = await Genre.findAll();
+    const selectedGenre = req.query.genre || "";
+
+    let filter = {}; //create filter to search genre
+    if (selectedGenre) {
+      filter.genre = selectedGenre; //filter by genre_id, this is correct if genre is stored as ObjectId in movie
+    }    
+    const movies = await Movie.find(filter).populate("genre"); //use filter;
 
     let msg = "";
     if (req.query.msg === "added") msg = "Successfully added to watchlist!";
@@ -13,6 +21,8 @@ exports.showAllMovies = async (req, res) => {
 
     res.render("movies", {
       movies,
+      genres,
+      selectedGenre,
       user: req.session.user,
       msg: msg
     });
@@ -20,6 +30,8 @@ exports.showAllMovies = async (req, res) => {
     console.error(error);
     res.render("movies", {
       movies: [],
+      genres: [],
+      selectedGenre: "",
       user: req.session.user,
       msg: "Error loading movies",
     });
@@ -34,7 +46,7 @@ exports.showMovieDetails = async (req, res) => {
     const movieId = req.params.id;
     const user = req.session.user || null;
 
-    const movie = await Movie.findMovieById(movieId);
+    const movie = await Movie.findMovieById(movieId).populate("genre");
     if (!movie) {
       return res.status(404).send("Movie not found");
     }

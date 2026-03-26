@@ -13,7 +13,7 @@ const userRoutes = require("./routes/user-routes");
 const movieRoutes = require("./routes/movie-routes");
 const reviewRoutes = require("./routes/review-routes");
 const watchlistRoutes = require("./routes/watchlist-routes");
-
+const genreRoutes = require("./routes/genre-routes");
 const server = express();
 
 server.use(express.urlencoded({ extended: true }));
@@ -38,6 +38,7 @@ server.use("/user", userRoutes);
 server.use("/movies", movieRoutes);
 server.use("/reviews", reviewRoutes);
 server.use("/watchlist", watchlistRoutes);
+server.use("/admin/genres", genreRoutes);
 
 server.get("/", (req, res) => {
   if (req.session.user) {
