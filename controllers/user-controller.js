@@ -7,7 +7,7 @@ function generateOtp() {
 }
 
 exports.showRegisterForm = (req, res) => {
-  res.render("register-user", {
+  res.render("auth/register", {
     msg: "",
     formData: {},
   });
@@ -27,7 +27,7 @@ exports.createUser = async (req, res) => {
   };
 
   if (!fullName || !username || !email || !password || !confirmPassword) {
-    return res.render("register-user", {
+    return res.render("auth/register", {
       msg: "Please fill in all required fields",
       formData,
     });
@@ -35,21 +35,21 @@ exports.createUser = async (req, res) => {
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
-    return res.render("register-user", {
+    return res.render("auth/register", {
       msg: "Please enter a valid email address",
       formData,
     });
   }
 
   if (password.length < 6) {
-    return res.render("register-user", {
+    return res.render("auth/register", {
       msg: "Password must be at least 6 characters",
       formData,
     });
   }
 
   if (password !== confirmPassword) {
-    return res.render("register-user", {
+    return res.render("auth/register", {
       msg: "Passwords do not match",
       formData,
     });
@@ -60,7 +60,7 @@ exports.createUser = async (req, res) => {
 
     if (existingUser) {
       if (existingUser.isVerified) {
-        return res.render("register-user", {
+        return res.render("auth/register", {
           msg: "Email already exists",
           formData,
         });
@@ -144,7 +144,7 @@ exports.createUser = async (req, res) => {
     console.error(error);
 
     if (error.code === 11000 && error.keyPattern?.email) {
-      return res.render("register-user", {
+      return res.render("auth/register", {
         msg: "Email already exists",
         formData,
       });
@@ -152,13 +152,13 @@ exports.createUser = async (req, res) => {
 
     if (error.name === "ValidationError") {
       const firstError = Object.values(error.errors)[0];
-      return res.render("register-user", {
+      return res.render("auth/register", {
         msg: firstError.message,
         formData,
       });
     }
 
-    return res.render("register-user", {
+    return res.render("auth/register", {
       msg: "Error registering user",
       formData,
     });
@@ -168,7 +168,7 @@ exports.createUser = async (req, res) => {
 exports.showVerifyOtpForm = (req, res) => {
   const { email, msg = "" } = req.query;
 
-  return res.render("verify-otp", {
+  return res.render("auth/verify-otp", {
     email: email || "",
     msg,
   });
@@ -181,7 +181,7 @@ exports.verifyOtp = async (req, res) => {
   otp = otp?.trim();
 
   if (!email || !otp) {
-    return res.render("verify-otp", {
+    return res.render("auth/verify-otp", {
       email,
       msg: "Please enter the OTP",
     });
@@ -191,7 +191,7 @@ exports.verifyOtp = async (req, res) => {
     const user = await User.findByEmail(email);
 
     if (!user) {
-      return res.render("verify-otp", {
+      return res.render("auth/verify-otp", {
         email,
         msg: "User not found",
       });
@@ -205,14 +205,14 @@ exports.verifyOtp = async (req, res) => {
     }
 
     if (!user.otp || !user.otp.code || !user.otp.expiresAt) {
-      return res.render("verify-otp", {
+      return res.render("auth/verify-otp", {
         email,
         msg: "No OTP found. Please resend OTP.",
       });
     }
 
     if (new Date() > new Date(user.otp.expiresAt)) {
-      return res.render("verify-otp", {
+      return res.render("auth/verify-otp", {
         email,
         msg: "OTP has expired. Please resend OTP.",
       });
@@ -221,7 +221,7 @@ exports.verifyOtp = async (req, res) => {
     const isOtpValid = await bcrypt.compare(otp, user.otp.code);
 
     if (!isOtpValid) {
-      return res.render("verify-otp", {
+      return res.render("auth/verify-otp", {
         email,
         msg: "Invalid OTP",
       });
@@ -242,7 +242,7 @@ exports.verifyOtp = async (req, res) => {
   } catch (error) {
     console.error(error);
 
-    return res.render("verify-otp", {
+    return res.render("auth/verify-otp", {
       email,
       msg: "Error verifying OTP",
     });
@@ -309,31 +309,40 @@ exports.showProfilePage = async (req, res) => {
       return res.render("user/profile", {
         user: null,
         msg: "No user found.",
+        type: "error",
       });
     }
 
-    res.render("user/profile", {
+    return res.render("user/profile", {
       user,
       msg: "",
+      type: "",
     });
   } catch (error) {
     console.error(error);
-    res.render("user/profile", {
+    return res.render("user/profile", {
       user: null,
       msg: "Error loading profile.",
+      type: "error",
     });
   }
 };
 
 exports.showChangePasswordPage = async (req, res) => {
   try {
-    res.render("update-password", {
-      msg: "",
-      type: "",
+    const msg = req.session.msg || "";
+    const type = req.session.type || "";
+
+    req.session.msg = null;
+    req.session.type = null;
+
+    return res.render("auth/update-password", {
+      msg,
+      type,
     });
   } catch (error) {
     console.error(error);
-    res.render("update-password", {
+    return res.render("auth/update-password", {
       msg: "Error loading update password page.",
       type: "error",
     });
@@ -345,15 +354,17 @@ exports.changePassword = async (req, res) => {
     const { currentPassword, newPassword, confirmPassword } = req.body;
 
     if (!currentPassword || !newPassword || !confirmPassword) {
-      return res.render("update-password", {
+      return res.render("auth/update-password", {
         msg: "Please fill in all fields.",
         type: "error",
       });
     }
+
     const userId = req.session.user.id;
     const user = await User.findById(userId);
+
     if (!user) {
-      return res.render("update-password", {
+      return res.render("auth/update-password", {
         msg: "User not found.",
         type: "error",
       });
@@ -365,21 +376,21 @@ exports.changePassword = async (req, res) => {
     );
 
     if (!isCurrentPasswordCorrect) {
-      return res.render("update-password", {
+      return res.render("auth/update-password", {
         msg: "Current password is incorrect.",
         type: "error",
       });
     }
 
     if (newPassword.length < 6) {
-      return res.render("update-password", {
+      return res.render("auth/update-password", {
         msg: "New password must be at least 6 characters long.",
         type: "error",
       });
     }
 
     if (newPassword !== confirmPassword) {
-      return res.render("update-password", {
+      return res.render("auth/update-password", {
         msg: "New password and confirm password do not match.",
         type: "error",
       });
@@ -391,7 +402,7 @@ exports.changePassword = async (req, res) => {
     );
 
     if (isSameAsOldPassword) {
-      return res.render("update-password", {
+      return res.render("auth/update-password", {
         msg: "New password must be different from current password.",
         type: "error",
       });
@@ -401,13 +412,16 @@ exports.changePassword = async (req, res) => {
 
     await User.updatePassword(user._id, hashedPassword);
 
-    return res.render("update-password", {
-      msg: "Password changed successfully.",
-      type: "success",
-    });
+    // ✅ store message in session
+    req.session.msg = "Password changed successfully.";
+    req.session.type = "success";
+
+    // ✅ redirect back to same page
+    return res.redirect("/user/change-password");
   } catch (error) {
     console.error(error);
-    return res.render("update-password", {
+
+    return res.render("auth/update-password", {
       msg: "Error changing password.",
       type: "error",
     });
