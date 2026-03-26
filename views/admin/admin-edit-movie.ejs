@@ -4,7 +4,7 @@
   <head>
 
     <meta charset="UTF-8" />
-    <title>Admin Movie Creation Page</title>
+    <title>Admin Edit Movie Page</title>
     <style>
 
       body {
@@ -43,9 +43,12 @@
 
   <body>
 
+    <%- include("../navbar") %>
+
     <div class="container">
 
-      <h1>Admin Movie Creation Page</h1>
+      <h1>Admin Edit Movie Page</h1>
+      <p><em>* All fields are required. Please fill in all fields before submitting.</em></p>
 
       <% if (errors && errors.length > 0) { %>
         <div class="msg">
@@ -57,41 +60,43 @@
         </div>
       <% } %>
 
-      <form action="/admin/movies/create" method="POST" enctype="multipart/form-data">
+      <form action="/admin/movies/<%= movie._id %>/edit" method="POST" enctype="multipart/form-data">
 
         Title<br>
-        <input type="text" name="title" value="<%= formData.title || '' %>"><br><br>
+        <input type="text" name="title" value="<%= formData ? formData.title : movie.title %>"><br><br>
 
         Genre<br>
-        <select name="genre">
-          <option value="">-- Select A Genre --</option>
-
-        <% if (genres && genres.length > 0) { %>
+        <small><em>Hold Ctrl (Windows) or Cmd (Mac) to select multiple genres.</em></small><br>
+        <select name="genre" multiple size="6">
           <% genres.forEach(g => { %>
-            <option value="<%= g._id %>"
-              <%= String(formData.genre) === String(g._id) ? "selected" : "" %>>
+            <%
+              const selectedGenres = formData
+                ? formData.genre.map(String)
+                : movie.genre.map(g => String(g._id));
+              const isSelected = selectedGenres.includes(String(g._id));
+            %>
+            <option value="<%= g._id %>" <%= isSelected ? "selected" : "" %>>
               <%= g.name %>
             </option>
           <% }) %>
-        <% } %>
         </select><br><br>
 
         Director<br>
-        <input type="text" name="director" value="<%= formData.director || '' %>"><br><br>
+        <input type="text" name="director" value="<%= formData ? formData.director : movie.director || '' %>"><br><br>
 
         Release Year<br>
-        <input type="number" name="releaseYear" value="<%= formData.releaseYear || '' %>"><br><br>
+        <input type="number" name="releaseYear" value="<%= formData ? formData.releaseYear : movie.releaseYear || '' %>"><br><br>
 
         Description<br>
-        <textarea name="description" rows="6" cols="60"><%= formData.description || '' %></textarea><br><br>
+        <textarea name="description" rows="6" cols="60"><%= formData ? formData.description : movie.description || '' %></textarea><br><br>
 
         Movie Image<br>
         <input type="file" name="movieImage" accept="image/*"
         style="border: 1px solid #ccc; padding: 4px;"><br>
         <small>Accepted formats: JPEG, JPG, PNG, WEBP (max 5MB)</small><br>
-        <small>If there is an error, please re-attach the image.</small><br><br>
+        <small>Leave empty to keep existing image. If there is an error, please re-attach the image.</small><br><br>
 
-        <button type="submit" class="btn">Add Movie</button>
+        <button type="submit" class="btn">Save Changes</button>
 
       </form>
 

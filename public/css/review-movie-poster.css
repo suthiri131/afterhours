@@ -1,0 +1,133 @@
+.movie-summary-box {
+  width: 100%;
+}
+
+.movie-summary-main {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.movie-summary-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.movie-summary-title {
+  margin: 0 0 14px 0;
+  font-size: 2rem;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #1f2937;
+  word-break: break-word;
+}
+
+.movie-summary-info-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.movie-summary-poster {
+  width: 110px;
+  height: 155px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid #d1d5db;
+  background: #e5e7eb;
+  flex-shrink: 0;
+}
+
+.movie-summary-poster-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.movie-summary-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.movie-summary-meta {
+  margin: 0 0 8px 0;
+  color: #4b5563;
+  font-size: 1rem;
+  line-height: 1.6;
+  word-break: break-word;
+}
+
+.movie-summary-description-label {
+  margin-top: 8px;
+}
+
+.movie-summary-description {
+  margin: 0;
+  color: #1f2937;
+  line-height: 1.7;
+  font-size: 1rem;
+  word-break: break-word;
+}
+
+.movie-summary-right {
+  min-width: 250px;
+  flex-shrink: 0;
+}
+
+.movie-summary-rating-box {
+  min-width: 250px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.movie-summary-rating-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.movie-summary-rating-text {
+  margin: 6px 0 0 0;
+  color: #6b7280;
+}
+
+.stars-display {
+  color: #f5b301;
+  letter-spacing: 2px;
+  font-size: 1.2rem;
+  margin-top: 8px;
+}
+
+@media (max-width: 900px) {
+  .movie-summary-main {
+    flex-direction: column;
+  }
+
+  .movie-summary-right {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .movie-summary-rating-box {
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+@media (max-width: 700px) {
+  .movie-summary-info-row {
+    flex-direction: column;
+  }
+
+  .movie-summary-poster {
+    width: 120px;
+    height: 170px;
+  }
+}

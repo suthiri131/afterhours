@@ -1,0 +1,67 @@
+<div class="movie-summary-box">
+  <div class="movie-summary-main">
+    <div class="movie-summary-left">
+      <h1 class="movie-summary-title"><%= movie.title %></h1>
+
+      <div class="movie-summary-info-row">
+        <% if (movie.movieImage) { %>
+          <img
+            src="<%= movie.movieImage %>"
+            alt="<%= movie.title %> poster"
+            class="movie-summary-poster"
+          />
+        <% } else { %>
+          <div class="movie-summary-poster movie-summary-poster-placeholder">
+            No Image
+          </div>
+        <% } %>
+
+        <div class="movie-summary-info">
+          <p class="movie-summary-meta">
+            <strong>Genre:</strong>
+            <%= movie.genre && movie.genre.name ? movie.genre.name : "No genre" %>
+          </p>
+
+          <% if (movie.director && movie.director.trim() !== "") { %>
+            <p class="movie-summary-meta">
+              <strong>Director:</strong> <%= movie.director %>
+            </p>
+          <% } %>
+
+          <% if (movie.releaseYear) { %>
+            <p class="movie-summary-meta">
+              <strong>Release Year:</strong> <%= movie.releaseYear %>
+            </p>
+          <% } %>
+
+          <p class="movie-summary-meta movie-summary-description-label">
+            <strong>Description:</strong>
+          </p>
+          <p class="movie-summary-description">
+            <%= movie.description && movie.description.trim()
+              ? movie.description
+              : "No description available." %>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <% if (typeof showAverageBox !== "undefined" && showAverageBox && typeof averageRating !== "undefined") { %>
+      <div class="movie-summary-right">
+        <div class="movie-summary-rating-box">
+          <div class="movie-summary-rating-value"><%= averageRating.toFixed(1) %> / 5.0</div>
+          <div class="movie-summary-rating-text">
+            Average rating from <%= reviewCount %> review<%= reviewCount === 1 ? "" : "s" %>
+          </div>
+
+          <div class="stars-display">
+            <% const roundedAvg = Math.round(Number(averageRating)); %>
+            <% for (let i = 1; i <= 5; i++) { %>
+              <%= i <= roundedAvg ? "★" : "☆" %>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</div>

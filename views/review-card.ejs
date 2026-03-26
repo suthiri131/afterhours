@@ -1,0 +1,91 @@
+<article class="review-item <%= isOwner ? 'own-review-card' : '' %>">
+  <div class="review-grid">
+    <div>
+      <div class="review-top">
+        <div class="reviewer-name">
+          <%= isOwner
+            ? ((user && (user.username || user.fullname || user.fullName)) || "You")
+            : (review.userId ? (review.userId.fullname || review.userId.username) : "Deleted User") %>
+          <% if (isOwner) { %><span class="you-badge">(You)</span><% } %>
+        </div>
+
+        <div class="rating-pill">
+          <span><%= review.rating.toFixed(1) %>/5.0</span>
+          <span class="mini-stars">
+            <% for (let i = 1; i <= 5; i++) { %>
+              <%= i <= Math.round(review.rating) ? "★" : "☆" %>
+            <% } %>
+          </span>
+        </div>
+      </div>
+
+      <h3 class="review-headline"><%= review.headline ? review.headline : "Untitled Review" %></h3>
+
+      <% if (review.reviewText && review.reviewText.trim() !== "") { %>
+        <p class="review-text"><%= review.reviewText %></p>
+      <% } else { %>
+        <p class="review-text" style="color:#6b7280; font-style:italic;">No written review provided.</p>
+      <% } %>
+
+      <small class="review-date">
+        Posted on
+        <%= new Date(review.createdAt).toLocaleDateString("en-GB") %>
+        at
+        <%= new Date(review.createdAt).toLocaleTimeString("en-GB", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false
+        }) %>
+      </small>
+
+      <% if (review.isEdited) { %>
+        <p class="review-date review-edited">
+          Edited on
+          <%= new Date(review.updatedAt).toLocaleDateString("en-GB") %>
+          at
+          <%= new Date(review.updatedAt).toLocaleTimeString("en-GB", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false
+          }) %>
+        </p>
+      <% } %>
+
+      <% if (isOwner) { %>
+        <div class="review-owner-actions">
+          <a href="/reviews/<%= review._id %>/edit" class="action-btn action-btn-primary">Edit</a>
+          <form action="/reviews/<%= review._id %>/delete" method="POST" style="margin:0;">
+            <button type="submit" class="action-btn action-btn-danger">Delete</button>
+          </form>
+        </div>
+      <% } %>
+    </div>
+
+    <aside class="score-card">
+      <div class="score-card-head">
+        <span>Overall</span>
+        <span class="score-card-score"><%= review.rating != null ? review.rating.toFixed(1) + " / 5.0" : "-" %></span>
+      </div>
+      <div class="score-card-body">
+        <div class="score-row">
+          <span class="score-label">Story</span>
+          <span class="score-value"><%= review.storyRating != null ? review.storyRating.toFixed(1) : "-" %></span>
+        </div>
+        <div class="score-row">
+          <span class="score-label">Acting/Cast</span>
+          <span class="score-value"><%= review.actingRating != null ? review.actingRating.toFixed(1) : "-" %></span>
+        </div>
+        <div class="score-row">
+          <span class="score-label">Music</span>
+          <span class="score-value"><%= review.musicRating != null ? review.musicRating.toFixed(1) : "-" %></span>
+        </div>
+        <div class="score-row">
+          <span class="score-label">Rewatch Value</span>
+          <span class="score-value"><%= review.rewatchRating != null ? review.rewatchRating.toFixed(1) : "-" %></span>
+        </div>
+      </div>
+    </aside>
+  </div>
+</article>

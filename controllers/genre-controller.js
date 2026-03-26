@@ -4,7 +4,7 @@ const Genre = require("../models/genre-model");
 exports.showGenres = async (req, res) => {
   try {
     const genres = await Genre.findAll();
-    res.render("genre", { genres });
+    res.render("admin/genre", { genres, user: req.session.user });
 
   } catch (err) {
     console.error(err);
@@ -17,7 +17,7 @@ exports.adminShowCreateGenreForm = async (req, res) => {
   try {
     const genres = await Genre.findAll();
 
-    res.render("admin-create-movie", {
+    res.render("admin/admin-create-movie", {
       user: req.session.user,
       msg: "",
       formData: {},
@@ -38,7 +38,7 @@ exports.createGenre = async (req, res) => {
   const formData = { name };
 
   if (!name) {
-    return res.render("admin-create-genre", {
+    return res.render("admin/admin-create-genre", {
       user: req.session.user,
       msg: "Genre name is required",
       formData,
@@ -49,7 +49,7 @@ exports.createGenre = async (req, res) => {
     const existing = await Genre.findByName(name);
 
     if (existing) {
-      return res.render("admin-create-genre", {
+      return res.render("admin/admin-create-genre", {
         user: req.session.user,
         msg: "Genre already exists",
         formData,
@@ -62,7 +62,7 @@ exports.createGenre = async (req, res) => {
 
   } catch (err) {
     console.error(err);
-    res.render("admin-create-genre", {
+    res.render("admin/admin-create-genre", {
       user: req.session.user,
       msg: "Error creating genre",
       formData,
@@ -78,7 +78,7 @@ exports.showEditGenreForm = async (req, res) => {
       return res.status(404).send("Genre not found");
     }
 
-    res.render("edit-genre-form", {
+    res.render("admin/edit-genre-form", {
       genre,
       user: req.session.user,
       msg: "",
