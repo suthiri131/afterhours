@@ -97,7 +97,7 @@
                 <% } %>
               </td>
               <td><%= movie.title %></td>
-              <td><%= movie.genre.name %></td>
+              <td><%= movie.genre.map(g => g.name).join(", ") %></td>
               <td><%= movie.director || "-" %></td>
               <td><%= movie.releaseYear || "-" %></td>
               <td>

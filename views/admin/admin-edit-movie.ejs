@@ -46,6 +46,7 @@
     <div class="container">
 
       <h1>Admin Edit Movie Page</h1>
+      <p><em>* All fields are required. Please fill in all fields before submitting.</em></p>
 
       <% if (errors && errors.length > 0) { %>
         <div class="msg">
@@ -63,19 +64,19 @@
         <input type="text" name="title" value="<%= formData ? formData.title : movie.title %>"><br><br>
 
         Genre<br>
-        <select name="genre">
-          <% if (genres && genres.length > 0) { %>
-            <% genres.forEach(g => { %>
-              
-              <option value="<%= g._id %>"
-                <%= String(formData ? formData.genre : (movie.genre ? movie.genre._id : "" )) === String(g._id) ? "selected" : "" %>>
-                <%= g.name %>
-              </option>
-
-            <% }) %>
-            <% } %>
-
-        </select>
+        <small><em>Hold Ctrl (Windows) or Cmd (Mac) to select multiple genres.</em></small><br>
+        <select name="genre" multiple size="6">
+          <% genres.forEach(g => { %>
+            <%
+              const selectedGenres = formData
+                ? formData.genre.map(String)
+                : movie.genre.map(g => String(g._id));
+              const isSelected = selectedGenres.includes(String(g._id));
+            %>
+            <option value="<%= g._id %>" <%= isSelected ? "selected" : "" %>>
+              <%= g.name %>
+            </option>
+          <% }) %>
         </select><br><br>
 
         Director<br>
