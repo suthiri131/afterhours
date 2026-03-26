@@ -6,12 +6,21 @@ const Genre = require("../models/genre-model");
 exports.showAllMovies = async (req, res) => {
   try {
     const genres = await Genre.findAll();
-    const selectedGenre = req.query.genre || "";
-
+    let selectedGenre = req.query.genre || [];
+    const search = req.query.search || "";
     let filter = {}; //create filter to search genre
-    if (selectedGenre) {
-      filter.genre = selectedGenre; //filter by genre_id, this is correct if genre is stored as ObjectId in movie
-    }    
+    //genre filter
+    if (!Array.isArray(selectedGenre)) {
+      selectedGenre = selectedGenre ? [selectedGenre] : [];
+    }
+
+    if (selectedGenre.length > 0) {
+      filter.genre = { $all: selectedGenre }; //use $all not $in to filter all selected genres
+    } 
+    //search movie filter
+    if (search) {
+      filter.title = { $regex: search, $options: "i" };
+    }
     const movies = await Movie.find(filter).populate("genre"); //use filter;
 
     let msg = "";
@@ -24,7 +33,8 @@ exports.showAllMovies = async (req, res) => {
       genres,
       selectedGenre,
       user: req.session.user,
-      msg: msg
+      msg: msg,
+      search
     });
   } catch (error) {
     console.error(error);
@@ -34,6 +44,7 @@ exports.showAllMovies = async (req, res) => {
       selectedGenre: "",
       user: req.session.user,
       msg: "Error loading movies",
+      search: ""
     });
   }
 };

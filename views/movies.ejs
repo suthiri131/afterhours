@@ -107,7 +107,7 @@
       }
 
       .movie-banner {
-        height: 410px; 
+        height: 410px;
         min-height: 410px; 
         max-width: 300px;
         width: 100%;
@@ -144,14 +144,16 @@
       }
 
       .movie-info {
-        display: flex;
-        gap: 6px;
+        display: inline-flex;
+        gap: 10px;
         flex-wrap: wrap;
         margin-bottom: 8px;
       }
 
       .badge {
-        padding: 4px 8px;
+        display: inline-flex;
+        white-space: nowrap;  /* Prevents the text from wrapping to a new line */
+        padding: 5px 8px;
         border-radius: 999px;
         background-color: #eef2ff;
         font-size: 11px;
@@ -222,6 +224,43 @@
           grid-template-columns: 1fr;
         }
       }
+
+      .genre-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 10px 0 20px;
+      }
+
+      .tag {
+        cursor: pointer;
+      }
+
+      .tag input {
+        display: none;
+      }
+
+      .tag span {
+        display: inline-block;
+        padding: 8px 14px;
+        border-radius: 999px;
+        background-color: #e5e7eb;
+        font-size: 13px;
+        transition: all 0.2s ease;
+      }
+
+      /* Hover */
+      .tag span:hover {
+        background-color: #c7d2fe;
+      }
+
+      /* Selected */
+      .tag input:checked + span {
+        background-color: #14213d;
+        color: white;
+      }
+
+
     </style>
   </head>
 
@@ -236,21 +275,34 @@
           <%= msg %>
         </div>
       <% } %>
-      <!-- Genre filer -->
-      <h3>Genre Filter: </h3>
-      <form method="GET" action="/movies" style="margin-bottom: 20px;">
-        <select name="genre" onchange="this.form.submit()">
-          <option value="" <%= !selectedGenre ? "selected" : "" %>>-- All Genres --</option>
-          <% if (genres && genres.length > 0) { %>
-            <% genres.forEach(g => { %>
-              <option value="<%= g._id %>"
-                <%= selectedGenre == g._id ? "selected" : "" %>>
-                <%= g.name %>
-              </option>
-            <% }) %>
-      <% } %>
-        </select>
+
+      <form id="filterForm" method="GET" action="/movies">
+      <h3>Movie Title Filter:</h3>
+        <!-- Search -->
+        <input 
+          type="text" 
+          name="search" 
+          placeholder="Search movie title..."
+          value="<%= search || '' %>"
+        />
+      <h3>Genre Filter:</h3>
+        <!-- Genre Tags -->
+        <div class="genre-tags">
+          <% genres.forEach(g => { %>
+            <label class="tag">
+              <input 
+                type="checkbox" 
+                name="genre" 
+                value="<%= g._id %>"
+                <%= Array.isArray(selectedGenre) && selectedGenre.includes(g._id.toString()) ? "checked" : "" %>
+                onchange="this.form.submit()">
+              <span><%= g.name %></span>
+            </label>
+          <% }) %>
+        </div>
+
       </form>
+
       <br>
 
       <% if (!movies || movies.length === 0) { %>
@@ -280,12 +332,23 @@
                   </a>
                 </h2>
 
-                <div class="movie-info">
-                    <span class="badge"><%= movie.genre ? movie.genre.name : "Unknown Genre" %></span>
-                  <% if (movie.releaseYear) { %>
-                    <span class="badge"><%= movie.releaseYear %></span>
+              <div class="movie-info">
+                <% if (movie.genre && movie.genre.length > 0) { %>
+                  <% if (movie.genre.length === 1) { %> 
+                    <!-- for movie w 1 genre -->
+                    <span class="badge"><%= movie.genre[0].name %></span>
+                  <% } else { %>
+                    <!-- for movie w more than 1 genre -->
+                    <span class="badge"><%= movie.genre[0].name %>...</span>
                   <% } %>
-                </div>
+                <% } else { %>
+                  <span class="badge">Unknown Genre</span>
+                <% } %>
+
+                <% if (movie.releaseYear) { %>
+                  <span class="badge"><%= movie.releaseYear %></span>
+                <% } %>
+              </div>
 
                 <p class="description">
                   <%= movie.description && movie.description.trim() !== ""
