@@ -51,7 +51,6 @@ exports.adminCreateMovie = async (req, res) => {
   let { title, genre, description, releaseYear, director } = req.body;
 
   title = title?.trim();
-  genre = genre?.trim();
   description = description?.trim();
   director = director?.trim();
 
