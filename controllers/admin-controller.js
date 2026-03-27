@@ -262,8 +262,6 @@ exports.adminDeleteMovie = async (req, res) => {
       }
       
     }
-
-    // updated by thet
     // when admin deletes a movie, also delete all ratings and reviews for that movie
     await Review.deleteReviewsByMovieId(req.params.id);
 

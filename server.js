@@ -39,7 +39,7 @@ server.use("/user", userRoutes);
 server.use("/movies", movieRoutes);
 server.use("/reviews", reviewRoutes);
 server.use("/watchlist", watchlistRoutes);
-server.use("/admin/genres", genreRoutes);
+server.use("/admin/genre", genreRoutes);
 server.use("/superAdmin", superAdminRoutes);
 
 server.get("/", (req, res) => {

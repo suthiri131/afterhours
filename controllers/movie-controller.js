@@ -21,23 +21,50 @@ exports.showAllMovies = async (req, res) => {
     if (search) {
       filter.title = { $regex: search, $options: "i" };
     }
-    const movies = await Movie.find(filter).populate("genre").sort({ createdAt: -1 }); // populate to filter, sort for newest first
 
-    let msg = "";
-    if (req.query.msg === "added") msg = "Successfully added to watchlist!";
-    if (req.query.msg === "exists") {
-      msg = "This movie is already in your watchlist.";
-    }
-    if (req.query.msg === "error") msg = "Something went wrong. Try again!";
+      const movies = await Movie.find(filter).populate("genre").sort({ createdAt: -1 }); // populate to filter, sort for newest first
 
-    res.render("movies", {
-      movies,
-      genres,
-      selectedGenre,
-      user: req.session.user,
-      msg: msg,
-      search
-    });
+      const moviesWithStats = await Promise.all(
+        movies.map(async (movie) => {
+          const stats = await Review.getMovieReviewStats(movie._id);
+
+          const views = movie.views || 0;
+          const avgRating = stats.averageRating || 0;
+          const reviewCount = stats.reviewCount || 0;
+
+          const trendingScore = //what's determinant of being trending:
+            views * 0.4 + //40% on number of movie details views
+            avgRating * 20 * 0.4 + //40% on average rating of movie
+            reviewCount * 0.2; //remaing 20% on number of reviews
+
+          return {
+            ...movie.toObject(),
+            trendingScore,
+            views,
+            avgRating,
+            reviewCount,
+          };
+        })
+      );
+
+      moviesWithStats.sort((a, b) => b.trendingScore - a.trendingScore); //sort by tabulated trending scores
+      const trendingMovies = moviesWithStats.slice(0, 4); // slide to limit top 4 trending movies
+      let msg = "";
+      if (req.query.msg === "added") msg = "Successfully added to watchlist!";
+      if (req.query.msg === "exists") {
+        msg = "This movie is already in your watchlist.";
+      }
+      if (req.query.msg === "error") msg = "Something went wrong. Try again!";
+
+      res.render("movies", {
+        movies: moviesWithStats,
+        trendingMovies,
+        genres,
+        selectedGenre,
+        user: req.session.user,
+        msg: msg,
+        search
+      });
   } catch (error) {
     console.error(error);
     res.render("movies", {
@@ -50,7 +77,6 @@ exports.showAllMovies = async (req, res) => {
   }
 };
 
-// thet
 // load movie details, public reviews, the current user's review,
 // and check watched history so removed watched movies are still remembered
 exports.showMovieDetails = async (req, res) => {
@@ -62,7 +88,7 @@ exports.showMovieDetails = async (req, res) => {
     if (!movie) {
       return res.status(404).send("Movie not found");
     }
-
+    await Movie.findByIdAndUpdate(movieId, { $inc: { views: 1 } });//every click increase by 1, btr than session-based counting
     const reviews = await Review.findByMovieId(movieId);
     const stats = await Review.getMovieReviewStats(movieId);
 
@@ -116,7 +142,6 @@ exports.showMovieDetails = async (req, res) => {
     if (user) {
       myReview = await Review.findByMovieIdAndUserId(movieId, user.id);
 
-      // updated by thet
       // find the active watchlist item only, so movie details page
       // does not depend on removed entries for current watchlist actions
       watchlistItem = await Watchlist.findOne({
@@ -124,8 +149,7 @@ exports.showMovieDetails = async (req, res) => {
         movieId: movieId,
         isRemoved: false,
       });
-
-      // updated by thet
+      
       // check watched history even if the movie was removed from watchlist,
       // so user can still write a review later if it was watched before
       const watchedRecord = await Watchlist.findOne({

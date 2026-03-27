@@ -299,7 +299,31 @@
         color: #14213d;
       }
 
+      .trending-container {
+        border: 2px solid #14213d;
+        border-radius: 16px;
+        padding: 20px;
+        background-color: #f0f4ff;
+        margin-bottom: 30px;
+      }
 
+      .trending-card {
+        position: relative;
+        border: 2px solid #f59e0b;
+      }
+
+      .rank-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background-color: #f59e0b;
+        color: white;
+        font-weight: bold;
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-size: 14px;
+        z-index: 10;
+      }
     </style>
   </head>
 
@@ -352,6 +376,38 @@
 
       <br>
 
+      <h2>🔥 Trending Movies 🔥</h2>
+      <div class="trending-container">
+        <div class="movies-grid">
+          <% trendingMovies.forEach((movie,index) => { %>
+            <div class="movie-card trending-card">
+              <div class="movie-banner">
+                <a href="/movies/<%= movie._id %>">
+                  <% if (movie.movieImage) { %>
+                    <img src="<%= movie.movieImage %>">
+                  <% } else { %>
+                    <div class="movie-placeholder">
+                      <%= movie.title.charAt(0).toUpperCase() %>
+                    </div>
+                  <% } %>
+                </a>
+              </div>
+              <div class="rank-badge">#<%= index + 1 %></div>
+              
+              <div class="movie-content">
+                <!-- <h2><%= movie.title %> --> 
+                <h2 class="movie-title">
+                  <a href="/movies/<%= movie._id %>"><%= movie.title %></a>
+                </h2>
+                <p class="description">
+                  ⭐ <%= movie.avgRating || 0 %> | 👁 <%= movie.views || 0 %> views
+                </p>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+      <br><br><br>
       <% if (!movies || movies.length === 0) { %>
         <div class="empty">
           <p>No movies available</p>

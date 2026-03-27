@@ -4,8 +4,12 @@ const Genre = require("../models/genre-model");
 exports.showGenres = async (req, res) => {
   try {
     const genres = await Genre.findAll();
-    res.render("admin/genre", { genres, user: req.session.user });
-
+    res.render("admin/genre", { 
+      genres, 
+      user: req.session.user,
+      errors: [],
+      formData: {}
+    });
   } catch (err) {
     console.error(err);
     res.status(500).send("Error loading genres");
@@ -19,7 +23,7 @@ exports.adminShowCreateGenreForm = async (req, res) => {
 
     res.render("admin/admin-create-movie", {
       user: req.session.user,
-      msg: "",
+      errors: [],
       formData: {},
       genres,
     });
@@ -34,38 +38,49 @@ exports.adminShowCreateGenreForm = async (req, res) => {
 exports.createGenre = async (req, res) => {
   let { name } = req.body;
   name = name?.trim();
-
+  const genres = await Genre.findAll(); 
   const formData = { name };
-
+  const errors = [];
+  //check for empty & white space input
   if (!name) {
-    return res.render("admin/admin-create-genre", {
-      user: req.session.user,
-      msg: "Genre name is required",
-      formData,
-    });
+    errors.push("Genre name is required and cannot be blank.");
+  }
+  //second check for invalid charaters
+  if (name && !/^[a-zA-Z0-9 ]+$/.test(name)) {
+    errors.push("Genre name can only contain letters, numbers, and spaces.");
   }
 
   try {
-    const existing = await Genre.findByName(name);
+    // third check for duplicates
+    if (name) {
+      const existing = await Genre.findByName(name);
+      if (existing) {
+        errors.push(`"${name}" has already been created! Please create a different genre.`);
+      }
+    }
 
-    if (existing) {
-      return res.render("admin/admin-create-genre", {
+    //render form with all errors if got error
+    if (errors.length > 0) {
+      return res.render("admin/genre", {
         user: req.session.user,
-        msg: "Genre already exists",
+        errors, // array of errors
         formData,
+        genres,
       });
     }
 
+    //create genre if above validation is okay
     await Genre.createGenre({ name });
-
-    res.redirect("/admin/genres");
+    res.redirect("/admin/genre");
 
   } catch (err) {
     console.error(err);
-    res.render("admin/admin-create-genre", {
+    const genres = await Genre.findAll();
+    res.render("admin/genre", {
       user: req.session.user,
-      msg: "Error creating genre",
+      errors: ["Error creating genre. Please try again."],
       formData,
+      genres
     });
   }
 };
@@ -81,7 +96,7 @@ exports.showEditGenreForm = async (req, res) => {
     res.render("admin/edit-genre-form", {
       genre,
       user: req.session.user,
-      msg: "",
+      errors: [],
     });
 
   } catch (err) {
@@ -95,17 +110,49 @@ exports.updateGenre = async (req, res) => {
   let { name } = req.body;
   name = name?.trim();
 
+  const errors = [];
+
+  //check empty or whitespace-only input
   if (!name) {
-    return res.send("Genre name is required");
+    errors.push("Genre name is required and cannot be blank.");
+  }
+
+  // second check for invalid characters (only letters, numbers, spaces)
+  if (name && !/^[a-zA-Z0-9 ]+$/.test(name)) {
+    errors.push("Genre name can only contain letters, numbers, and spaces.");
   }
 
   try {
+    // third check for duplicates
+    if (name) {
+      const existing = await Genre.findByName(name);
+      if (existing && existing._id.toString() !== req.params.id) {
+        errors.push(`"${name}" has already been created! Please choose a different name.`);
+      }
+    }
+
+    // If errors exist, re-render the edit form with errors
+    if (errors.length > 0) {
+      const genre = await Genre.findById(req.params.id);
+      return res.render("admin/edit-genre-form", {
+        genre,
+        user: req.session.user,
+        errors,
+      });
+    }
+
+    //update genre if above validation is ok
     await Genre.updateGenre(req.params.id, { name });
-    res.redirect("/admin/genres");
+    res.redirect("/admin/genre");
 
   } catch (err) {
     console.error(err);
-    res.send("Error updating genre");
+    const genre = await Genre.findById(req.params.id);
+    res.render("admin/edit-genre-form", {
+      genre,
+      user: req.session.user,
+      errors: ["Error updating genre. Please try again."],
+    });
   }
 };
 
@@ -113,7 +160,7 @@ exports.updateGenre = async (req, res) => {
 exports.deleteGenre = async (req, res) => {
   try {
     await Genre.deleteGenre(req.params.id);
-    res.redirect("/admin/genres");
+    res.redirect("/admin/genre");
 
   } catch (err) {
     console.error(err);

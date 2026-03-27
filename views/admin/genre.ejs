@@ -131,11 +131,26 @@
   <div class="container">
     <h1>Manage Genres</h1>
     <a href="/admin/movies" class="back">← Back to Admin Movie Management Main Page</a><br><br>
-
+    <!-- Display errors -->
+    <% if (errors && errors.length > 0) { %>
+      <div class="msg">
+        <ul>
+          <% errors.forEach(err => { %>
+            <li><%= err %></li>
+          <% }) %>
+        </ul>
+      </div>
+    <% } %>
     <!-- add genre form -->
     <form action="/admin/genres/create" method="POST">
       <div class="form-group">
-        <input type="text" name="name" placeholder="Enter genre name" required>
+        <input 
+          type="text" 
+          name="name" 
+          value="<%= formData.name || '' %>" 
+          placeholder="Enter genre name" 
+          required
+        >
         <button class="btn">Add Genre</button>
       </div>
     </form>

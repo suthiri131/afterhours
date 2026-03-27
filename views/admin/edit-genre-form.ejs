@@ -117,13 +117,14 @@
     </div>
   </div>
 
-  <!-- FORM -->
   <div class="container">
 
     <h1>Edit Genre</h1>
 
-    <% if (msg) { %>
-      <div class="msg"><%= msg %></div>
+    <% if (errors && errors.length > 0) { %>
+      <% errors.forEach(e => { %>
+        <div class="msg"><%= e %></div>
+      <% }) %>
     <% } %>
 
     <form action="/admin/genres/<%= genre._id %>/edit" method="POST">
