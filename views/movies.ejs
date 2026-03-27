@@ -35,6 +35,10 @@
         color: #6b7280;
       }
 
+      .instruction {
+        margin-bottom: 20px;
+      }
+
       .message {
         margin-bottom: 18px;
         padding: 12px 14px;
@@ -292,6 +296,10 @@
       <% if (user) { %>
         <p class="subtitle">Welcome, <%= user.username %></p>
       <% } %>
+
+      <p class="subtitle instruction">
+        Click the poster or title to view details and reviews.
+      </p>
 
       <% if (typeof msg !== "undefined" && msg) { %>
         <div class="message <%= msg.includes('Successfully') ? 'success' : '' %>">
