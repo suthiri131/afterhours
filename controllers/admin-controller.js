@@ -157,7 +157,7 @@ exports.adminUpdateMovie = async (req, res) => {
 
   const movie = await Movie.findMovieById(req.params.id);
 
-  const formData = { title, genre, description, releaseYear, director };
+  const formData = { title, genre: genreArray || [], description, releaseYear, director };
 
   const cleanUpFile = () => {
     if (req.file) {      

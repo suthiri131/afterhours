@@ -48,7 +48,7 @@
     <div class="container">
 
       <h1>Admin Edit Movie Page</h1>
-      <p><em>* All fields are required. Please fill in all fields before submitting.</em></p>
+      <p><em>* Please ensure that all fields in the form are filled in before submitting</em></p>
 
       <% if (errors && errors.length > 0) { %>
         <div class="msg">
@@ -71,8 +71,8 @@
           <% genres.forEach(g => { %>
             <%
               const selectedGenres = formData
-                ? formData.genre.map(String)
-                : movie.genre.map(g => String(g._id));
+                ? (formData.genre || []).map(String)
+                : (movie.genre || []).map(g => String(g._id));
               const isSelected = selectedGenres.includes(String(g._id));
             %>
             <option value="<%= g._id %>" <%= isSelected ? "selected" : "" %>>
