@@ -3,27 +3,87 @@ const Movie = require("../models/movie-model");
 const Review = require("../models/review-model");
 const Watchlist = require("../models/watchlist-model");
 
+// helper: get logged-in user from session
+function getSessionUser(req) {
+  return req.session && req.session.user ? req.session.user : null;
+}
+
+// helper: parse all 4 ratings
+function parseRatings(body) {
+  const storyRating = Number(body.storyRating);
+  const actingRating = Number(body.actingRating);
+  const musicRating = Number(body.musicRating);
+  const rewatchRating = Number(body.rewatchRating);
+
+  return {
+    storyRating,
+    actingRating,
+    musicRating,
+    rewatchRating,
+  };
+}
+
+// helper: validate all 4 ratings are between 1 and 5
+function areRatingsValid({ storyRating, actingRating, musicRating, rewatchRating }) {
+  return (
+    storyRating >= 1 && storyRating <= 5 &&
+    actingRating >= 1 && actingRating <= 5 &&
+    musicRating >= 1 && musicRating <= 5 &&
+    rewatchRating >= 1 && rewatchRating <= 5
+  );
+}
+
+// helper: calculate overall average rating
+function calculateOverallRating({ storyRating, actingRating, musicRating, rewatchRating }) {
+  const overall =
+    (storyRating + actingRating + musicRating + rewatchRating) / 4;
+
+  return Number(overall.toFixed(1));
+}
+
+// helper: load movie with genre
+async function getMovie(movieId) {
+  return await Movie.findMovieById(movieId).populate("genre");
+}
+
+// helper: check watched history
+async function getWatchedRecord(userId, movieId) {
+  return await Watchlist.findOne({
+    user: userId,
+    movieId: movieId,
+    status: "Watched",
+  });
+}
+
+// helper: keep old form values when validation fails
+function buildFormData(body) {
+  return {
+    headline: body.headline || "",
+    storyRating: body.storyRating || "",
+    actingRating: body.actingRating || "",
+    musicRating: body.musicRating || "",
+    rewatchRating: body.rewatchRating || "",
+    reviewText: body.reviewText || "",
+  };
+}
+
 exports.showCreateReviewForm = async (req, res) => {
   try {
     const movieId = req.params.movieId;
-    const user = req.session.user;
+    const user = getSessionUser(req);
 
     if (!user) {
       return res.redirect("/user/login");
     }
 
-    const movie = await Movie.findMovieById(movieId).populate("genre");
+    const movie = await getMovie(movieId);
     if (!movie) {
       return res.status(404).send("Movie not found");
     }
 
-    const watchlistItem = await Watchlist.findOne({
-      user: user.id,
-      movieId: movieId
-    });
-
-    if (!watchlistItem || watchlistItem.status !== "Watched") {
-      return res.status(403).send("You can only review movies marked as Watched in your watchlist.");
+    const watchedRecord = await getWatchedRecord(user.id, movieId);
+    if (!watchedRecord) {
+      return res.status(403).send("You can only review movies you have marked as Watched.");
     }
 
     const existingReview = await Review.findByMovieIdAndUserId(movieId, user.id);
@@ -31,117 +91,95 @@ exports.showCreateReviewForm = async (req, res) => {
       return res.redirect(`/reviews/${existingReview._id}/edit`);
     }
 
-    res.render("create-review", {
+    return res.render("create-review", {
       movie,
       user,
       error: null,
-      formData: {}
+      formData: {},
     });
   } catch (err) {
     console.error(err);
-    res.status(500).send("Error loading create review form");
+    return res.status(500).send("Error loading create review form");
   }
 };
 
 exports.createReview = async (req, res) => {
   try {
     const movieId = req.params.movieId;
-    const user = req.session.user;
-    const {
-      headline,
-      storyRating,
-      actingRating,
-      musicRating,
-      rewatchRating,
-      reviewText
-    } = req.body;
+    const user = getSessionUser(req);
 
     if (!user) {
       return res.redirect("/user/login");
     }
 
-    const movie = await Movie.findMovieById(movieId).populate("genre");
+    const movie = await getMovie(movieId);
     if (!movie) {
       return res.status(404).send("Movie not found");
     }
 
-    const watchlistItem = await Watchlist.findOne({
-      user: user.id,
-      movieId: movieId
-    });
-
-    if (!watchlistItem || watchlistItem.status !== "Watched") {
-      return res.status(403).send("You can only review movies marked as Watched in your watchlist.");
+    const watchedRecord = await getWatchedRecord(user.id, movieId);
+    if (!watchedRecord) {
+      return res.status(403).send("You can only review movies you have marked as Watched.");
     }
 
     const existingReview = await Review.findByMovieIdAndUserId(movieId, user.id);
     if (existingReview) {
-      return res.status(400).send("You have already reviewed this movie.");
+      return res.redirect(`/reviews/${existingReview._id}/edit`);
     }
 
-    const numericStoryRating = Number(storyRating);
-    const numericActingRating = Number(actingRating);
-    const numericMusicRating = Number(musicRating);
-    const numericRewatchRating = Number(rewatchRating);
+    const headline = req.body.headline ? req.body.headline.trim() : "";
+    const ratings = parseRatings(req.body);
+    const validRatings = areRatingsValid(ratings);
 
-    const validRatings =
-      numericStoryRating >= 1 && numericStoryRating <= 5 &&
-      numericActingRating >= 1 && numericActingRating <= 5 &&
-      numericMusicRating >= 1 && numericMusicRating <= 5 &&
-      numericRewatchRating >= 1 && numericRewatchRating <= 5;
-
-    if (!headline || !headline.trim() || !validRatings) {
+    if (!headline || !validRatings) {
       return res.render("create-review", {
         movie,
         user,
         error: "Please enter a headline and select all 4 category ratings from 1 to 5.",
-        formData: {
-          headline,
-          storyRating,
-          actingRating,
-          musicRating,
-          rewatchRating,
-          reviewText
-        }
+        formData: buildFormData(req.body),
       });
     }
 
-    const overallRating =
-      (
-        numericStoryRating +
-        numericActingRating +
-        numericMusicRating +
-        numericRewatchRating
-      ) / 4;
+    const overallRating = calculateOverallRating(ratings);
 
     await Review.createReview({
       movieId,
       userId: user.id,
-      headline: headline.trim(),
-      storyRating: numericStoryRating,
-      actingRating: numericActingRating,
-      musicRating: numericMusicRating,
-      rewatchRating: numericRewatchRating,
-      rating: Number(overallRating.toFixed(1)),
-      reviewText: reviewText ? reviewText.trim() : ""
+      headline,
+      storyRating: ratings.storyRating,
+      actingRating: ratings.actingRating,
+      musicRating: ratings.musicRating,
+      rewatchRating: ratings.rewatchRating,
+      rating: overallRating,
+      reviewText: req.body.reviewText ? req.body.reviewText.trim() : "",
     });
 
-    res.redirect(`/movies/${movieId}`);
+    return res.redirect(`/movies/${movieId}`);
   } catch (err) {
     console.error(err);
 
     if (err.code === 11000) {
+      const movieId = req.params.movieId;
+      const user = getSessionUser(req);
+
+      if (user) {
+        const existingReview = await Review.findByMovieIdAndUserId(movieId, user.id);
+        if (existingReview) {
+          return res.redirect(`/reviews/${existingReview._id}/edit`);
+        }
+      }
+
       return res.status(400).send("You have already reviewed this movie.");
     }
 
-    res.status(500).send("Error creating review");
+    return res.status(500).send("Error creating review");
   }
 };
 
 exports.showEditReviewForm = async (req, res) => {
   try {
     const reviewId = req.params.reviewId;
-    const user = req.session.user;
+    const user = getSessionUser(req);
 
     if (!user) {
       return res.redirect("/user/login");
@@ -149,7 +187,7 @@ exports.showEditReviewForm = async (req, res) => {
 
     const review = await Review.findById(reviewId).populate({
       path: "movieId",
-      populate: { path: "genre" }
+      populate: { path: "genre" },
     });
 
     if (!review) {
@@ -160,7 +198,7 @@ exports.showEditReviewForm = async (req, res) => {
       return res.status(403).send("You can only edit your own review.");
     }
 
-    res.render("edit-review", {
+    return res.render("edit-review", {
       review,
       movie: review.movieId,
       user,
@@ -171,27 +209,19 @@ exports.showEditReviewForm = async (req, res) => {
         actingRating: review.actingRating,
         musicRating: review.musicRating,
         rewatchRating: review.rewatchRating,
-        reviewText: review.reviewText || ""
-      }
+        reviewText: review.reviewText || "",
+      },
     });
   } catch (err) {
     console.error(err);
-    res.status(500).send("Error loading edit review form");
+    return res.status(500).send("Error loading edit review form");
   }
 };
 
 exports.updateReview = async (req, res) => {
   try {
     const reviewId = req.params.reviewId;
-    const user = req.session.user;
-    const {
-      headline,
-      storyRating,
-      actingRating,
-      musicRating,
-      rewatchRating,
-      reviewText
-    } = req.body;
+    const user = getSessionUser(req);
 
     if (!user) {
       return res.redirect("/user/login");
@@ -199,7 +229,7 @@ exports.updateReview = async (req, res) => {
 
     const review = await Review.findById(reviewId).populate({
       path: "movieId",
-      populate: { path: "genre" }
+      populate: { path: "genre" },
     });
 
     if (!review) {
@@ -210,50 +240,28 @@ exports.updateReview = async (req, res) => {
       return res.status(403).send("You can only edit your own review.");
     }
 
-    const numericStoryRating = Number(storyRating);
-    const numericActingRating = Number(actingRating);
-    const numericMusicRating = Number(musicRating);
-    const numericRewatchRating = Number(rewatchRating);
+    const headline = req.body.headline ? req.body.headline.trim() : "";
+    const ratings = parseRatings(req.body);
+    const validRatings = areRatingsValid(ratings);
 
-    const validRatings =
-      numericStoryRating >= 1 && numericStoryRating <= 5 &&
-      numericActingRating >= 1 && numericActingRating <= 5 &&
-      numericMusicRating >= 1 && numericMusicRating <= 5 &&
-      numericRewatchRating >= 1 && numericRewatchRating <= 5;
-
-    if (!headline || !headline.trim() || !validRatings) {
+    if (!headline || !validRatings) {
       return res.render("edit-review", {
         review,
         movie: review.movieId,
         user,
         error: "Please enter a headline and select all 4 category ratings from 1 to 5.",
-        formData: {
-          headline,
-          storyRating,
-          actingRating,
-          musicRating,
-          rewatchRating,
-          reviewText
-        }
+        formData: buildFormData(req.body),
       });
     }
 
-    const overallRating =
-      (
-        numericStoryRating +
-        numericActingRating +
-        numericMusicRating +
-        numericRewatchRating
-      ) / 4;
+    const trimmedReviewText = req.body.reviewText ? req.body.reviewText.trim() : "";
+    const overallRating = calculateOverallRating(ratings);
 
-    const trimmedHeadline = headline.trim();
-    const trimmedReviewText = reviewText ? reviewText.trim() : "";
-
-    const headlineChanged = (review.headline || "") !== trimmedHeadline;
-    const storyChanged = review.storyRating !== numericStoryRating;
-    const actingChanged = review.actingRating !== numericActingRating;
-    const musicChanged = review.musicRating !== numericMusicRating;
-    const rewatchChanged = review.rewatchRating !== numericRewatchRating;
+    const headlineChanged = (review.headline || "") !== headline;
+    const storyChanged = review.storyRating !== ratings.storyRating;
+    const actingChanged = review.actingRating !== ratings.actingRating;
+    const musicChanged = review.musicRating !== ratings.musicRating;
+    const rewatchChanged = review.rewatchRating !== ratings.rewatchRating;
     const textChanged = (review.reviewText || "") !== trimmedReviewText;
 
     if (
@@ -268,33 +276,34 @@ exports.updateReview = async (req, res) => {
     }
 
     await Review.updateReview(reviewId, {
-      headline: trimmedHeadline,
-      storyRating: numericStoryRating,
-      actingRating: numericActingRating,
-      musicRating: numericMusicRating,
-      rewatchRating: numericRewatchRating,
-      rating: Number(overallRating.toFixed(1)),
+      headline,
+      storyRating: ratings.storyRating,
+      actingRating: ratings.actingRating,
+      musicRating: ratings.musicRating,
+      rewatchRating: ratings.rewatchRating,
+      rating: overallRating,
       reviewText: trimmedReviewText,
-      isEdited: true
+      isEdited: true,
     });
 
-    res.redirect(`/movies/${review.movieId._id}`);
+    return res.redirect(`/movies/${review.movieId._id}`);
   } catch (err) {
     console.error(err);
-    res.status(500).send("Error updating review");
+    return res.status(500).send("Error updating review");
   }
 };
 
 exports.deleteReview = async (req, res) => {
   try {
     const reviewId = req.params.reviewId;
-    const user = req.session.user;
+    const user = getSessionUser(req);
 
     if (!user) {
       return res.redirect("/user/login");
     }
 
     const review = await Review.findById(reviewId);
+
     if (!review) {
       return res.status(404).send("Review not found");
     }
@@ -307,9 +316,9 @@ exports.deleteReview = async (req, res) => {
 
     await Review.deleteReview(reviewId);
 
-    res.redirect(`/movies/${movieId}`);
+    return res.redirect(`/movies/${movieId}`);
   } catch (err) {
     console.error(err);
-    res.status(500).send("Error deleting review");
+    return res.status(500).send("Error deleting review");
   }
 };
