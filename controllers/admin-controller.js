@@ -9,6 +9,7 @@ const Watchlist = require("../models/watchlist-model");
 // START of admin functions for adding/editing/deleting movies
 
 exports.adminShowCreateForm = async (req, res) => {
+  
   try {
 
     const genres = await Genre.findAll();
@@ -29,7 +30,9 @@ exports.adminShowCreateForm = async (req, res) => {
 exports.adminShowMovies = async (req, res) => {
 
   try {
+
     const movies = await Movie.findAll().populate("genre");
+    
     res.render("admin/admin-mainpage", {
       movies,
       user: req.session.user,
@@ -47,7 +50,7 @@ exports.adminCreateMovie = async (req, res) => {
 
   const user = req.session.user;
   const currentYear = new Date().getFullYear();
-  const genres = await Genre.findAll();
+
   let { title, genre, description, releaseYear, director } = req.body;
 
   title = title?.trim();
