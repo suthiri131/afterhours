@@ -42,7 +42,7 @@
       .message {
         margin-bottom: 18px;
         padding: 12px 14px;
-        border-radius: 8px;
+        border-radius: 10px;
         background-color: #fee2e2;
         color: #991b1b;
         font-size: 13px;
@@ -88,7 +88,7 @@
 
       .movie-card {
         background-color: white;
-        border-radius: 16px;
+        border-radius: 20px;
         border: 1px solid #e5e7eb;
         overflow: hidden;
         display: flex;
@@ -172,7 +172,7 @@
         display: inline-flex;
         white-space: nowrap;  /* Prevents the text from wrapping to a new line */
         padding: 5px 8px;
-        border-radius: 999px;
+        border-radius: 6px;
         background-color: #eef2ff;
         font-size: 11px;
         color: #14213d;
@@ -203,7 +203,7 @@
       .btn {
         width: 100%;
         border: none;
-        border-radius: 8px;
+        border-radius: 10px;
         padding: 10px;
         background-color: #14213d;
         color: white;
@@ -248,6 +248,10 @@
         }
       }
 
+      h3 {
+        margin-bottom: 8px;
+      }
+
       .genre-tags {
         display: flex;
         flex-wrap: wrap;
@@ -266,8 +270,8 @@
       .tag span {
         display: inline-block;
         padding: 8px 14px;
-        border-radius: 999px;
-        background-color: #e5e7eb;
+        border-radius: 8px;
+        background-color: #e3e7f3;
         font-size: 13px;
         transition: all 0.2s ease;
       }
@@ -281,6 +285,18 @@
       .tag input:checked + span {
         background-color: #14213d;
         color: white;
+      }
+
+      .search-bar {
+        background-color: #e3e7f3;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 15px;
+        width: 100%;
+      }
+
+      .search-bar::placeholder {
+        color: #14213d;
       }
 
 
@@ -310,7 +326,7 @@
       <form id="filterForm" method="GET" action="/movies">
       <h3>Movie Title Filter:</h3>
         <!-- Search -->
-        <input 
+        <input class="search-bar" 
           type="text" 
           name="search" 
           placeholder="Search movie title..."
