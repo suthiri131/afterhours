@@ -8,6 +8,7 @@
     <style>
 
       body {
+        margin: 0;
         font-family: Arial, sans-serif;
         color: #0f172a;
       }
@@ -58,6 +59,8 @@
     <div class="container">
 
       <h1>Admin Movie Management Main Page</h1>
+      
+      <p>Welcome, <%= user.username %>! You can manage all movies on the website here.</p>
 
       <% if (msg) { %>
         <div class="msg"><%= msg %></div>

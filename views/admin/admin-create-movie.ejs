@@ -8,6 +8,7 @@
     <style>
 
       body {
+        margin: 0;
         font-family: Arial, sans-serif;
         color: #0f172a;
       }
@@ -48,9 +49,8 @@
     <div class="container">
 
       <h1>Admin Movie Creation Page</h1>
-      <p><em>Welcome, <%= user.username %>! You can manage all movies here — add new movies, edit existing ones, or remove them from the platform.</em></p>
 
-      <p><em>* Please ensure that all fields in the form are filled in before submitting.</em></p>
+      <p>* Please ensure that all fields in the form are filled in before submitting.</p>
 
       <% if (errors && errors.length > 0) { %>
         <div class="msg">
