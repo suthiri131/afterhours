@@ -21,7 +21,7 @@ exports.showAllMovies = async (req, res) => {
     if (search) {
       filter.title = { $regex: search, $options: "i" };
     }
-    const movies = await Movie.find(filter).populate("genre"); //use filter;
+    const movies = await Movie.find(filter).populate("genre").sort({ createdAt: -1 }); // populate to filter, sort for newest first
 
     let msg = "";
     if (req.query.msg === "added") msg = "Successfully added to watchlist!";
