@@ -99,6 +99,11 @@ exports.showCreateReviewForm = async (req, res) => {
     });
   } catch (err) {
     console.error(err);
+
+    if (err.name === "CastError") {
+      return res.status(404).send("Movie not found");
+    }
+
     return res.status(500).send("Error loading create review form");
   }
 };
@@ -172,6 +177,10 @@ exports.createReview = async (req, res) => {
       return res.status(400).send("You have already reviewed this movie.");
     }
 
+    if (err.name === "CastError") {
+      return res.status(404).send("Movie not found");
+    }
+
     return res.status(500).send("Error creating review");
   }
 };
@@ -214,6 +223,11 @@ exports.showEditReviewForm = async (req, res) => {
     });
   } catch (err) {
     console.error(err);
+
+    if (err.name === "CastError") {
+      return res.status(404).send("Review not found");
+    }
+
     return res.status(500).send("Error loading edit review form");
   }
 };
@@ -289,6 +303,11 @@ exports.updateReview = async (req, res) => {
     return res.redirect(`/movies/${review.movieId._id}`);
   } catch (err) {
     console.error(err);
+
+    if (err.name === "CastError") {
+      return res.status(404).send("Review not found");
+    }
+
     return res.status(500).send("Error updating review");
   }
 };
@@ -319,6 +338,11 @@ exports.deleteReview = async (req, res) => {
     return res.redirect(`/movies/${movieId}`);
   } catch (err) {
     console.error(err);
+
+    if (err.name === "CastError") {
+      return res.status(404).send("Review not found");
+    }
+
     return res.status(500).send("Error deleting review");
   }
 };

@@ -4,8 +4,8 @@
       <div class="review-top">
         <div class="reviewer-name">
           <%= isOwner
-            ? ((user && (user.username || user.fullname || user.fullName)) || "You")
-            : (review.userId ? (review.userId.fullname || review.userId.username) : "Deleted User") %>
+            ? ((user && (user.username || user.fullName)) || "You")
+            : (review.userId ? (review.userId.fullName || review.userId.username) : "Deleted User") %>
           <% if (isOwner) { %><span class="you-badge">(You)</span><% } %>
         </div>
 
