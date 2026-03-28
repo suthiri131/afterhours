@@ -37,7 +37,7 @@
       <section class="panel">
         <h2 class="section-label">Step 2: Rate This Movie</h2>
 
-        <form id="reviewForm" action="/reviews/movie/<%= movie._id %>" method="POST">
+        <form action="/reviews/movie/<%= movie._id %>" method="POST">
           <%- include("review-rating-fields", { formData: formData }) %>
 
           <%- include("review-form-fields", {

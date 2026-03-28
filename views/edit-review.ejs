@@ -36,7 +36,7 @@
       <section class="panel">
         <h2 class="section-label">Step 2: Update Your Rating</h2>
 
-        <form id="reviewForm" action="/reviews/<%= review._id %>/edit" method="POST">
+        <form action="/reviews/<%= review._id %>/edit" method="POST">
           <%- include("review-rating-fields", { formData: formData }) %>
 
           <%- include("review-form-fields", {

@@ -77,8 +77,6 @@ exports.showAllMovies = async (req, res) => {
   }
 };
 
-// load movie details, public reviews, the current user's review,
-// and check watched history so removed watched movies are still remembered
 exports.showMovieDetails = async (req, res) => {
   try {
     const movieId = req.params.id;
@@ -142,16 +140,12 @@ exports.showMovieDetails = async (req, res) => {
     if (user) {
       myReview = await Review.findByMovieIdAndUserId(movieId, user.id);
 
-      // find the active watchlist item only, so movie details page
-      // does not depend on removed entries for current watchlist actions
       watchlistItem = await Watchlist.findOne({
         user: user.id,
         movieId: movieId,
         isRemoved: false,
       });
-      
-      // check watched history even if the movie was removed from watchlist,
-      // so user can still write a review later if it was watched before
+ 
       const watchedRecord = await Watchlist.findOne({
         user: user.id,
         movieId: movieId,
@@ -165,7 +159,7 @@ exports.showMovieDetails = async (req, res) => {
     if (req.query.msg === "added")
       suggestedMsg = "Successfully added to watchlist!";
     if (req.query.msg === "error")
-      suggestedMsg = "Something went wrong. try again!";
+      suggestedMsg = "Something went wrong. Try again!";
 
     res.render("movie-details", {
       movie,
@@ -174,7 +168,6 @@ exports.showMovieDetails = async (req, res) => {
       reviewCount: stats.reviewCount,
       user,
       myReview,
-      watchlistItem,
       hasWatched,
       isInWatchlist: !!watchlistItem,
       suggestedMovies,

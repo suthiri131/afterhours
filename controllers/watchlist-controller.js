@@ -1,15 +1,10 @@
 const Watchlist = require("../models/watchlist-model");
 const Review = require("../models/review-model");
 
-// updated by thet
-// load watchlist items and check whether the current user
-// already wrote a review for each movie
-// if yes, pass hasReview and reviewId so watchlist page can show Edit Review
-// if no, keep showing Write a Review
 exports.showWatchList = async (req, res) => {
   try {
     if (!req.session || !req.session.user) {
-      return res.redirect("/login");
+      return res.redirect("/user/login");
     }
 
     const userId = req.session.user.id;
@@ -43,11 +38,6 @@ exports.showWatchList = async (req, res) => {
     res.status(500).send("Error loading watchlist.");
   }
 };
-
-// updated by thet
-// add movie to watchlist
-// if returnTo is sent from another page, redirect there after adding
-// otherwise go back to the movies page with a success/existing message
 
 exports.addToWatchList = async (req, res) => {
   try {
@@ -92,8 +82,6 @@ exports.deleteFromWatchlist = async (req, res) => {
   }
 };
 
-// updated by thet
-// Mark movie as watched and return to the previous page (or watchlist by default)
 exports.markAsWatched = async (req, res) => {
   try {
     const { id } = req.params;

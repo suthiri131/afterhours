@@ -30,45 +30,6 @@ body {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
 }
 
-.movie-header {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    align-items: flex-start;
-    flex-wrap: wrap;
-}
-
-.details-movie-title {
-    margin: 0 0 10px 0;
-    font-size: 2rem;
-}
-
-.movie-meta {
-    margin: 8px 0;
-    color: #4b5563;
-    font-size: 1rem;
-}
-
-.stats-box {
-    min-width: 250px;
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
-    border-radius: 16px;
-    padding: 18px;
-}
-
-.stats-number {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #111827;
-    margin: 0;
-}
-
-.stats-sub {
-    margin: 6px 0 0 0;
-    color: #6b7280;
-}
-
 .stars-display {
     color: #f5b301;
     letter-spacing: 2px;
@@ -417,8 +378,7 @@ body {
     min-height: 42px;
 }
 
-.card-movie-title a,
-.suggested-title-link {
+.card-movie-title a {
     text-decoration: none;
     color: inherit;
 }
@@ -463,19 +423,6 @@ body {
     color: #374151;
     margin: 0 0 6px 0;
     line-height: 1.5;
-}
-
-.suggested-tip {
-    margin: 0 0 8px 0;
-    padding: 8px 10px;
-    border-radius: 10px;
-    background: #eff6ff;
-    border: 1px solid #bfdbfe;
-    color: #1d4ed8;
-    font-size: 12px;
-    font-weight: 700;
-    text-align: center;
-    line-height: 1.4;
 }
 
 .watchlist-form {

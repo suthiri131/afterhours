@@ -29,13 +29,6 @@ body {
   color: #111827;
 }
 
-.section-subtitle {
-  margin: 0 0 18px 0;
-  color: #6b7280;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
 .notice {
   background: #f9fafb;
   border: 1px solid #e5e7eb;
@@ -66,12 +59,6 @@ body {
   background: #ecfdf5;
   border-color: #a7f3d0;
   color: #047857;
-}
-
-.notice-error {
-  background: #fef2f2;
-  border-color: #fecaca;
-  color: #dc2626;
 }
 
 .btn-row {

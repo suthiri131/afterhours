@@ -113,8 +113,7 @@
               <div
                 class="sortable-review"
                 data-rating="<%= getOverallRating(review) %>"
-                data-created="<%= review.createdAt ? new Date(review.createdAt).getTime() : 0 %>"
-              >
+                data-created="<%= review.createdAt ? new Date(review.createdAt).getTime() : 0 %>">
                 <%- include("review-card", { review: review, isOwner: false, user: user }) %>
               </div>
             <% }) %>
@@ -144,8 +143,7 @@
               <div
                 class="sortable-review"
                 data-rating="<%= getOverallRating(review) %>"
-                data-created="<%= review.createdAt ? new Date(review.createdAt).getTime() : 0 %>"
-              >
+                data-created="<%= review.createdAt ? new Date(review.createdAt).getTime() : 0 %>">
                 <%- include("review-card", { review: review, isOwner: false, user: user }) %>
               </div>
             <% }) %>
