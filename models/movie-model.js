@@ -17,23 +17,24 @@ const movieSchema = new mongoose.Schema({
   description: {
     type: String,
     trim: true,
+    required: [true, "A movie must have a description"],
     default: "",
   },
 
   releaseYear: {
     type: Number,
-    default: null,
+    required: [true, "A movie must have a release year"],
   },
 
   director: {
     type: String,
     trim: true,
-    default: "",
+    required: [true, "A movie must have a director"],
   },
 
   movieImage: {
     type: String,
-    default: null,
+    required: [true, "A movie must have an image"],
   },
 
   createdAt: {
@@ -44,9 +45,11 @@ const movieSchema = new mongoose.Schema({
   views: {
     type: Number,
     default: 0,
-},
+  },
 
 });
+
+movieSchema.index({ title: 1, releaseYear: 1 }, { unique: true });
 
 const Movie = mongoose.model("Movie", movieSchema, "movies");
 
@@ -59,7 +62,7 @@ Movie.findAll = function () {
 };
 
 Movie.findMovieById = function (id) {
-  return Movie.findById(id).populate("genre");;
+  return Movie.findById(id).populate("genre");
 };
 
 Movie.updateMovie = function (id, updatedData) {

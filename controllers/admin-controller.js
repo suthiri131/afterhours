@@ -29,7 +29,7 @@ exports.adminShowMovies = async (req, res) => {
 
   try {
 
-    const movies = await Movie.findAll().populate("genre");
+    const movies = await Movie.findAll();
     
     res.render("admin/admin-mainpage", {
       movies,
@@ -57,7 +57,7 @@ exports.adminCreateMovie = async (req, res) => {
 
   const genreArray = Array.isArray(genre) ? genre : genre ? [genre] : [];
   
-  const formData = { title, genre, description, releaseYear, director };
+  const formData = { title, genre: genreArray, description, releaseYear, director };
 
   const cleanUpFile = () => {
     if (req.file) {
@@ -113,7 +113,12 @@ exports.adminCreateMovie = async (req, res) => {
 
   } catch (error) {
     console.error(error);
-    return renderForm("Error creating movie. Please try again.");
+
+    if (error.code === 11000) {
+      return renderForm(["A movie with this title and release year already exists."]);
+    }
+
+    return renderForm(["Error creating movie. Please try again."]);
   }
 
 };
@@ -121,7 +126,7 @@ exports.adminCreateMovie = async (req, res) => {
 exports.adminShowEditForm = async (req, res) => {
 
   try {
-    const movie = await Movie.findMovieById(req.params.id).populate("genre");
+    const movie = await Movie.findMovieById(req.params.id);
     const genres = await Genre.findAll();
 
     if (!movie) {
@@ -225,7 +230,12 @@ exports.adminUpdateMovie = async (req, res) => {
 
   } catch (error) {
     console.error(error);
-    return renderForm("Error updating movie. Please try again.");
+    
+    if (error.code === 11000) {
+      return renderForm(["A movie with this title and release year already exists."]);
+    }
+
+    return renderForm(["Error updating movie. Please try again."]);
   }
 
 };
