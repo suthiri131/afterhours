@@ -112,7 +112,7 @@
                 <form
                   action="/admin/movies/<%= movie._id %>/delete"
                   method="POST"
-                  onsubmit="return confirm('Delete this movie?')"
+                  onsubmit="return confirm('Deleting this movie will remove it from all users\' watchlists and all reviews and ratings tied to this movie. Are you sure you want to delete?')"
                   style="margin: 0; padding: 0;">
                   
                   <button type="submit" class="btn"

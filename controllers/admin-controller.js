@@ -233,16 +233,6 @@ exports.adminUpdateMovie = async (req, res) => {
 exports.adminDeleteMovie = async (req, res) => {
 
   try {
-    const watchlistEntries = await Watchlist.find({ movieId: req.params.id });
-
-    if (watchlistEntries.length > 0) {
-      const movies = await Movie.findAll().populate("genre");
-      return res.render("admin/admin-mainpage", {
-        movies,
-        user: req.session.user,
-        msg: "Unable to delete as this movie is in one or more users' watchlists.",
-      });
-    }
 
     const movie = await Movie.findMovieById(req.params.id);
     
@@ -262,9 +252,10 @@ exports.adminDeleteMovie = async (req, res) => {
     }
 
     await Review.deleteReviewsByMovieId(req.params.id);
+    await Watchlist.deleteMany({ movieId: req.params.id });
 
     await Movie.deleteMovie(req.params.id);
-    console.log("Movie and related reviews deleted successfully:", movie.title);
+    console.log("Movie, related reviews and watchlist entries deleted successfully:", movie.title);
     res.redirect("/admin/movies");
     
   } catch (error) {
