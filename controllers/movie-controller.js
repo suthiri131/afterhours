@@ -47,8 +47,8 @@ exports.showAllMovies = async (req, res) => {
         })
       );
 
-      moviesWithStats.sort((a, b) => b.trendingScore - a.trendingScore); //sort by tabulated trending scores
-      const trendingMovies = moviesWithStats.slice(0, 4); // slide to limit top 4 trending movies
+      //sort by tabulated trending scores, slide to limit top 4 trending movies 
+      const trendingMovies = [...moviesWithStats].sort((a, b) => b.trendingScore - a.trendingScore).slice(0, 4); 
       let msg = "";
       if (req.query.msg === "added") msg = "Successfully added to watchlist!";
       if (req.query.msg === "exists") {
