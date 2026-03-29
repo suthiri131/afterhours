@@ -5,7 +5,7 @@
   <title>Manage Genres</title>
 
   <style>
-    /* HEADER */
+
     .header {
       display: flex;
       justify-content: space-between;
@@ -121,6 +121,7 @@
     .back:hover {
       text-decoration: underline;
     }
+
   </style>
 </head>
 
@@ -131,7 +132,7 @@
   <div class="container">
     <h1>Manage Genres</h1>
     <a href="/admin/movies" class="back">← Back to Admin Movie Management Main Page</a><br><br>
-    <!-- Display errors -->
+
     <% if (errors && errors.length > 0) { %>
       <div class="msg">
         <ul>
@@ -141,7 +142,7 @@
         </ul>
       </div>
     <% } %>
-    <!-- add genre form -->
+
     <form action="/admin/genres/create" method="POST">
       <div class="form-group">
         <input 
@@ -155,7 +156,6 @@
       </div>
     </form>
 
-    <!-- genre table -->
     <table>
       <thead>
         <tr>
@@ -178,12 +178,10 @@
             <td>
               <div class="actions">
 
-                <!-- edit -->
                 <form action="/admin/genres/<%= g._id %>/edit" method="GET">
                   <button class="btn btn-edit">Edit</button>
                 </form>
 
-                <!-- delete -->
                 <form action="/admin/genres/<%= g._id %>/delete" method="POST" onsubmit="return confirm('Delete this genre?')">
                   <button class="btn btn-danger">Delete</button>
                 </form>
