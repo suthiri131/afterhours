@@ -6,67 +6,67 @@ const reviewSchema = new mongoose.Schema(
     movieId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Movie",
-      required: [true, "Movie does not exist"]
+      required: [true, "Movie does not exist"],
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: [true, "User does not exist"]
+      required: [true, "User does not exist"],
     },
 
     headline: {
       type: String,
       required: [true, "Headline is required"],
-      trim: true
+      trim: true,
     },
 
     storyRating: {
       type: Number,
       required: [true, "Story rating is required"],
       min: [1, "Story rating must be at least 1"],
-      max: [5, "Story rating must be at most 5"]
+      max: [5, "Story rating must be at most 5"],
     },
 
     actingRating: {
       type: Number,
       required: [true, "Acting/Cast rating is required"],
       min: [1, "Acting/Cast rating must be at least 1"],
-      max: [5, "Acting/Cast rating must be at most 5"]
+      max: [5, "Acting/Cast rating must be at most 5"],
     },
 
     musicRating: {
       type: Number,
       required: [true, "Music rating is required"],
       min: [1, "Music rating must be at least 1"],
-      max: [5, "Music rating must be at most 5"]
+      max: [5, "Music rating must be at most 5"],
     },
 
     rewatchRating: {
       type: Number,
       required: [true, "Rewatch value rating is required"],
       min: [1, "Rewatch value rating must be at least 1"],
-      max: [5, "Rewatch value rating must be at most 5"]
+      max: [5, "Rewatch value rating must be at most 5"],
     },
 
     rating: {
       type: Number,
       required: [true, "Overall rating is required"],
       min: [1, "Overall rating must be at least 1"],
-      max: [5, "Overall rating must be at most 5"]
+      max: [5, "Overall rating must be at most 5"],
     },
 
     reviewText: {
       type: String,
       trim: true,
-      default: ""
+      default: "",
     },
 
     isEdited: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 reviewSchema.index({ movieId: 1, userId: 1 }, { unique: true });
@@ -95,8 +95,8 @@ exports.findById = function (id) {
 
 exports.updateReview = function (id, updatedData) {
   return Review.findByIdAndUpdate(id, updatedData, {
-    returnDocument: 'after',
-    runValidators: true
+    returnDocument: "after",
+    runValidators: true,
   });
 };
 
@@ -108,31 +108,35 @@ exports.getMovieReviewStats = async function (movieId) {
   const result = await Review.aggregate([
     {
       $match: {
-        movieId: new mongoose.Types.ObjectId(movieId)
-      }
+        movieId: new mongoose.Types.ObjectId(movieId),
+      },
     },
     {
       $group: {
         _id: "$movieId",
         averageRating: { $avg: "$rating" },
-        reviewCount: { $sum: 1 }
-      }
-    }
+        reviewCount: { $sum: 1 },
+      },
+    },
   ]);
 
   if (result.length === 0) {
     return {
       averageRating: 0,
-      reviewCount: 0
+      reviewCount: 0,
     };
   }
 
   return {
     averageRating: Number(result[0].averageRating.toFixed(1)),
-    reviewCount: result[0].reviewCount
+    reviewCount: result[0].reviewCount,
   };
 };
 
 exports.deleteReviewsByMovieId = function (movieId) {
   return Review.deleteMany({ movieId });
+};
+
+exports.deleteReviewsByUserId = function (userId) {
+  return Review.deleteMany({ userId });
 };
