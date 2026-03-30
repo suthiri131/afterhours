@@ -25,11 +25,10 @@ function parseRatings(body) {
 
 // helper: validate all 4 ratings are between 1 and 5
 function areRatingsValid({ storyRating, actingRating, musicRating, rewatchRating }) {
-  return (
-    storyRating >= 1 && storyRating <= 5 &&
-    actingRating >= 1 && actingRating <= 5 &&
-    musicRating >= 1 && musicRating <= 5 &&
-    rewatchRating >= 1 && rewatchRating <= 5
+  const ratings = [storyRating, actingRating, musicRating, rewatchRating];
+
+  return ratings.every((rating) =>
+    !Number.isNaN(rating) && rating >= 1 && rating <= 5
   );
 }
 
@@ -58,12 +57,12 @@ async function getWatchedRecord(userId, movieId) {
 // helper: keep old form values when validation fails
 function buildFormData(body) {
   return {
-    headline: body.headline || "",
+    headline: body.headline ? body.headline.trim().replace(/\s+/g, " ") : "",
     storyRating: body.storyRating || "",
     actingRating: body.actingRating || "",
     musicRating: body.musicRating || "",
     rewatchRating: body.rewatchRating || "",
-    reviewText: body.reviewText || "",
+    reviewText: body.reviewText ? body.reviewText.trim() : "",
   };
 }
 
@@ -132,7 +131,9 @@ exports.createReview = async (req, res) => {
       return res.redirect(`/reviews/${existingReview._id}/edit`);
     }
 
-    const headline = req.body.headline ? req.body.headline.trim() : "";
+    const headline = req.body.headline
+      ? req.body.headline.trim().replace(/\s+/g, " ")
+      : "";
     const ratings = parseRatings(req.body);
     const validRatings = areRatingsValid(ratings);
 
@@ -254,7 +255,9 @@ exports.updateReview = async (req, res) => {
       return res.status(403).send("You can only edit your own review.");
     }
 
-    const headline = req.body.headline ? req.body.headline.trim() : "";
+    const headline = req.body.headline
+      ? req.body.headline.trim().replace(/\s+/g, " ")
+      : "";
     const ratings = parseRatings(req.body);
     const validRatings = areRatingsValid(ratings);
 
