@@ -36,6 +36,4 @@ router.post(
   adminController.adminDeleteMovie,
 );
 
-
-
 module.exports = router;
