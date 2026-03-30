@@ -211,6 +211,14 @@
         font-weight: 600;
         cursor: pointer;
       }
+      .search-btn {
+      width: auto;
+      padding: 10px 12px;
+      white-space: nowrap;
+      }
+      .search-bar {
+        flex: 1;   /* instead of width: 100% */
+      }
 
       .btn:hover {
         background-color: #1f325c;
@@ -349,12 +357,15 @@
       <form id="filterForm" method="GET" action="/movies">
       <h3>Movie Title Filter:</h3>
         <!-- Search -->
+        <div style="display: flex; gap: 20px;">
         <input class="search-bar" 
           type="text" 
           name="search" 
           placeholder="Search movie title..."
           value="<%= search || '' %>"
         />
+        <button type="submit" class="btn search-btn">🔍Search</button>
+        </div>
       <h3>Genre Filter:</h3>
         <!-- Genre Tags -->
         <div class="genre-tags">
@@ -374,11 +385,13 @@
       </form>
 
       <br>
+      <!-- show trending movies when not searching nor filtering aka only main movies page -->
+      <% if ((!search || search === "") && (!selectedGenre || selectedGenre.length === 0) && movies.length > 0) { %>
 
-      <h2>🔥 Trending Movies 🔥</h2>
-      <div class="trending-container">
-        <div class="movies-grid">
-          <% trendingMovies.forEach((movie,index) => { %>
+        <h2>🔥 Trending Movies 🔥</h2>
+        <div class="trending-container">
+          <div class="movies-grid">
+            <% trendingMovies.forEach((movie,index) => { %>
             <div class="movie-card trending-card">
               <div class="movie-banner">
                 <a href="/movies/<%= movie._id %>">
@@ -405,6 +418,8 @@
           <% }) %>
         </div>
       </div>
+      
+      <% } %>
       <br><br><br>
       <% if (!movies || movies.length === 0) { %>
         <div class="empty">
