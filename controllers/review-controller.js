@@ -24,17 +24,26 @@ function parseRatings(body) {
 }
 
 // helper: validate all 4 ratings are between 1 and 5
-function areRatingsValid({ storyRating, actingRating, musicRating, rewatchRating }) {
-  return (
-    storyRating >= 1 && storyRating <= 5 &&
-    actingRating >= 1 && actingRating <= 5 &&
-    musicRating >= 1 && musicRating <= 5 &&
-    rewatchRating >= 1 && rewatchRating <= 5
+function areRatingsValid({
+  storyRating,
+  actingRating,
+  musicRating,
+  rewatchRating,
+}) {
+  const ratings = [storyRating, actingRating, musicRating, rewatchRating];
+
+  return ratings.every(
+    (rating) => !Number.isNaN(rating) && rating >= 1 && rating <= 5,
   );
 }
 
 // helper: calculate overall average rating
-function calculateOverallRating({ storyRating, actingRating, musicRating, rewatchRating }) {
+function calculateOverallRating({
+  storyRating,
+  actingRating,
+  musicRating,
+  rewatchRating,
+}) {
   const overall =
     (storyRating + actingRating + musicRating + rewatchRating) / 4;
 
@@ -58,12 +67,12 @@ async function getWatchedRecord(userId, movieId) {
 // helper: keep old form values when validation fails
 function buildFormData(body) {
   return {
-    headline: body.headline || "",
+    headline: body.headline ? body.headline.trim().replace(/\s+/g, " ") : "",
     storyRating: body.storyRating || "",
     actingRating: body.actingRating || "",
     musicRating: body.musicRating || "",
     rewatchRating: body.rewatchRating || "",
-    reviewText: body.reviewText || "",
+    reviewText: body.reviewText ? body.reviewText.trim() : "",
   };
 }
 
@@ -83,15 +92,20 @@ exports.showCreateReviewForm = async (req, res) => {
 
     const watchedRecord = await getWatchedRecord(user.id, movieId);
     if (!watchedRecord) {
-      return res.status(403).send("You can only review movies you have marked as Watched.");
+      return res
+        .status(403)
+        .send("You can only review movies you have marked as Watched.");
     }
 
-    const existingReview = await Review.findByMovieIdAndUserId(movieId, user.id);
+    const existingReview = await Review.findByMovieIdAndUserId(
+      movieId,
+      user.id,
+    );
     if (existingReview) {
       return res.redirect(`/reviews/${existingReview._id}/edit`);
     }
 
-    return res.render("create-review", {
+    return res.render("user/create-review", {
       movie,
       user,
       error: null,
@@ -124,23 +138,31 @@ exports.createReview = async (req, res) => {
 
     const watchedRecord = await getWatchedRecord(user.id, movieId);
     if (!watchedRecord) {
-      return res.status(403).send("You can only review movies you have marked as Watched.");
+      return res
+        .status(403)
+        .send("You can only review movies you have marked as Watched.");
     }
 
-    const existingReview = await Review.findByMovieIdAndUserId(movieId, user.id);
+    const existingReview = await Review.findByMovieIdAndUserId(
+      movieId,
+      user.id,
+    );
     if (existingReview) {
       return res.redirect(`/reviews/${existingReview._id}/edit`);
     }
 
-    const headline = req.body.headline ? req.body.headline.trim() : "";
+    const headline = req.body.headline
+      ? req.body.headline.trim().replace(/\s+/g, " ")
+      : "";
     const ratings = parseRatings(req.body);
     const validRatings = areRatingsValid(ratings);
 
     if (!headline || !validRatings) {
-      return res.render("create-review", {
+      return res.render("user/create-review", {
         movie,
         user,
-        error: "Please enter a headline and select all 4 category ratings from 1 to 5.",
+        error:
+          "Please enter a headline and select all 4 category ratings from 1 to 5.",
         formData: buildFormData(req.body),
       });
     }
@@ -168,7 +190,10 @@ exports.createReview = async (req, res) => {
       const user = getSessionUser(req);
 
       if (user) {
-        const existingReview = await Review.findByMovieIdAndUserId(movieId, user.id);
+        const existingReview = await Review.findByMovieIdAndUserId(
+          movieId,
+          user.id,
+        );
         if (existingReview) {
           return res.redirect(`/reviews/${existingReview._id}/edit`);
         }
@@ -207,7 +232,7 @@ exports.showEditReviewForm = async (req, res) => {
       return res.status(403).send("You can only edit your own review.");
     }
 
-    return res.render("edit-review", {
+    return res.render("user/edit-review", {
       review,
       movie: review.movieId,
       user,
@@ -254,21 +279,26 @@ exports.updateReview = async (req, res) => {
       return res.status(403).send("You can only edit your own review.");
     }
 
-    const headline = req.body.headline ? req.body.headline.trim() : "";
+    const headline = req.body.headline
+      ? req.body.headline.trim().replace(/\s+/g, " ")
+      : "";
     const ratings = parseRatings(req.body);
     const validRatings = areRatingsValid(ratings);
 
     if (!headline || !validRatings) {
-      return res.render("edit-review", {
+      return res.render("user/edit-review", {
         review,
         movie: review.movieId,
         user,
-        error: "Please enter a headline and select all 4 category ratings from 1 to 5.",
+        error:
+          "Please enter a headline and select all 4 category ratings from 1 to 5.",
         formData: buildFormData(req.body),
       });
     }
 
-    const trimmedReviewText = req.body.reviewText ? req.body.reviewText.trim() : "";
+    const trimmedReviewText = req.body.reviewText
+      ? req.body.reviewText.trim()
+      : "";
     const overallRating = calculateOverallRating(ratings);
 
     const headlineChanged = (review.headline || "") !== headline;
