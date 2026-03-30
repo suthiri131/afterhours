@@ -1,6 +1,8 @@
 const User = require("../models/user-model");
 const bcrypt = require("bcrypt");
 const sendOtpEmail = require("../utils/sendOtpEmail");
+const Review = require("../models/review-model");
+const Watchlist = require("../models/watchlist-model");
 
 function generateOtp() {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -623,19 +625,15 @@ exports.logoutUser = (req, res) => {
 
 exports.showDeleteUserPage = (req, res) => {
   const msg = req.session.deleteMsg || "";
-
   req.session.deleteMsg = null;
-
-  return res.render("deleteUser", {
+  return res.render("user/delete-user", {
     msg,
   });
 };
 
 exports.deleteUserAccount = async (req, res) => {
   const userId = req.session.user?.id;
-  let password = req.body.password;
-
-  password = password ?? "";
+  let password = req.body.password ?? "";
 
   if (!userId) {
     return res.redirect("/user/login");
@@ -659,8 +657,13 @@ exports.deleteUserAccount = async (req, res) => {
       req.session.deleteMsg = "Incorrect password";
       return res.redirect("/user/delete");
     }
-    await Review.deleteMany({ userId });
 
+    await Review.deleteReviewsByUserId(userId);
+    //uncomment this after watchlist model is completed.
+    //     exports.deleteWatchlistByUserId = function (userId) {
+    //   return Watchlist.deleteMany({ user: userId });
+    // };
+    //await Watchlist.deleteWatchlistByUserId(userId);
     await User.deleteUser(userId);
 
     req.session.destroy((err) => {

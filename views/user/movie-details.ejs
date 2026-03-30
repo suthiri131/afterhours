@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="/css/review-movie-poster.css" />
 </head>
 <body>
-  <%- include("navbar") %>
+  <%- include("../navbar") %>
 
   <div class="page-container">
     <section class="card">
@@ -25,16 +25,7 @@
         !user || !review.userId || review.userId._id.toString() !== user.id.toString()
       );
 
-      function getOverallRating(review) {
-        const ratings = [
-          Number(review.storyRating) || 0,
-          Number(review.actingRating) || 0,
-          Number(review.musicRating) || 0,
-          Number(review.rewatchRating) || 0
-        ];
-        const total = ratings.reduce((sum, value) => sum + value, 0);
-        return (total / ratings.length).toFixed(1);
-      }
+      
     %>
 
     <section class="card">
@@ -112,7 +103,7 @@
             <% otherReviews.forEach(function(review) { %>
               <div
                 class="sortable-review"
-                data-rating="<%= getOverallRating(review) %>"
+                data-rating="<%= review.rating %>"
                 data-created="<%= review.createdAt ? new Date(review.createdAt).getTime() : 0 %>">
                 <%- include("review-card", { review: review, isOwner: false, user: user }) %>
               </div>
@@ -142,7 +133,7 @@
             <% reviews.forEach(function(review) { %>
               <div
                 class="sortable-review"
-                data-rating="<%= getOverallRating(review) %>"
+                data-rating="<%= review.rating %>"
                 data-created="<%= review.createdAt ? new Date(review.createdAt).getTime() : 0 %>">
                 <%- include("review-card", { review: review, isOwner: false, user: user }) %>
               </div>
