@@ -60,7 +60,7 @@ exports.showAllMovies = async (req, res) => {
     }
     if (req.query.msg === "error") msg = "Something went wrong. Try again!";
 
-    res.render("movies", {
+    res.render("user/movies", {
       movies: moviesWithStats,
       trendingMovies,
       genres,
@@ -71,7 +71,7 @@ exports.showAllMovies = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.render("movies", {
+    res.render("user/movies", {
       movies: [],
       genres: [],
       selectedGenre: "",
@@ -165,7 +165,7 @@ exports.showMovieDetails = async (req, res) => {
     if (req.query.msg === "error")
       suggestedMsg = "Something went wrong. Try again!";
 
-    res.render("movie-details", {
+    res.render("user/movie-details", {
       movie,
       reviews,
       averageRating: stats.averageRating,
