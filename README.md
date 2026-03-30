@@ -16,6 +16,7 @@ After Hours is a movie watchlist and review web application where users can keep
 - Watched / not watched status
 - Ratings and reviews
 - Search and filter movies
+- Movie recommendations (most viewed, similar genre)
 
 ## Tech Stack
 
