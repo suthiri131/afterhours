@@ -30,20 +30,10 @@ function areRatingsValid({
   musicRating,
   rewatchRating,
 }) {
-  return (
-    storyRating >= 1 &&
-    storyRating <= 5 &&
-    actingRating >= 1 &&
-    actingRating <= 5 &&
-    musicRating >= 1 &&
-    musicRating <= 5 &&
-    rewatchRating >= 1 &&
-    rewatchRating <= 5
-function areRatingsValid({ storyRating, actingRating, musicRating, rewatchRating }) {
   const ratings = [storyRating, actingRating, musicRating, rewatchRating];
 
-  return ratings.every((rating) =>
-    !Number.isNaN(rating) && rating >= 1 && rating <= 5
+  return ratings.every(
+    (rating) => !Number.isNaN(rating) && rating >= 1 && rating <= 5,
   );
 }
 
