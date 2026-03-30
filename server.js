@@ -1,5 +1,5 @@
 const express = require("express");
-const dotenv = require("dotenv");
+const dotenv = require("dotenv"); 
 const mongoose = require("mongoose");
 const fs = require("fs");
 const session = require("express-session");
@@ -39,7 +39,7 @@ server.use("/user", userRoutes);
 server.use("/movies", movieRoutes);
 server.use("/reviews", reviewRoutes);
 server.use("/watchlist", watchlistRoutes);
-server.use("/admin/genre", genreRoutes);
+server.use("/genre", genreRoutes);
 server.use("/superAdmin", superAdminRoutes);
 
 server.get("/", (req, res) => {

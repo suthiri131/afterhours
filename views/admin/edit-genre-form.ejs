@@ -107,9 +107,9 @@
     <div class="logo">AfterHours</div>
 
     <div class="right">
-      <% if (user && user.role === "admin" || "superAdmin") { %>
+      <% if (user && (user.role === "admin" || user.role === "superAdmin")) { %>
         <a class="link" href="/admin/movies">Manage Movies</a>
-        <a class="link" href="/admin/genres">Genres</a>
+        <a class="link" href="/genres">Genres</a>
       <% } %>
       <a class="link" href="/watchlist">WatchList</a>
       <a class="link" href="/user/profile">Profile</a>
@@ -126,7 +126,7 @@
       <% }) %>
     <% } %>
 
-    <form action="/admin/genres/<%= genre._id %>/edit" method="POST">
+    <form action="/genre/<%= genre._id %>/edit" method="POST">
       
       Genre Name<br>
       <input 
@@ -140,7 +140,7 @@
 
     </form>
 
-    <a href="/admin/genres" class="back">← Back to Manage Genres</a>
+    <a href="/genre" class="back">← Back to Manage Genres</a>
 
   </div>
 

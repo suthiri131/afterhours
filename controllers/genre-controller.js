@@ -71,12 +71,12 @@ exports.createGenre = async (req, res) => {
 
     //create genre if above validation is okay
     await Genre.createGenre({ name });
-    res.redirect("/admin/genre");
+    res.redirect("/genre");
 
   } catch (err) {
     console.error(err);
     const genres = await Genre.findAll();
-    res.render("admin/genre", {
+    res.render("/genre", {
       user: req.session.user,
       errors: ["Error creating genre. Please try again."],
       formData,
@@ -143,7 +143,7 @@ exports.updateGenre = async (req, res) => {
 
     //update genre if above validation is ok
     await Genre.updateGenre(req.params.id, { name });
-    res.redirect("/admin/genre");
+    res.redirect("/genre");
 
   } catch (err) {
     console.error(err);
@@ -160,7 +160,7 @@ exports.updateGenre = async (req, res) => {
 exports.deleteGenre = async (req, res) => {
   try {
     await Genre.deleteGenre(req.params.id);
-    res.redirect("/admin/genre");
+    res.redirect("/genre");
 
   } catch (err) {
     console.error(err);
