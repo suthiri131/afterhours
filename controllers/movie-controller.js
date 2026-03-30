@@ -1,4 +1,4 @@
-const Movie = require("./../models/movie-model");
+const Movie = require("../models/movie-model");
 const Review = require("../models/review-model");
 const Watchlist = require("../models/watchlist-model");
 const Genre = require("../models/genre-model");
@@ -16,55 +16,59 @@ exports.showAllMovies = async (req, res) => {
 
     if (selectedGenre.length > 0) {
       filter.genre = { $all: selectedGenre }; //use $all not $in to filter all selected genres
-    } 
+    }
     //search movie filter
     if (search) {
       filter.title = { $regex: search, $options: "i" };
     }
 
-      const movies = await Movie.find(filter).populate("genre").sort({ createdAt: -1 }); // populate to filter, sort for newest first
+    const movies = await Movie.find(filter)
+      .populate("genre")
+      .sort({ createdAt: -1 }); // populate to filter, sort for newest first
 
-      const moviesWithStats = await Promise.all(
-        movies.map(async (movie) => {
-          const stats = await Review.getMovieReviewStats(movie._id);
+    const moviesWithStats = await Promise.all(
+      movies.map(async (movie) => {
+        const stats = await Review.getMovieReviewStats(movie._id);
 
-          const views = movie.views || 0;
-          const avgRating = stats.averageRating || 0;
-          const reviewCount = stats.reviewCount || 0;
+        const views = movie.views || 0;
+        const avgRating = stats.averageRating || 0;
+        const reviewCount = stats.reviewCount || 0;
 
-          const trendingScore = //what's determinant of being trending:
-            views * 0.4 + //40% on number of movie details views
-            avgRating * 20 * 0.4 + //40% on average rating of movie
-            reviewCount * 0.2; //remaing 20% on number of reviews
+        const trendingScore = //what's determinant of being trending:
+          views * 0.4 + //40% on number of movie details views
+          avgRating * 20 * 0.4 + //40% on average rating of movie
+          reviewCount * 0.2; //remaing 20% on number of reviews
 
-          return {
-            ...movie.toObject(),
-            trendingScore,
-            views,
-            avgRating,
-            reviewCount,
-          };
-        })
-      );
+        return {
+          ...movie.toObject(),
+          trendingScore,
+          views,
+          avgRating,
+          reviewCount,
+        };
+      }),
+    );
 
-      //sort by tabulated trending scores, slide to limit top 4 trending movies 
-      const trendingMovies = [...moviesWithStats].sort((a, b) => b.trendingScore - a.trendingScore).slice(0, 4); 
-      let msg = "";
-      if (req.query.msg === "added") msg = "Successfully added to watchlist!";
-      if (req.query.msg === "exists") {
-        msg = "This movie is already in your watchlist.";
-      }
-      if (req.query.msg === "error") msg = "Something went wrong. Try again!";
+    //sort by tabulated trending scores, slide to limit top 4 trending movies
+    const trendingMovies = [...moviesWithStats]
+      .sort((a, b) => b.trendingScore - a.trendingScore)
+      .slice(0, 4);
+    let msg = "";
+    if (req.query.msg === "added") msg = "Successfully added to watchlist!";
+    if (req.query.msg === "exists") {
+      msg = "This movie is already in your watchlist.";
+    }
+    if (req.query.msg === "error") msg = "Something went wrong. Try again!";
 
-      res.render("movies", {
-        movies: moviesWithStats,
-        trendingMovies,
-        genres,
-        selectedGenre,
-        user: req.session.user,
-        msg: msg,
-        search
-      });
+    res.render("movies", {
+      movies: moviesWithStats,
+      trendingMovies,
+      genres,
+      selectedGenre,
+      user: req.session.user,
+      msg: msg,
+      search,
+    });
   } catch (error) {
     console.error(error);
     res.render("movies", {
@@ -72,7 +76,7 @@ exports.showAllMovies = async (req, res) => {
       genres: [],
       selectedGenre: "",
       msg: "Error loading movies",
-      search: ""
+      search: "",
     });
   }
 };
@@ -86,7 +90,7 @@ exports.showMovieDetails = async (req, res) => {
     if (!movie) {
       return res.status(404).send("Movie not found");
     }
-    await Movie.findByIdAndUpdate(movieId, { $inc: { views: 1 } });//every click increase by 1, btr than session-based counting
+    await Movie.findByIdAndUpdate(movieId, { $inc: { views: 1 } }); //every click increase by 1, btr than session-based counting
     const reviews = await Review.findByMovieId(movieId);
     const stats = await Review.getMovieReviewStats(movieId);
 
@@ -145,7 +149,7 @@ exports.showMovieDetails = async (req, res) => {
         movieId: movieId,
         isRemoved: false,
       });
- 
+
       const watchedRecord = await Watchlist.findOne({
         user: user.id,
         movieId: movieId,

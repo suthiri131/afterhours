@@ -50,6 +50,14 @@ server.get("/", (req, res) => {
   }
 });
 
+server.get("/index.html", (req, res) => {
+  if (req.session.user) {
+    return res.redirect("/movies");
+  } else {
+    return res.redirect("/user/login");
+  }
+});
+
 async function connectDB() {
   try {
     await mongoose.connect(process.env.DB);
