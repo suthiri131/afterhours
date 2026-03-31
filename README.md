@@ -67,6 +67,7 @@ Website Features
 - Users can add movies to watchlist
 - Users can search for movies
 - Users can filter movies by genre
+- Clicking on movie shows reviews & ratings for movie
 
 6. Movies Watchlist Page
 - Users can remove movies from their watchlist
