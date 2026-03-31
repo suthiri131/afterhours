@@ -52,6 +52,18 @@ exports.createUser = async (req, res) => {
     return res.redirect("/user/register");
   }
 
+  if (fullName.length > 100) {
+    req.session.registerMsg = "Full name cannot exceed 100 characters";
+    req.session.registerFormData = formData;
+    return res.redirect("/user/register");
+  }
+
+  if (username.length > 30) {
+    req.session.registerMsg = "Username cannot exceed 30 characters";
+    req.session.registerFormData = formData;
+    return res.redirect("/user/register");
+  }
+
   if (!password || !password.trim()) {
     req.session.registerMsg = "Password is required";
     req.session.registerFormData = formData;
@@ -82,6 +94,12 @@ exports.createUser = async (req, res) => {
 
   if (password.length < 6) {
     req.session.registerMsg = "Password must be at least 6 characters";
+    req.session.registerFormData = formData;
+    return res.redirect("/user/register");
+  }
+
+  if (password.length > 100) {
+    req.session.registerMsg = "Password cannot exceed 100 characters";
     req.session.registerFormData = formData;
     return res.redirect("/user/register");
   }
