@@ -74,7 +74,13 @@ Website Features
 - Users can mark movies as watched and then leave a review/rating
 
 7. Reviews & Ratings Page
-- Users can leave reviews and rate the movies that they have watched
+- Users can leave reviews and rate movies they have watched
+- Only allowed after marking movie as “Watched”
+- One review per user per movie
+- Users can create, edit, and delete their own reviews
+- Reviews include category ratings (Story, Acting, Music, Rewatch) with - auto-calculated overall rating
+- Displays average rating, total reviews and suggested movies on Movie Details page
+- Prevents unauthorized access and handles invalid inputs
 
 8. Profile Page
 - Users can change their password
