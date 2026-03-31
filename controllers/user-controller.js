@@ -568,6 +568,12 @@ exports.changePassword = async (req, res) => {
       return res.redirect("/user/change-password");
     }
 
+    if (newPassword.length > 100) {
+      req.session.msg = "Password cannot exceed 100 characters.";
+      req.session.type = "error";
+      return res.redirect("/user/change-password");
+    }
+
     if (newPassword !== confirmPassword) {
       req.session.msg = "New password and confirm password do not match.";
       req.session.type = "error";
