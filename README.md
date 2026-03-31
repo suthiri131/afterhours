@@ -67,3 +67,15 @@ Website Features
 - Users can add movies to watchlist
 - Users can search for movies
 - Users can filter movies by genre
+
+6. Movies Watchlist Page
+- Users can remove movies from their watchlist
+- Users can mark movies as watched and then leave a review/rating
+
+7. Reviews & Ratings Page
+- Users can leave reviews and rate the movies that they have watched
+
+8. Profile Page
+- Users can change their password
+- Users can delete their account
+- Users can log out
