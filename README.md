@@ -1,6 +1,9 @@
 Afterhours Website
 
-Afterhours is a movie watchlist and review web application where users can keep track of movies they want to watch, mark them as watched, and leave ratings and reviews. This project is built as part of a group assignment and focuses on implementing core CRUD functionalities using Node.js, Express, and MongoDB.
+Afterhours is a movie watchlist and review web application where users can keep track of movies they want to watch, 
+mark them as watched, and leave ratings and reviews.
+
+This project is built as part of a group assignment and focuses on implementing core CRUD functionalities using Node.js, Express, and MongoDB.
 
 
 Getting Started
@@ -13,6 +16,7 @@ Getting Started
 4. Run the server - nodemon server.js
 5. Go to http://localhost:8000/index.html on your desired web browser.
 6. Welcome to our website!
+
 
 Account Credentials
 
@@ -36,5 +40,30 @@ User3
 Email: userthree@gmail.com
 Password: userthree123!!
 
-*Please note that we have used dummy email accounts,
 
+Website Features
+
+1. Login/Registration Page
+- Access the website from one of our provided accounts
+- You may also choose to create a user account, please use our provided SuperAdmin and Admin accounts to test SuperAdmin and Admin features
+* If you choose to create your own user account, please use an email that you have access to as you will be prompted for OTP verification
+
+2. Super Admin Manage Users Page (Only accessible by SuperAdmin)
+- Manage user roles and permissions
+
+3. Admin Movie Management Main Page (Only accessible by Admin)
+- Add new movies to the website
+- Edit movie details
+- Delete movie
+
+4. Manage Genres Page (Only accessible by Admin)
+- Add Genre
+- Edit Genre
+- Delete Genre
+
+5. All Movies Page
+- Shows users all the movies
+- Show users trending movies by views and ratings
+- Users can add movies to watchlist
+- Users can search for movies
+- Users can filter movies by genre
