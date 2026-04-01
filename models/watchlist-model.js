@@ -26,15 +26,19 @@ const watchlistSchema = new mongoose.Schema({
 
 watchlistSchema.index({ user: 1, movieId: 1 }, { unique: true });
 
-watchlistSchema.statics.getUserWatchlist = function(userId) {
-  return this.find({ user: userId, isRemoved: false }).populate("movieId");
+
+const Watchlist = mongoose.model("Watchlist", watchlistSchema);
+exports.Watchlist = Watchlist;
+
+exports.getUserWatchlist = function(userId) {
+  return Watchlist.find({ user: userId, isRemoved: false }).populate("movieId");
 };
 
-watchlistSchema.statics.softDelete = function(id) {
+exports.softDelete = function(id) {
   return this.findByIdAndUpdate(id, { isRemoved: true });
 };
 
-watchlistSchema.statics.upsertMovie = async function(userId, movieId) {
+exports.upsertMovie = async function(userId, movieId) {
   const existing = await this.findOne({ user: userId, movieId });
   
   if (!existing) {
@@ -46,8 +50,7 @@ watchlistSchema.statics.upsertMovie = async function(userId, movieId) {
   return "exists"; 
 };
 
-watchlistSchema.statics.updateStatus = function(id, status) {
+exports.updateStatus = function(id, status) {
   return this.findByIdAndUpdate(id, { status: status });
 };
 
-module.exports = mongoose.model("Watchlist", watchlistSchema);
