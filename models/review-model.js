@@ -17,6 +17,7 @@ const reviewSchema = new mongoose.Schema(
       type: String,
       required: [true, "Headline is required"],
       trim: true,
+      maxLength: [150, "Headline cannot exceed 150 characters"],
     },
 
     storyRating: {
@@ -58,6 +59,7 @@ const reviewSchema = new mongoose.Schema(
       type: String,
       trim: true,
       default: "",
+      maxLength: [1000, "Review text cannot exceed 1000 characters"],
     },
 
     isEdited: {

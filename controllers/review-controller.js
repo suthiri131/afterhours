@@ -129,6 +129,41 @@ exports.createReview = async (req, res) => {
       return res.status(404).send("Movie not found");
     }
 
+    const headline = req.body.headline
+      ? req.body.headline.trim().replace(/\s+/g, " ")
+      : "";
+    const reviewText = req.body.reviewText ? req.body.reviewText.trim() : "";
+    const ratings = parseRatings(req.body);
+    const validRatings = areRatingsValid(ratings);
+
+    if (!headline || !validRatings) {
+      return res.render("user/create-review", {
+        movie,
+        user,
+        error:
+          "Please enter a headline and select all 4 category ratings from 1 to 5.",
+        formData: buildFormData(req.body),
+      });
+    }
+
+    if (headline.length > 150) {
+      return res.render("user/create-review", {
+        movie,
+        user,
+        error: "Headline cannot exceed 150 characters",
+        formData: buildFormData(req.body),
+      });
+    }
+
+    if (reviewText.length > 1000) {
+      return res.render("user/create-review", {
+        movie,
+        user,
+        error: "Review cannot exceed 1000 characters",
+        formData: buildFormData(req.body),
+      });
+    }
+
     const watchedRecord = await getWatchedRecord(user.id, movieId);
     if (!watchedRecord) {
       return res
@@ -144,22 +179,6 @@ exports.createReview = async (req, res) => {
       return res.redirect(`/reviews/${existingReview._id}/edit`);
     }
 
-    const headline = req.body.headline
-      ? req.body.headline.trim().replace(/\s+/g, " ")
-      : "";
-    const ratings = parseRatings(req.body);
-    const validRatings = areRatingsValid(ratings);
-
-    if (!headline || !validRatings) {
-      return res.render("user/create-review", {
-        movie,
-        user,
-        error:
-          "Please enter a headline and select all 4 category ratings from 1 to 5.",
-        formData: buildFormData(req.body),
-      });
-    }
-
     const overallRating = calculateOverallRating(ratings);
 
     await Review.createReview({
@@ -171,7 +190,7 @@ exports.createReview = async (req, res) => {
       musicRating: ratings.musicRating,
       rewatchRating: ratings.rewatchRating,
       rating: overallRating,
-      reviewText: req.body.reviewText ? req.body.reviewText.trim() : "",
+      reviewText,
     });
 
     return res.redirect(`/movies/${movieId}`);
@@ -275,6 +294,7 @@ exports.updateReview = async (req, res) => {
     const headline = req.body.headline
       ? req.body.headline.trim().replace(/\s+/g, " ")
       : "";
+    const reviewText = req.body.reviewText ? req.body.reviewText.trim() : "";
     const ratings = parseRatings(req.body);
     const validRatings = areRatingsValid(ratings);
 
@@ -289,9 +309,26 @@ exports.updateReview = async (req, res) => {
       });
     }
 
-    const trimmedReviewText = req.body.reviewText
-      ? req.body.reviewText.trim()
-      : "";
+    if (headline.length > 150) {
+      return res.render("user/edit-review", {
+        review,
+        movie: review.movieId,
+        user,
+        error: "Headline cannot exceed 150 characters",
+        formData: buildFormData(req.body),
+      });
+    }
+
+    if (reviewText.length > 1000) {
+      return res.render("user/edit-review", {
+        review,
+        movie: review.movieId,
+        user,
+        error: "Review cannot exceed 1000 characters",
+        formData: buildFormData(req.body),
+      });
+    }
+
     const overallRating = calculateOverallRating(ratings);
 
     const headlineChanged = (review.headline || "") !== headline;
@@ -299,7 +336,7 @@ exports.updateReview = async (req, res) => {
     const actingChanged = review.actingRating !== ratings.actingRating;
     const musicChanged = review.musicRating !== ratings.musicRating;
     const rewatchChanged = review.rewatchRating !== ratings.rewatchRating;
-    const textChanged = (review.reviewText || "") !== trimmedReviewText;
+    const textChanged = (review.reviewText || "") !== reviewText;
 
     if (
       !headlineChanged &&
@@ -319,7 +356,7 @@ exports.updateReview = async (req, res) => {
       musicRating: ratings.musicRating,
       rewatchRating: ratings.rewatchRating,
       rating: overallRating,
-      reviewText: trimmedReviewText,
+      reviewText,
       isEdited: true,
     });
 
