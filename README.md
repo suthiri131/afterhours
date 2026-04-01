@@ -47,9 +47,11 @@ Website Features
 
 * If you choose to create your own user account, please use an email that you have access to as you will be prompted for OTP verification
 
+
 2. Super Admin Manage Users Page (Only accessible by SuperAdmin)
 
 - Manage user roles and permissions
+
 
 3. Admin Movie Management Main Page (Only accessible by Admin, SuperAdmin)
 
@@ -57,11 +59,13 @@ Website Features
 - Edit movie details
 - Delete movie
 
+
 4. Manage Genres Page (Only accessible by Admin, SuperAdmin)
 
 - Add Genre
 - Edit Genre
 - Delete Genre
+
 
 5. All Movies Page
 
@@ -72,10 +76,12 @@ Website Features
 - Users can filter movies by genre
 - Clicking on movie shows reviews & ratings for movie
 
+
 6. Movies Watchlist Page
 
 - Users can remove movies from their watchlist
 - Users can mark movies as watched and then leave a review/rating
+
 
 7. Reviews & Ratings Page
 
@@ -86,6 +92,7 @@ Website Features
 - Reviews include category ratings (Story, Acting, Music, Rewatch) with - auto-calculated overall rating
 - Displays average rating, total reviews and suggested movies on Movie Details page
 - Prevents unauthorized access and handles invalid inputs
+
 
 8. Profile Page
 
