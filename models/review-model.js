@@ -141,3 +141,6 @@ exports.deleteReviewsByMovieId = function (movieId) {
 exports.deleteReviewsByUserId = function (userId) {
   return Review.deleteMany({ userId });
 };
+
+exports.Review = Review;
+module.exports = exports;

@@ -1,14 +1,18 @@
 const Watchlist = require("../models/watchlist-model");
-const Review = require("../models/review-model");
+const Review = require("../models/review-model"); 
 
 exports.showWatchList = async (req, res) => {
   try {
     if (!req.session?.user) return res.redirect("/user/login");
+    const userId = req.session.user.id || req.session.user._id;
 
-    const userId = req.session.user.id;
     const items = await Watchlist.getUserWatchlist(userId);
-    
     const cleanMovies = items.filter(item => item.movieId !== null);
+
+    let msg = "";
+    if (req.query.msg === "deleted") msg = "Movie has been removed from your watchlist.";
+    if (req.query.msg === "watched") msg = "Movie status has been updated to: Watched";
+    if (req.query.msg === "error") msg = "Oops! Something went wrong.";
 
     const moviesWithReviewStatus = await Promise.all(
       cleanMovies.map(async (item) => {
@@ -20,9 +24,9 @@ exports.showWatchList = async (req, res) => {
         };
       })
     );
-    
-    res.render("watchlist", { movies: moviesWithReviewStatus, user: req.session.user, msg: req.query.msg || "" });
+    res.render("watchlist", { movies: moviesWithReviewStatus, user: req.session.user, msg: msg });
   } catch (error) {
+    console.error(error);
     res.status(500).send("Error loading watchlist.");
   }
 };
@@ -32,12 +36,9 @@ exports.addToWatchList = async (req, res) => {
     const { movieId } = req.params;
     const userId = req.session.user.id || req.session.user._id;
     const returnTo = req.body.returnTo || "/movies";
-
     const result = await Watchlist.upsertMovie(userId, movieId);
-    
     const status = result === "exists" ? "exists" : "added";
-    res.redirect(`${returnTo.split("#")[0]}?msg=${status}${returnTo.includes("#") ? "#" + returnTo.split("#")[1] : ""}`);
-
+    res.redirect(`${returnTo.split("#")[0]}?msg=${status}`);
   } catch (error) {
     res.redirect("/movies?msg=error");
   }
@@ -45,13 +46,9 @@ exports.addToWatchList = async (req, res) => {
 
 exports.markAsWatched = async (req, res) => {
   try {
-    const { id } = req.params;
-    await Watchlist.updateStatus(id, "Watched");
-    
-    const returnTo = req.body.returnTo || "/watchlist";
-    res.redirect(returnTo);
+    await Watchlist.updateStatus(req.params.id, "Watched");
+    res.redirect("/watchlist?msg=watched");
   } catch (error) {
-    console.error(error);
     res.status(500).send("Error updating status.");
   }
 };
@@ -59,8 +56,10 @@ exports.markAsWatched = async (req, res) => {
 exports.deleteFromWatchlist = async (req, res) => {
   try {
     await Watchlist.softDelete(req.params.id);
-    res.redirect("/watchlist");
+    res.redirect("/watchlist?msg=deleted"); 
   } catch (error) {
-    res.status(500).send("Error deleting movie.");
+    res.redirect("/watchlist?msg=error");
   }
 };
+
+
