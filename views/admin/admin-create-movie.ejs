@@ -84,7 +84,8 @@
         <input type="number" name="releaseYear" value="<%= formData.releaseYear || '' %>"><br><br>
 
         Description<br>
-        <textarea name="description" rows="6" cols="60"><%= formData.description || '' %></textarea><br><br>
+        <textarea name="description" rows="6" cols="60" maxlength="2000"><%= formData.description || '' %></textarea><br>
+        <small>Maximum 2000 characters.</small><br><br>
 
         Movie Image<br>
         <input type="file" name="movieImage" accept="image/*"

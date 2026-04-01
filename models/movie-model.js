@@ -25,7 +25,6 @@ const movieSchema = new mongoose.Schema({
     type: Number,
     required: [true, "A movie must have a release year"],
     min: [1888, "Release year is invalid"],
-    max: [2100, "Release year is invalid"],
   },
 
   director: {
