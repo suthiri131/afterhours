@@ -16,7 +16,7 @@ function parseRatings(body) {
     storyRating,
     actingRating,
     musicRating,
-    rewatchRating,
+    rewatchRating
   };
 }
 
@@ -24,7 +24,7 @@ function areRatingsValid({
   storyRating,
   actingRating,
   musicRating,
-  rewatchRating,
+  rewatchRating
 }) {
   const ratings = [storyRating, actingRating, musicRating, rewatchRating];
 
@@ -37,7 +37,7 @@ function calculateOverallRating({
   storyRating,
   actingRating,
   musicRating,
-  rewatchRating,
+  rewatchRating
 }) {
   const overall =
     (storyRating + actingRating + musicRating + rewatchRating) / 4;
@@ -54,7 +54,7 @@ async function getWatchedRecord(userId, movieId) {
   return await Watchlist.findOne({
     user: userId,
     movieId: movieId,
-    status: "Watched",
+    status: "Watched"
   });
 }
 
@@ -65,7 +65,7 @@ function buildFormData(body) {
     actingRating: body.actingRating || "",
     musicRating: body.musicRating || "",
     rewatchRating: body.rewatchRating || "",
-    reviewText: body.reviewText ? body.reviewText.trim() : "",
+    reviewText: body.reviewText ? body.reviewText.trim() : ""
   };
 }
 
@@ -102,7 +102,7 @@ exports.showCreateReviewForm = async (req, res) => {
       movie,
       user,
       error: null,
-      formData: {},
+      formData: {}
     });
   } catch (err) {
     console.error(err);
@@ -142,7 +142,7 @@ exports.createReview = async (req, res) => {
         user,
         error:
           "Please enter a headline and select all 4 category ratings from 1 to 5.",
-        formData: buildFormData(req.body),
+        formData: buildFormData(req.body)
       });
     }
 
@@ -151,7 +151,7 @@ exports.createReview = async (req, res) => {
         movie,
         user,
         error: "Headline cannot exceed 150 characters",
-        formData: buildFormData(req.body),
+        formData: buildFormData(req.body)
       });
     }
 
@@ -160,7 +160,7 @@ exports.createReview = async (req, res) => {
         movie,
         user,
         error: "Review cannot exceed 1000 characters",
-        formData: buildFormData(req.body),
+        formData: buildFormData(req.body)
       });
     }
 
@@ -173,7 +173,7 @@ exports.createReview = async (req, res) => {
 
     const existingReview = await Review.findByMovieIdAndUserId(
       movieId,
-      user.id,
+      user.id
     );
     if (existingReview) {
       return res.redirect(`/reviews/${existingReview._id}/edit`);
@@ -190,7 +190,7 @@ exports.createReview = async (req, res) => {
       musicRating: ratings.musicRating,
       rewatchRating: ratings.rewatchRating,
       rating: overallRating,
-      reviewText,
+      reviewText
     });
 
     return res.redirect(`/movies/${movieId}`);
@@ -255,7 +255,7 @@ exports.showEditReviewForm = async (req, res) => {
         actingRating: review.actingRating,
         musicRating: review.musicRating,
         rewatchRating: review.rewatchRating,
-        reviewText: review.reviewText || "",
+        reviewText: review.reviewText || ""
       },
     });
   } catch (err) {
@@ -305,7 +305,7 @@ exports.updateReview = async (req, res) => {
         user,
         error:
           "Please enter a headline and select all 4 category ratings from 1 to 5.",
-        formData: buildFormData(req.body),
+        formData: buildFormData(req.body)
       });
     }
 
@@ -315,7 +315,7 @@ exports.updateReview = async (req, res) => {
         movie: review.movieId,
         user,
         error: "Headline cannot exceed 150 characters",
-        formData: buildFormData(req.body),
+        formData: buildFormData(req.body)
       });
     }
 
@@ -325,7 +325,7 @@ exports.updateReview = async (req, res) => {
         movie: review.movieId,
         user,
         error: "Review cannot exceed 1000 characters",
-        formData: buildFormData(req.body),
+        formData: buildFormData(req.body)
       });
     }
 
@@ -357,7 +357,7 @@ exports.updateReview = async (req, res) => {
       rewatchRating: ratings.rewatchRating,
       rating: overallRating,
       reviewText,
-      isEdited: true,
+      isEdited: true
     });
 
     return res.redirect(`/movies/${review.movieId._id}`);
