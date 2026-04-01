@@ -6,7 +6,9 @@
           <%= isOwner
             ? ((user && (user.username || user.fullName)) || "You")
             : (review.userId ? (review.userId.fullName || review.userId.username) : "Deleted User") %>
-          <% if (isOwner) { %><span class="you-badge">(You)</span><% } %>
+          <% if (isOwner) { %>
+            <span class="you-badge">(You)</span>
+          <% } %>
         </div>
 
         <div class="rating-pill">
