@@ -683,11 +683,7 @@ exports.deleteUserAccount = async (req, res) => {
     }
 
     await Review.deleteReviewsByUserId(userId);
-    //uncomment this after watchlist model is completed.
-    //     exports.deleteWatchlistByUserId = function (userId) {
-    //   return Watchlist.deleteMany({ user: userId });
-    // };
-    //await Watchlist.deleteWatchlistByUserId(userId);
+    await Watchlist.deleteWatchlistByUserId(userId);
     await User.deleteUser(userId);
 
     req.session.destroy((err) => {
