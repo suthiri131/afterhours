@@ -143,7 +143,7 @@
       </div>
     <% } %>
 
-    <form action="/admin/genres/create" method="POST">
+    <form action="/genre/create" method="POST">
       <div class="form-group">
         <input 
           type="text" 
@@ -178,11 +178,11 @@
             <td>
               <div class="actions">
 
-                <form action="/admin/genres/<%= g._id %>/edit" method="GET">
+                <form action="/genre/<%= g._id %>/edit" method="GET">
                   <button class="btn btn-edit">Edit</button>
                 </form>
 
-                <form action="/admin/genres/<%= g._id %>/delete" method="POST" onsubmit="return confirm('Delete this genre?')">
+                <form action="/genre/<%= g._id %>/delete" method="POST" onsubmit="return confirm('Delete this genre?')">
                   <button class="btn btn-danger">Delete</button>
                 </form>
 

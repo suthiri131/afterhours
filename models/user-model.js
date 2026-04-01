@@ -4,12 +4,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "A user must have a full name"],
     trim: true,
+    maxLength: [100, "Full name cannot exceed 100 characters"],
   },
   username: {
     type: String,
     required: [true, "A user must have a username"],
     unique: true,
     trim: true,
+    maxLength: [30, "Username cannot exceed 30 characters"],
   },
   email: {
     type: String,
@@ -22,6 +24,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "A user must have a password"],
     minlength: [6, "Password must be at least 6 characters"],
+    maxLength: [100, "Password cannot exceed 100 characters"],
   },
   role: {
     type: String,

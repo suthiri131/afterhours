@@ -1,14 +1,11 @@
-// thet
 const Movie = require("../models/movie-model");
 const Review = require("../models/review-model");
 const Watchlist = require("../models/watchlist-model");
 
-// helper: get logged-in user from session
 function getSessionUser(req) {
   return req.session && req.session.user ? req.session.user : null;
 }
 
-// helper: parse all 4 ratings
 function parseRatings(body) {
   const storyRating = Number(body.storyRating);
   const actingRating = Number(body.actingRating);
@@ -23,7 +20,6 @@ function parseRatings(body) {
   };
 }
 
-// helper: validate all 4 ratings are between 1 and 5
 function areRatingsValid({
   storyRating,
   actingRating,
@@ -37,7 +33,6 @@ function areRatingsValid({
   );
 }
 
-// helper: calculate overall average rating
 function calculateOverallRating({
   storyRating,
   actingRating,
@@ -50,7 +45,6 @@ function calculateOverallRating({
   return Number(overall.toFixed(1));
 }
 
-// helper: load movie with genre
 async function getMovie(movieId) {
   return await Movie.findMovieById(movieId).populate("genre");
 }
@@ -64,7 +58,6 @@ async function getWatchedRecord(userId, movieId) {
   });
 }
 
-// helper: keep old form values when validation fails
 function buildFormData(body) {
   return {
     headline: body.headline ? body.headline.trim().replace(/\s+/g, " ") : "",
