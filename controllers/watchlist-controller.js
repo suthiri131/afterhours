@@ -44,10 +44,9 @@ exports.addToWatchList = async (req, res) => {
   try {
     const { movieId } = req.params;
     const userId = req.session.user.id || req.session.user._id;
-    const returnTo = req.body.returnTo || "/movies";
     const result = await Watchlist.upsertMovie(userId, movieId);
     const status = result === "exists" ? "exists" : "added";
-    res.redirect(`${returnTo.split("#")[0]}?msg=${status}`);
+    res.redirect(`/movies?msg=${status}`);
   } catch (error) {
     res.redirect("/movies?msg=error");
   }
