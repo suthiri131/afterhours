@@ -364,7 +364,7 @@
           placeholder="Search movie title..."
           value="<%= search || '' %>"
         />
-        <button type="submit" class="btn search-btn">🔍Search</button>
+        <button type="submit" class="btn search-btn">Search</button>
         </div>
       <h3>Genre Filter:</h3>
         <!-- Genre Tags -->
@@ -388,7 +388,7 @@
       <!-- show trending movies when not searching nor filtering aka only main movies page -->
       <% if ((!search || search === "") && (!selectedGenre || selectedGenre.length === 0) && movies.length > 0) { %>
 
-        <h2>🔥 Trending Movies 🔥</h2>
+        <h2>Trending Movies</h2>
         <div class="trending-container">
           <div class="movies-grid">
             <% trendingMovies.forEach((movie,index) => { %>
