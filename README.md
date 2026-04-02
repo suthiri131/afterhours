@@ -81,7 +81,7 @@ Website Features
 - Only allowed after marking movie as “Watched”
 - One review per user per movie
 - Users can create, edit, and delete their own reviews
-- Reviews include category ratings (Story, Acting, Music, Rewatch) with - auto-calculated overall rating
+- Reviews include category ratings (Story, Acting, Music, Rewatch) with review
 - Displays average rating, total reviews and suggested movies on Movie Details page
 - Prevents unauthorized access and handles invalid inputs
 

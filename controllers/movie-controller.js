@@ -85,13 +85,27 @@ exports.showMovieDetails = async (req, res) => {
   try {
     const movieId = req.params.id;
     const user = req.session.user || null;
+    const reviewSort = req.query.sort || "mostRecent";
 
     const movie = await Movie.findMovieById(movieId).populate("genre");
     if (!movie) {
       return res.status(404).send("Movie not found");
     }
-    await Movie.findByIdAndUpdate(movieId, { $inc: { views: 1 } }); //every click increase by 1, btr than session-based counting
-    const reviews = await Review.findByMovieId(movieId);
+
+    await Movie.findByIdAndUpdate(movieId, { $inc: { views: 1 } });
+     
+    let reviews = await Review.findByMovieId(movieId);
+
+    if (reviewSort === "oldest") {
+      reviews.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    } else if (reviewSort === "mostRated") {
+      reviews.sort((a, b) => Number(b.rating) - Number(a.rating));
+    } else if (reviewSort === "leastRated") {
+      reviews.sort((a, b) => Number(a.rating) - Number(b.rating));
+    } else {
+      reviews.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
+
     const stats = await Review.getMovieReviewStats(movieId);
 
     let activeWatchlistMovieIds = [];
@@ -122,12 +136,12 @@ exports.showMovieDetails = async (req, res) => {
           : [];
 
         const overlapCount = suggestedGenreIds.filter((id) =>
-          genreIds.includes(id),
+          genreIds.includes(id)
         ).length;
 
         return {
           ...suggestedMovie.toObject(),
-          overlapCount,
+          overlapCount
         };
       })
       .sort((a, b) => {
@@ -168,6 +182,7 @@ exports.showMovieDetails = async (req, res) => {
     res.render("user/movie-details", {
       movie,
       reviews,
+      reviewSort,
       averageRating: stats.averageRating,
       reviewCount: stats.reviewCount,
       user,

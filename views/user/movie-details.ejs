@@ -9,6 +9,14 @@
 <body>
   <%- include("../navbar") %>
 
+  <%
+    const currentSort = reviewSort || "mostRecent";
+
+    const otherReviews = reviews.filter(review =>
+      !user || !review.userId || review.userId._id.toString() !== user.id.toString()
+    );
+  %>
+
   <div class="page-container">
     <section class="card">
       <%- include("review-movie-poster", {
@@ -18,12 +26,6 @@
         reviewCount: reviewCount
       }) %>
     </section>
-
-    <%
-      const otherReviews = reviews.filter(review =>
-        !user || !review.userId || review.userId._id.toString() !== user.id.toString()
-      );      
-    %>
 
     <section class="card">
       <% if (!user) { %>
@@ -75,65 +77,69 @@
           <%- include("review-card", { review: myReview, isOwner: true, user: user }) %>
         </div>
 
-        <div class="review-header-row">
+        <div class="review-header-row" style="display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;">
           <h2 class="section-title" style="margin-bottom: 0;">Other Public Reviews</h2>
 
-          <div class="review-sort-wrap">
+          <form action="/movies/<%= movie._id %>" method="GET" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:0;">
             <label for="reviewSortOther" class="review-sort-label">Sort by:</label>
-            <select id="reviewSortOther" class="review-sort-select">
-              <option value="mostRecent">Most Recent</option>
-              <option value="oldest">Oldest</option>
-              <option value="mostRated">Most Rated</option>
-              <option value="leastRated">Least Rated</option>
+            <select
+              id="reviewSortOther"
+              name="sort"
+              class="review-sort-select"
+              onchange="this.form.submit()"
+            >
+              <option value="mostRecent" <%= currentSort === "mostRecent" ? "selected" : "" %>>Most Recent</option>
+              <option value="oldest" <%= currentSort === "oldest" ? "selected" : "" %>>Oldest</option>
+              <option value="mostRated" <%= currentSort === "mostRated" ? "selected" : "" %>>Most Rated</option>
+              <option value="leastRated" <%= currentSort === "leastRated" ? "selected" : "" %>>Least Rated</option>
             </select>
-          </div>
+          </form>
         </div>
 
-        <p style="margin-top: -6px; margin-bottom: 18px; color: #6b7280; font-size: 14px;">
+        <p style="margin-top: 10px; margin-bottom: 18px; color: #6b7280; font-size: 14px;">
           Other users’ ratings and reviews for this movie are shown here.
         </p>
 
         <% if (otherReviews.length === 0) { %>
           <p class="empty-state">No other public reviews yet.</p>
         <% } else { %>
-          <div class="review-list" id="other-review-list">
+          <div class="review-list">
             <% otherReviews.forEach(function(review) { %>
-              <div
-                class="sortable-review"
-                data-rating="<%= review.rating %>"
-                data-created="<%= review.createdAt ? new Date(review.createdAt).getTime() : 0 %>">
-                <%- include("review-card", { review: review, isOwner: false, user: user }) %>
-              </div>
+              <%- include("review-card", { review: review, isOwner: false, user: user }) %>
             <% }) %>
           </div>
         <% } %>
 
       <% } else { %>
-        <div class="review-header-row">
+        <div class="review-header-row" style="display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;">
           <h2 class="section-title" style="margin-bottom: 0;">Public Reviews</h2>
 
-          <div class="review-sort-wrap">
+          <form action="/movies/<%= movie._id %>" method="GET" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:0;">
             <label for="reviewSortPublic" class="review-sort-label">Sort by:</label>
-            <select id="reviewSortPublic" class="review-sort-select">
-              <option value="mostRecent">Most Recent</option>
-              <option value="oldest">Oldest</option>
-              <option value="mostRated">Most Rated</option>
-              <option value="leastRated">Least Rated</option>
+            <select
+              id="reviewSortPublic"
+              name="sort"
+              class="review-sort-select"
+              onchange="this.form.submit()"
+            >
+              <option value="mostRecent" <%= currentSort === "mostRecent" ? "selected" : "" %>>Most Recent</option>
+              <option value="oldest" <%= currentSort === "oldest" ? "selected" : "" %>>Oldest</option>
+              <option value="mostRated" <%= currentSort === "mostRated" ? "selected" : "" %>>Most Rated</option>
+              <option value="leastRated" <%= currentSort === "leastRated" ? "selected" : "" %>>Least Rated</option>
             </select>
-          </div>
+          </form>
         </div>
+
+        <p style="margin-top: 10px; margin-bottom: 18px; color: #6b7280; font-size: 14px;">
+          Public ratings and reviews for this movie are shown here.
+        </p>
 
         <% if (reviews.length === 0) { %>
           <p class="empty-state">No reviews yet. Be the first to rate this movie.</p>
         <% } else { %>
-          <div class="review-list" id="public-review-list">
+          <div class="review-list">
             <% reviews.forEach(function(review) { %>
-              <div
-                class="sortable-review"
-                data-rating="<%= review.rating %>"
-                data-created="<%= review.createdAt ? new Date(review.createdAt).getTime() : 0 %>">
-                <%- include("review-card", { review: review, isOwner: false, user: user }) %>
-              </div>
+              <%- include("review-card", { review: review, isOwner: false, user: user }) %>
             <% }) %>
           </div>
         <% } %>
@@ -157,141 +163,77 @@
       <% if (!suggestedMovies || suggestedMovies.length === 0) { %>
         <p class="empty-state">No similar movies available yet.</p>
       <% } else { %>
-        <div class="suggested-slider-wrapper">
-          <button type="button" class="suggested-arrow" id="suggested-left">&#10094;</button>
-
-          <div class="suggested-grid" id="suggested-grid">
-            <% suggestedMovies.forEach(suggestedMovie => { %>
-              <div class="movie-card">
-                <div class="movie-banner">
-                  <a href="/movies/<%= suggestedMovie._id %>">
-                    <% if (suggestedMovie.movieImage) { %>
-                      <img src="<%= suggestedMovie.movieImage %>" alt="<%= suggestedMovie.title %>">
-                    <% } else { %>
-                      <div class="movie-banner-placeholder">
-                        <%= suggestedMovie.title ? suggestedMovie.title.charAt(0).toUpperCase() : "M" %>
-                      </div>
-                    <% } %>
-                  </a>
-                </div>
-
-                <div class="movie-content">
-                  <h2 class="card-movie-title">
-                    <a href="/movies/<%= suggestedMovie._id %>">
-                      <%= suggestedMovie.title %>
-                    </a>
-                  </h2>
-
-                  <div class="movie-info">
-                    <span class="badge">
-                      <%= suggestedMovie.genre && suggestedMovie.genre.length
-                        ? suggestedMovie.genre.map(g => g.name).join(", ")
-                        : "Unknown Genre" %>
-                    </span>
-
-                    <% if (suggestedMovie.releaseYear) { %>
-                      <span class="badge"><%= suggestedMovie.releaseYear %></span>
-                    <% } %>
-                  </div>
-
-                  <p class="description">
-                    <%= suggestedMovie.description && suggestedMovie.description.trim() !== ""
-                      ? suggestedMovie.description
-                      : "No description available" %>
-                  </p>
-
-                  <p class="director">
-                    <strong>Director:</strong>
-                    <%= suggestedMovie.director && suggestedMovie.director.trim() !== "" ? suggestedMovie.director : "Unknown" %>
-                  </p>
-
-                  <% const isSuggestedInWatchlist = user && activeWatchlistMovieIds.includes(suggestedMovie._id.toString()); %>
-
-                  <% if (isSuggestedInWatchlist) { %>
-                    <div class="notice notice-success suggested-added">
-                      Added to watchlist
-                    </div>
+        <div
+          class="suggested-grid"
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            align-items: stretch;
+          "
+        >
+          <% suggestedMovies.forEach(function(suggestedMovie) { %>
+            <div class="movie-card" style="height: 100%;">
+              <div class="movie-banner">
+                <a href="/movies/<%= suggestedMovie._id %>">
+                  <% if (suggestedMovie.movieImage) { %>
+                    <img src="<%= suggestedMovie.movieImage %>" alt="<%= suggestedMovie.title %>">
                   <% } else { %>
-                    <form class="watchlist-form suggested-watchlist-form" action="/watchlist/add/<%= suggestedMovie._id %>" method="POST">
-                      <input type="hidden" name="returnTo" value="/movies/<%= movie._id %>#suggested-movies">
-                      <button type="submit" class="movie-card-btn">Add to Watchlist</button>
-                    </form>
+                    <div class="movie-banner-placeholder">
+                      <%= suggestedMovie.title ? suggestedMovie.title.charAt(0).toUpperCase() : "M" %>
+                    </div>
+                  <% } %>
+                </a>
+              </div>
+
+              <div class="movie-content">
+                <h2 class="card-movie-title">
+                  <a href="/movies/<%= suggestedMovie._id %>">
+                    <%= suggestedMovie.title %>
+                  </a>
+                </h2>
+
+                <div class="movie-info">
+                  <span class="badge">
+                    <%= suggestedMovie.genre && suggestedMovie.genre.length
+                      ? suggestedMovie.genre.map(g => g.name).join(", ")
+                      : "Unknown Genre" %>
+                  </span>
+
+                  <% if (suggestedMovie.releaseYear) { %>
+                    <span class="badge"><%= suggestedMovie.releaseYear %></span>
                   <% } %>
                 </div>
-              </div>
-            <% }) %>
-          </div>
 
-          <button type="button" class="suggested-arrow" id="suggested-right">&#10095;</button>
+                <p class="description">
+                  <%= suggestedMovie.description && suggestedMovie.description.trim() !== ""
+                    ? suggestedMovie.description
+                    : "No description available" %>
+                </p>
+
+                <p class="director">
+                  <strong>Director:</strong>
+                  <%= suggestedMovie.director && suggestedMovie.director.trim() !== "" ? suggestedMovie.director : "Unknown" %>
+                </p>
+
+                <% const isSuggestedInWatchlist = user && activeWatchlistMovieIds.includes(suggestedMovie._id.toString()); %>
+
+                <% if (isSuggestedInWatchlist) { %>
+                  <div class="notice notice-success suggested-added">
+                    Added to watchlist
+                  </div>
+                <% } else { %>
+                  <form class="watchlist-form suggested-watchlist-form" action="/watchlist/add/<%= suggestedMovie._id %>" method="POST">
+                    <input type="hidden" name="returnTo" value="/movies/<%= movie._id %>#suggested-movies">
+                    <button type="submit" class="movie-card-btn">Add to Watchlist</button>
+                  </form>
+                <% } %>
+              </div>
+            </div>
+          <% }) %>
         </div>
       <% } %>
     </section>
   </div>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const suggestedGrid = document.getElementById("suggested-grid");
-      const leftBtn = document.getElementById("suggested-left");
-      const rightBtn = document.getElementById("suggested-right");
-
-      if (suggestedGrid && leftBtn && rightBtn) {
-        const scrollAmount = 260;
-
-        leftBtn.addEventListener("click", function () {
-          suggestedGrid.scrollBy({
-            left: -scrollAmount,
-            behavior: "smooth"
-          });
-        });
-
-        rightBtn.addEventListener("click", function () {
-          suggestedGrid.scrollBy({
-            left: scrollAmount,
-            behavior: "smooth"
-          });
-        });
-      }
-
-      function sortReviewList(listId, sortId) {
-        const reviewList = document.getElementById(listId);
-        const sortDropdown = document.getElementById(sortId);
-
-        if (!reviewList || !sortDropdown) return;
-
-        function applySort() {
-          const reviewItems = Array.from(reviewList.querySelectorAll(".sortable-review"));
-
-          reviewItems.sort(function (a, b) {
-            const ratingA = parseFloat(a.dataset.rating) || 0;
-            const ratingB = parseFloat(b.dataset.rating) || 0;
-            const createdA = parseInt(a.dataset.created, 10) || 0;
-            const createdB = parseInt(b.dataset.created, 10) || 0;
-
-            switch (sortDropdown.value) {
-              case "oldest":
-                return createdA - createdB;
-              case "mostRated":
-                return ratingB - ratingA;
-              case "leastRated":
-                return ratingA - ratingB;
-              case "mostRecent":
-              default:
-                return createdB - createdA;
-            }
-          });
-
-          reviewItems.forEach(function (item) {
-            reviewList.appendChild(item);
-          });
-        }
-
-        sortDropdown.addEventListener("change", applySort);
-        applySort();
-      }
-
-      sortReviewList("public-review-list", "reviewSortPublic");
-      sortReviewList("other-review-list", "reviewSortOther");
-    });
-  </script>
 </body>
 </html>

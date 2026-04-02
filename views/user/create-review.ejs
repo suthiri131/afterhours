@@ -24,17 +24,18 @@
         }) %>
 
         <hr>
+
         <ul class="guideline-list">
           <li>Write a short interesting headline.</li>
           <li>Rate each category honestly.</li>
           <li>Keep your review helpful and easy to read.</li>
           <li>Avoid major spoilers if possible.</li>
-          <li>The overall score is calculated automatically.</li>
         </ul>
       </section>
 
       <section class="panel">
         <h2 class="section-label">Step 2: Rate This Movie</h2>
+        <p class="section-subtext">Choose your rating below.</p>
 
         <form action="/reviews/movie/<%= movie._id %>" method="POST">
           <%- include("review-rating-fields", { formData: formData }) %>
@@ -51,36 +52,5 @@
       </section>
     </div>
   </div>
-
-  <script>
-    const categoryNames = ["storyRating", "actingRating", "musicRating", "rewatchRating"];
-    const overallValue = document.getElementById("overallValue");
-
-    function updateOverall() {
-      let total = 0;
-      let count = 0;
-
-      categoryNames.forEach((name) => {
-        const checked = document.querySelector(`input[name="${name}"]:checked`);
-        if (checked) {
-          total += Number(checked.value);
-          count++;
-        }
-      });
-
-      if (count === 4) {
-        const avg = (total / 4).toFixed(1);
-        overallValue.textContent = `${avg} / 5.0`;
-      } else {
-        overallValue.textContent = "0.0 / 5.0";
-      }
-    }
-
-    document.querySelectorAll('input[type="radio"]').forEach((input) => {
-      input.addEventListener("change", updateOverall);
-    });
-
-    updateOverall();
-  </script>
 </body>
 </html>

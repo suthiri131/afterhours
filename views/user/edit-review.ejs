@@ -27,13 +27,14 @@
         <ul class="guideline-list">
           <li>Update your headline if needed.</li>
           <li>You can change one or all category ratings.</li>
-          <li>The overall score updates automatically.</li>
           <li>Keep your review clear and helpful.</li>
+          <li>Make sure your updated review still matches your rating.</li>
         </ul>
       </section>
 
       <section class="panel">
         <h2 class="section-label">Step 2: Update Your Rating</h2>
+        <p class="section-subtext">Update your rating below.</p>
 
         <form action="/reviews/<%= review._id %>/edit" method="POST">
           <%- include("review-rating-fields", { formData: formData }) %>
@@ -50,36 +51,5 @@
       </section>
     </div>
   </div>
-
-  <script>
-    const categoryNames = ["storyRating", "actingRating", "musicRating", "rewatchRating"];
-    const overallValue = document.getElementById("overallValue");
-
-    function updateOverall() {
-      let total = 0;
-      let count = 0;
-
-      categoryNames.forEach((name) => {
-        const checked = document.querySelector(`input[name="${name}"]:checked`);
-        if (checked) {
-          total += Number(checked.value);
-          count++;
-        }
-      });
-
-      if (count === 4) {
-        const avg = (total / 4).toFixed(1);
-        overallValue.textContent = `${avg} / 5.0`;
-      } else {
-        overallValue.textContent = "0.0 / 5.0";
-      }
-    }
-
-    document.querySelectorAll('input[type="radio"]').forEach((input) => {
-      input.addEventListener("change", updateOverall);
-    });
-
-    updateOverall();
-  </script>
 </body>
 </html>
