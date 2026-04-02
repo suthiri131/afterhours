@@ -7,7 +7,7 @@ This project is built as part of a group assignment and focuses on implementing 
 
 Getting Started
 
-1. Extract the zipped folder onto your desktop
+1. Download and extract the zipped folder onto your desktop
 2. Open the folder that you have extracted on Visual Studio Code
    - Open terminal and make sure that you are in the afterhours folder
    - If you are not already in the folder, make sure to navigate to it using cd.
