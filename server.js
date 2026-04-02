@@ -1,5 +1,5 @@
 const express = require("express");
-const dotenv = require("dotenv"); 
+const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const fs = require("fs");
 const session = require("express-session");
@@ -27,9 +27,6 @@ server.use(
     secret: process.env.SECRET,
     resave: false,
     saveUninitialized: false,
-    // cookie: {
-    //   httpOnly: true,
-    // },
   }),
 );
 server.use(authMiddleware.attachUser);

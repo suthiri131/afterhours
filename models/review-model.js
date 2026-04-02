@@ -5,66 +5,66 @@ const reviewSchema = new mongoose.Schema(
     movieId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Movie",
-      required: [true, "Movie does not exist"],
+      required: [true, "Movie does not exist"]
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: [true, "User does not exist"],
+      required: [true, "User does not exist"]
     },
 
     headline: {
       type: String,
       required: [true, "Headline is required"],
       trim: true,
-      maxLength: [150, "Headline cannot exceed 150 characters"],
+      maxLength: [150, "Headline cannot exceed 150 characters"]
     },
 
     storyRating: {
       type: Number,
       required: [true, "Story rating is required"],
       min: [1, "Story rating must be at least 1"],
-      max: [5, "Story rating must be at most 5"],
+      max: [5, "Story rating must be at most 5"]
     },
 
     actingRating: {
       type: Number,
       required: [true, "Acting/Cast rating is required"],
       min: [1, "Acting/Cast rating must be at least 1"],
-      max: [5, "Acting/Cast rating must be at most 5"],
+      max: [5, "Acting/Cast rating must be at most 5"]
     },
 
     musicRating: {
       type: Number,
       required: [true, "Music rating is required"],
       min: [1, "Music rating must be at least 1"],
-      max: [5, "Music rating must be at most 5"],
+      max: [5, "Music rating must be at most 5"]
     },
 
     rewatchRating: {
       type: Number,
       required: [true, "Rewatch value rating is required"],
       min: [1, "Rewatch value rating must be at least 1"],
-      max: [5, "Rewatch value rating must be at most 5"],
+      max: [5, "Rewatch value rating must be at most 5"]
     },
 
     rating: {
       type: Number,
       required: [true, "Overall rating is required"],
       min: [1, "Overall rating must be at least 1"],
-      max: [5, "Overall rating must be at most 5"],
+      max: [5, "Overall rating must be at most 5"]
     },
 
     reviewText: {
       type: String,
       trim: true,
       default: "",
-      maxLength: [1000, "Review text cannot exceed 1000 characters"],
+      maxLength: [1000, "Review text cannot exceed 1000 characters"]
     },
 
     isEdited: {
       type: Boolean,
-      default: false,
+      default: false
     },
   },
   { timestamps: true },
@@ -97,7 +97,7 @@ exports.findById = function (id) {
 exports.updateReview = function (id, updatedData) {
   return Review.findByIdAndUpdate(id, updatedData, {
     returnDocument: "after",
-    runValidators: true,
+    runValidators: true
   });
 };
 
@@ -116,7 +116,7 @@ exports.getMovieReviewStats = async function (movieId) {
       $group: {
         _id: "$movieId",
         averageRating: { $avg: "$rating" },
-        reviewCount: { $sum: 1 },
+        reviewCount: { $sum: 1 }
       },
     },
   ]);
@@ -124,7 +124,7 @@ exports.getMovieReviewStats = async function (movieId) {
   if (result.length === 0) {
     return {
       averageRating: 0,
-      reviewCount: 0,
+      reviewCount: 0
     };
   }
 
@@ -141,6 +141,3 @@ exports.deleteReviewsByMovieId = function (movieId) {
 exports.deleteReviewsByUserId = function (userId) {
   return Review.deleteMany({ userId });
 };
-
-exports.Review = Review;
-module.exports = exports;

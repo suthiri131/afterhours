@@ -8,11 +8,11 @@ const watchlistSchema = new mongoose.Schema({
   },
   movieId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Movie'
+    ref: "Movie",
   },
-  status: { 
-    type: String, 
-    default: 'Plan to Watch' 
+  status: {
+    type: String,
+    default: "Plan to Watch",
   },
   addedAt: {
     type: Date,
@@ -20,23 +20,23 @@ const watchlistSchema = new mongoose.Schema({
   },
   isRemoved: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 });
 
 watchlistSchema.index({ user: 1, movieId: 1 }, { unique: true });
 
 const Watchlist = mongoose.model("Watchlist", watchlistSchema);
 
-Watchlist.getUserWatchlist = function(userId) {
+Watchlist.getUserWatchlist = function (userId) {
   return Watchlist.find({ user: userId, isRemoved: false }).populate("movieId");
 };
 
-Watchlist.softDelete = function(id) {
+Watchlist.softDelete = function (id) {
   return Watchlist.findByIdAndUpdate(id, { isRemoved: true });
 };
 
-Watchlist.upsertMovie = async function(userId, movieId) {
+Watchlist.upsertMovie = async function (userId, movieId) {
   const existing = await Watchlist.findOne({ user: userId, movieId });
   if (!existing) {
     return Watchlist.create({ user: userId, movieId });
@@ -47,8 +47,12 @@ Watchlist.upsertMovie = async function(userId, movieId) {
   return "exists";
 };
 
-Watchlist.updateStatus = function(id, status) {
+Watchlist.updateStatus = function (id, status) {
   return Watchlist.findByIdAndUpdate(id, { status: status });
+};
+
+Watchlist.deleteWatchlistByUserId = function (userId) {
+  return Watchlist.deleteMany({ user: userId });
 };
 
 module.exports = Watchlist;

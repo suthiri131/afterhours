@@ -1,8 +1,7 @@
 exports.isLoggedIn = (req, res, next) => {
   if (!req.session.user) {
     console.log("User not logged in");
-    req.session.returnTo = req.originalUrl;
-    return res.redirect("/user/login");
+    return res.redirect("/");
   }
   next();
 };

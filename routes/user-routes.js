@@ -3,6 +3,13 @@ const userController = require("../controllers/user-controller");
 const authMiddleware = require("../middleware/auth-middleware");
 const router = express.Router();
 
+router.get("/", (req, res) => {
+  if (req.session.user) {
+    return res.redirect("/user/profile");
+  }
+  return res.redirect("/user/login");
+});
+
 router.get(
   "/register",
   authMiddleware.isNotLoggedIn,
@@ -20,24 +27,6 @@ router.get(
   userController.showLoginForm,
 );
 router.post("/login", authMiddleware.isNotLoggedIn, userController.loginUser);
-
-router.get(
-  "/verify-otp",
-  authMiddleware.isNotLoggedIn,
-  userController.showVerifyOtpForm,
-);
-
-router.post(
-  "/verify-otp",
-  authMiddleware.isNotLoggedIn,
-  userController.verifyOtp,
-);
-
-router.get(
-  "/resend-otp",
-  authMiddleware.isNotLoggedIn,
-  userController.resendOtp,
-);
 
 // only for logged in users
 router.get(
