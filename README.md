@@ -13,8 +13,8 @@ Getting Started
    - If you are not already in the folder, make sure to navigate to it using cd.
 3. Install dependencies - npm i
 4. Run the server - nodemon server.js
-5. Go to http://localhost:8000/index.html on your desired web browser.
-6. Welcome to our website!
+5. Go to http://localhost:8000/index.html on Google Chrome web browser.
+6. Welcome to our website! Login with the accounts provided below to proceed.
 
 Account Credentials
 
