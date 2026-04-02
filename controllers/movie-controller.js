@@ -149,7 +149,9 @@ exports.showMovieDetails = async (req, res) => {
           return b.overlapCount - a.overlapCount;
         }
         return a.title.localeCompare(b.title);
-      });
+      })
+      .filter((m) => !activeWatchlistMovieIds.includes(m._id.toString())) 
+      .slice(0, 4);
 
     let myReview = null;
     let watchlistItem = null;
