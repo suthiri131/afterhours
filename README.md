@@ -7,14 +7,14 @@ This project is built as part of a group assignment and focuses on implementing 
 
 Getting Started
 
-1. Extract the zipped folder onto your desktop
+1. Download and extract the zipped folder onto your desktop
 2. Open the folder that you have extracted on Visual Studio Code
    - Open terminal and make sure that you are in the afterhours folder
    - If you are not already in the folder, make sure to navigate to it using cd.
 3. Install dependencies - npm i
 4. Run the server - nodemon server.js
-5. Go to http://localhost:8000/index.html on your desired web browser.
-6. Welcome to our website!
+5. Go to http://localhost:8000/index.html on Google Chrome web browser.
+6. Welcome to our website! Login with the accounts provided below to proceed.
 
 Account Credentials
 
